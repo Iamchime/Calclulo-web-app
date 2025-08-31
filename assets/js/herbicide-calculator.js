@@ -9,11 +9,6 @@ function calculateResults() {
   const waterVolumeVal = waterVolumeInput.value.trim();
   const sprayerCapacityVal = sprayerCapacityInput.value.trim();
 
-  // Clear previous errors
-  removeError(dosageInput);
-  removeError(waterVolumeInput);
-  removeError(sprayerCapacityInput);
-
   // Don't calculate or show errors until all inputs are filled
   if (!dosageVal || !waterVolumeVal || !sprayerCapacityVal) {
     resultInput.value = '';
