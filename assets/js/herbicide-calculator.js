@@ -61,6 +61,5 @@ function calculateResults() {
   const input = document.getElementById(id);
   input.addEventListener('input', () => {
     calculateResults();
-    removeError(input);
   });
 });
