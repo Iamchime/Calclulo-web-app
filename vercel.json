@@ -3,43 +3,5 @@
   "trailingSlash": false,
   "rewrites": [
     { "source": "/(.*)", "destination": "/$1.html" }
-  ],
-  "headers": [
-    {
-      "source": "/assets/css/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=2592000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/assets/fonts/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=2592000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/assets/images/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=2592000, immutable"
-        }
-      ]
-    },
-    {
-      "source": "/assets/icons/(.*)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=2592000, immutable"
-        }
-      ]
-    }
   ]
 }
