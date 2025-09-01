@@ -29,37 +29,53 @@
   // Listen for orientation changes
   window.addEventListener("resize", updateHomeLink);
 });
- /*********************************
- * progressive web app
- */
+
+/*********************************
+ * Progressive Web App
+ *********************************/
 
 // Register service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js')
-      .then(reg => console.log('Service worker registered:', reg.scope))
-      .catch(err => console.error('Service worker registration failed:', err));
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/service-worker.js")
+      .then((reg) => console.log("Service worker registered:", reg.scope))
+      .catch((err) =>
+        console.error("Service worker registration failed:", err)
+      );
   });
 }
 
-let deferredPrompt;
+let deferredPrompt = null;
 
-// Listen for install prompt event
-window.addEventListener('beforeinstallprompt', (e) => {
+// Listen for the install prompt event
+window.addEventListener("beforeinstallprompt", (e) => {
+  // Stop Chrome from showing its default "big box"
   e.preventDefault();
   deferredPrompt = e;
+  
+  console.log("PWA install prompt saved!");
+  
+  // Automatically trigger Chrome’s built-in prompt
+  showMiniPrompt();
 });
 
-// Trigger prompt on first user interaction
-window.addEventListener('click', () => {
+function showMiniPrompt() {
   if (deferredPrompt) {
+    // This shows Chrome’s built-in, swipeable prompt
     deferredPrompt.prompt();
+    
+    // Wait for the user's choice
     deferredPrompt.userChoice.then((choiceResult) => {
-      deferredPrompt = null; // reset so it doesn't show again immediately
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the PWA install prompt");
+      } else {
+        console.log("User dismissed the PWA install prompt");
+      }
+      deferredPrompt = null;
     });
   }
-}, { once: true }); // only fire once
-/***************************/
+}
 
 /*****************************
  * cookie management 
