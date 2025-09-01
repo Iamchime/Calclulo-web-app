@@ -35,48 +35,39 @@
  *********************************/
 
 // Register service worker
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register("/service-worker.js")
-      .then((reg) => console.log("Service worker registered:", reg.scope))
-      .catch((err) =>
-        console.error("Service worker registration failed:", err)
-      );
+      .register('/service-worker.js')
+      .then(reg => console.log('Service worker registered:', reg.scope))
+      .catch(err => console.error('Service worker registration failed:', err));
   });
 }
 
 let deferredPrompt = null;
+let promptTimeout = null;
 
-// Listen for the install prompt event
-window.addEventListener("beforeinstallprompt", (e) => {
+// Listen for install prompt event
+window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   
-  // Show prompt after delay if user hasn't dismissed before
-  const dismissed = localStorage.getItem("pwaDismissed");
-  if (!dismissed) {
-    setTimeout(showInstallPrompt, 5000); // wait 5 seconds
-  }
+  // Wait 30 seconds before showing the prompt
+  clearTimeout(promptTimeout);
+  promptTimeout = setTimeout(() => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === 'dismissed') {
+          console.log('User dismissed the PWA install prompt');
+        } else {
+          console.log('User accepted the PWA install prompt');
+        }
+        deferredPrompt = null; // Reset
+      });
+    }
+  }, 30000); // 30 seconds
 });
-
-// Show Chrome’s built-in prompt
-function showInstallPrompt() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    
-    deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === "dismissed") {
-        console.log("User dismissed PWA install prompt");
-        localStorage.setItem("pwaDismissed", "true"); // don’t bug user again
-      } else {
-        console.log("User accepted PWA install prompt");
-        localStorage.removeItem("pwaDismissed"); // reset for next time if needed
-      }
-      deferredPrompt = null;
-    });
-  }
-}
 
 /*****************************
  * cookie management 
