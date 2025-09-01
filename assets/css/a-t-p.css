@@ -1,47 +1,4 @@
 @font-face {
-  font-family: 'Rubik';
-  src: url("../fonts/Rubik-Regular.woff2");
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Lato';
-  src: url("../fonts/Lato-Bold.woff2");
-  font-weight: 700;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Lato';
-  src: url("../fonts/Lato-Black.woff2");
-  font-weight: 900;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Lato';
-  src: url("../fonts/Lato-Regular.woff2");
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
-  font-family: 'Nunito';
-  src: url("../fonts/Nunito-Regular.woff2");
-  font-weight: 400;
-  font-style: normal;
-}
-body{
-  font-family: "Lato";
-  display: flex;
-align-items: center;
-flex-direction: column;
-background: #464BFF08;
-}
-@font-face {
-  font-family: 'Young';
-  src: url("/assets/fonts/young.woff2");
-  font-weight: 400;
-  font-style: normal;
-}
-@font-face {
   font-family: 'lexend';
   src: url("/assets/fonts/Lexend-SemiBold.woff2");
   font-weight: 400;
@@ -59,6 +16,15 @@ background: #464BFF08;
   font-weight: 900;
   font-style: normal;
 }
+
+body{
+  font-family: "young";
+  display: flex;
+align-items: center;
+flex-direction: column;
+background: #464BFF08;
+}
+
 .no-scroll {
   overflow: hidden;
 }
@@ -223,11 +189,6 @@ font-family: 'Young';
   position: absolute;
   right: 0;
   fill: #4F516370;
-}
-.side-nav h2{
-  font-size: 1.2em;
-  font-family: 'lato';
-  color: #31323E;
 }
 .side-nav a {
   margin: .5rem 0;
