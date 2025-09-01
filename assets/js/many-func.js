@@ -50,27 +50,28 @@ let deferredPrompt = null;
 
 // Listen for the install prompt event
 window.addEventListener("beforeinstallprompt", (e) => {
-  // Stop Chrome from showing its default "big box"
   e.preventDefault();
   deferredPrompt = e;
   
-  console.log("PWA install prompt saved!");
-  
-  // Automatically trigger Chrome’s built-in prompt
-  showMiniPrompt();
+  // Show prompt after delay if user hasn't dismissed before
+  const dismissed = localStorage.getItem("pwaDismissed");
+  if (!dismissed) {
+    setTimeout(showInstallPrompt, 5000); // wait 5 seconds
+  }
 });
 
-function showMiniPrompt() {
+// Show Chrome’s built-in prompt
+function showInstallPrompt() {
   if (deferredPrompt) {
-    // This shows Chrome’s built-in, swipeable prompt
     deferredPrompt.prompt();
     
-    // Wait for the user's choice
     deferredPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === "accepted") {
-        console.log("User accepted the PWA install prompt");
+      if (choiceResult.outcome === "dismissed") {
+        console.log("User dismissed PWA install prompt");
+        localStorage.setItem("pwaDismissed", "true"); // don’t bug user again
       } else {
-        console.log("User dismissed the PWA install prompt");
+        console.log("User accepted PWA install prompt");
+        localStorage.removeItem("pwaDismissed"); // reset for next time if needed
       }
       deferredPrompt = null;
     });
