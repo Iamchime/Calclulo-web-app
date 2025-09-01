@@ -391,23 +391,22 @@ ul#favs-list {
 }
 /****************/
 footer{
-  width: 95%;
+  width: 100%;
   padding: .5em;
-  border-radius: 10px;
   display: flex;
 flex-direction: column;
 align-items: center;
 justify-content: center;
 gap: 1em;
 margin-top: 3em;
-font-family: "nunito";
+font-family: "Nunito";
+border-radius: 20px;
 }
 footer .quick-links{
   display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 1em;
+  align-items: center;
+  justify-content: center;
+  gap: 1em;
 }
 footer .quick-links a{
   text-decoration: none;
@@ -429,7 +428,7 @@ gap: .3em;
 }
 footer span svg{
   fill: red;
-  width: 1.3em;
+  width: 1.2em;
 }
 /** Responsiveness **/
 @media (min-width: 1400px) {
