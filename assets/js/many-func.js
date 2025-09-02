@@ -45,30 +45,45 @@ if ('serviceWorker' in navigator) {
 }
 
 let deferredPrompt = null;
-let promptTimeout = null;
+const installBtn = document.getElementById('installPwaBtn');
 
-// Listen for install prompt event
+// Listen for the install prompt event
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   
-  // Wait 30 seconds before showing the prompt
-  clearTimeout(promptTimeout);
-  promptTimeout = setTimeout(() => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      deferredPrompt.userChoice.then((choiceResult) => {
-        if (choiceResult.outcome === 'dismissed') {
-          console.log('User dismissed the PWA install prompt');
-        } else {
-          console.log('User accepted the PWA install prompt');
-        }
-        deferredPrompt = null; // Reset
-      });
-    }
-  }, 30000); // 30 seconds
+  // Show the button when app is installable
+  installBtn.style.display = 'inline-flex';
 });
 
+// Function to show install prompt when button is clicked
+function InstallPwa() {
+  if (!deferredPrompt) {
+    console.log("PWA install prompt is not available yet.");
+    return;
+  }
+  
+  // Show install popup
+  deferredPrompt.prompt();
+  
+  // Wait for user action
+  deferredPrompt.userChoice.then((choiceResult) => {
+    if (choiceResult.outcome === 'accepted') {
+      console.log('User accepted the PWA install prompt ✅');
+    } else {
+      console.log('User dismissed the PWA install prompt ❌');
+    }
+    deferredPrompt = null; // Reset after use
+    installBtn.style.display = 'none'; // Hide button after installing
+  });
+}
+
+// Hide install button if app is already installed
+window.addEventListener('appinstalled', () => {
+  console.log('PWA installed successfully 🎉');
+  deferredPrompt = null;
+  installBtn.style.display = 'none';
+});
 /*****************************
  * cookie management 
  */
