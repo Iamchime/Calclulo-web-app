@@ -2,4 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /*.html$
 
+User-agent: *
+Allow: /ads.txt
+
 Sitemap: https://calclulo.com/sitemap.xml
