@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /*.html$
+
+Sitemap: https://calclulo.com/sitemap.xml
