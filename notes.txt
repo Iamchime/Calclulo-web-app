@@ -1,6 +1,6 @@
 <div class="quick-links">
   <a href="https://www.facebook.com/share/1Fz7PSC47Q/">Facebook</a>
   <a href="https://youtube.com/@calclulo?si=Mb7LSwR3nYxaDRW8">YouTube</a>
-  <a href="tiktok.com/@calclulo">Tiktok</a>
+  <a href="https://www.tiktok.com/@calclulo?_t=ZN-8zPo2R4teJq&_r=1">Tiktok</a>
   <a href="https://x.com/calclulo?t=XzsIm3R0_6NqK1ARhXYvsQ&s=09">Twitter</a>
 </div>
