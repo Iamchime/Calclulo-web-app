@@ -29,12 +29,11 @@
   font-style: normal;
 }
 body{
-  font-family: young;
-  display: flex;
-align-items: flex-start;
+font-family: young;
+display: flex;
+align-items: center;
 flex-direction: column;
 background: #464BFF08;
-padding: 10px;
 }
 
 .no-scroll {
@@ -161,7 +160,6 @@ transition: .3s;
 .searchBtn-2:active {
   transform: scale(.9);
 }
-
 .side-nav {
   position: fixed;
   top: 0;
@@ -180,7 +178,6 @@ font-family: 'Young';
 .side-nav.active {
   transform: translateX(0);
 }
-
 .close-nav-btn {
   width: 40px;
   height: 40px;
@@ -322,7 +319,7 @@ ul#favs-list {
 
 #favs-list li {
   background: #fff;
-  
+  user-select: none;
   margin-bottom: 0.7em;
   padding: 1em;
   border-radius: 15px;
@@ -386,10 +383,6 @@ ul#favs-list {
 .del-btn svg:active {
   fill: #D20A0A;
 }
-.share-btn{
-  
-}
-/****************/
 footer{
   width: 100%;
   padding: .5em;
@@ -400,14 +393,77 @@ justify-content: center;
 gap: 1em;
 margin-top: 3em;
 font-family: "Nunito";
-border-radius: 20px;
+background: #fff;
+margin-bottom: -10px;
+box-shadow: rgba(0, 0, 0, 0.06) 0 18px 10px;
 }
 footer .quick-links{
   display: flex;
+  padding: 12px;
   align-items: center;
   justify-content: center;
   gap: 1em;
 }
+.calculator-categories-footer{
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  padding: 10px;
+  gap: .5em;
+  font-family: "young";
+}
+.calculator-categories-footer a{
+transition: .14s;
+display: flex;
+align-items: center;
+justify-content: flex-start;
+font-size: .9em;
+cursor: help;
+gap: 18px; 
+text-decoration: none;
+color: #4A4B5D;
+padding: 8px 12px;
+letter-spacing: .4px;
+}
+.calculator-categories-footer a:hover{
+  color: #3135CD;
+}
+.calculator-categories-footer a svg{
+  flex-shrink: 0;
+width: 17px;
+height: 17px;
+fill: #3135CD;
+}
+.quick-links-social{
+  display: flex;
+align-items: center;
+justify-content: center;
+  flex-direction: row;
+  gap: 1.4em;
+  border-bottom: 1px solid #ADB0C740;
+  width: 100%;
+  padding: 8px;
+ padding-bottom: 25px;
+}
+.quick-links-social a{
+cursor: help;
+color: #4E5065FA;
+transition: .2s;
+font-weight: 600;
+border-radius: 12px;
+background: #4E5065FA;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+.quick-links-social a:active {
+  transform: translateY(-4px);
+}
+.quick-links-social a svg{
+  height: 14px;
+  width: 14px;
+  fill: #fff;
+  padding: 7px;
+}
+
 footer .quick-links a{
   text-decoration: none;
   cursor: help;
@@ -418,6 +474,11 @@ footer .quick-links a{
 footer .quick-links a:hover{
   color: #434559;
 }
+footer h2{
+  font-family: lexend;
+  font-size: 1em;
+  margin-bottom: -10px;
+}
 footer span{
   display: flex;
 align-items: center;
@@ -425,12 +486,14 @@ justify-content: center;
 font-size: .95em;
 color: #6B6E8FDB;
 gap: .3em;
+padding: 10px;
+margin-top: -10px;
 }
 footer span svg{
   fill: red;
-  width: 1.2em;
+  width: 1.15em;
 }
-/** Responsiveness **/
+
 @media (min-width: 1400px) {
   
 }
@@ -438,7 +501,6 @@ footer span svg{
 @media (min-width: 1000px) {
 
 }
-/** Responsiveness **/
 @media (min-width: 1400px) {
   
 }
@@ -447,8 +509,13 @@ footer span svg{
 
 }
 
-@media (min-width: 700px) {
+@media (min-width: 900px) {
+  .calculator-categories-footer{
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  padding: 10px;
   
 }
-
-/* End of Responsive */
+.calculator-categories-footer a{
+  margin-right: 5em;
+}
+}
