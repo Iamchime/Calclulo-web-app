@@ -5,7 +5,7 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.error('Service worker registration failed:', err));
   });
 }
-//
+/*
   fetch('/assets/keywords.json')
     .then(res => res.json())
     .then(data => {
@@ -16,7 +16,7 @@ if ('serviceWorker' in navigator) {
         console.log(`#${index + 1}: ${toolObj.tool}`);
       });
     })
-    .catch(err => console.error("❌ Error loading JSON:", err));
+    .catch(err => console.error("❌ Error loading JSON:", err));*/
 
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-input-index");
