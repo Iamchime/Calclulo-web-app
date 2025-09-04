@@ -1,5 +1,5 @@
 
-  let semesterCount = 0;
+ let semesterCount = 0;
 
   // Add event listeners to all inputs and selects in a semester's course row
   function attachInputListeners(row) {
@@ -8,8 +8,37 @@
       el.addEventListener('change', () => recalculate());
     });
   }
+function addSemester() {
+  semesterCount++;
+  const semesterDiv = document.createElement("div");
+  semesterDiv.className = "semester";
+  semesterDiv.dataset.semester = semesterCount;
+  semesterDiv.innerHTML = `
+  <div style="margin-top: 8px;" class="container" semesterNG>
+  <details>
+    <summary>Semester ${semesterCount} <button id="deleteBtn" class="btn" onclick="deleteSemester(this)">Delete Semester</button></summary>
+    <div class="semester-title">
+      <div class="btn-wrap">
+        <button id="addcourseBtn" class="btn" onclick="addCourse(this)"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>Add Course</button>
+        <button class="btn" onclick="clearCourses(this)">Clear All Courses</button>
+<!--button was here -->
+      </div>
+    </div>
 
-  function addSemester() {
+    <!-- Table-like header -->
+    <div class="course-header">
+      <span>Course Name</span>
+      <span>Grade</span>
+      <span>Credits</span>
+      <span></span> <!-- For delete button space -->
+    </div>
+
+    <div class="courses"></div>
+    <div class="gpa-display">Semester GPA: <span class="semester-gpa">0.00</span></div>
+  </details>`;
+  document.getElementById("semestersContainer").appendChild(semesterDiv);
+}
+  /*function addSemester() {
     semesterCount++;
     const semesterDiv = document.createElement("div");
     semesterDiv.className = "semester";
@@ -27,7 +56,7 @@
       <div class="gpa-display">Semester GPA: <span class="semester-gpa">0.00</span></div>
     `;
     document.getElementById("semestersContainer").appendChild(semesterDiv);
-  }
+  }*/
 
   function deleteSemester(btn) {
     const sem = btn.closest(".semester");
@@ -50,7 +79,7 @@
         <option value="1">E</option>
         <option value="0">F</option>
       </select>
-      <input type="number" min="0" placeholder="Credits">
+      <input type="number" min="0" >
       <button class="delete-course"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm400-600H280v520h400v-520ZM360-280h80v-360h-80v360Zm160 0h80v-360h-80v360ZM280-720v520-520Z"/></svg></button>
       
     `;

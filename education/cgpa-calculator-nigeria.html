@@ -191,8 +191,7 @@ Everyday Life
   </p>
 </div>
 
-<div class="container">
-
+<div class="ng-cgpa-container">
   <div class="summary">
     <div><strong>CGPA:</strong> <span id="cgpaDisplay">0.00</span></div>
     <div><strong>Units Total:</strong> <span id="totalUnits">0</span></div>
@@ -201,8 +200,8 @@ Everyday Life
   </div>
   
   <div id="semestersContainer"></div>
-  
 </div>
+
 
 <div class="quick-actions-btn">
   <button id="share-calculator-btn" class="global-share-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm480-280q17 0 28.5-11.5T720-760q0-17-11.5-28.5T680-800q-17 0-28.5 11.5T640-760q0 17 11.5 28.5T680-720Zm0 520ZM200-480Zm480-280Z"/></svg>Share
@@ -371,11 +370,23 @@ Everyday Life
   </footer>
 
   <style>
-
-  h1 {
-    text-align: center;
-    margin-bottom: 10px;
-  }
+.ng-cgpa-container{
+  width: 90%;
+  max-width: 550px;
+  position: relative;
+  padding: 15px;
+}
+summary{
+  display: flex;
+  align-items:center;
+  position: relative;
+}
+div[semesterNG] {
+  width: 100%;
+  /*max-width: 550px;*/
+  position: relative;
+ /* padding: 15px;*/
+}
   .summary {
     text-align: center;
     margin-bottom: 20px;
@@ -430,35 +441,26 @@ fill: #55606c;
 #deleteBtn{
   background: #D31919;
   color: #fff;
+  position: absolute;
+  right: 0;
+  height: 30px;
 }
   #deleteBtn:active{
     background: #A62323;
   }
-  #deleteBtn svg{
-    height: auto;
-width: 1.4em;
-margin-right: .2em;
-fill: #55606c;
-  }
-  #deleteBtn svg:hover{
-    fill: #C10B0B;
-  }
-  #addsemester svg{
+  #addsemester svg,#addcourseBtn svg{
     fill: #464BFF;
     background: #fff;
     border-radius: 50%;
   }
-  #addsemester:active svg{
+  #addsemester:active svg,#addcourseBtn svg:active{
     fill: #3135AF;
   }
   .semester {
     display: flex;
     flex-direction: column;
-    border: 1px solid #42445A21;
-    padding: 15px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    overflow: scroll;
+    align-items: center;
+    justify-content: center;
   }
   .semester-title {
     display: flex;
@@ -485,18 +487,18 @@ fill: #55606c;
 }
   .course-row button.delete-course {
     padding: 10px;
-    border-radius: 50%;
-    background: #C00C0C1A;
-    border: none;
-    outline: none;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: .2s;
+border-radius: 50%;
+background: #C00C0C1A;
+border: none;
+outline: none;
+width: 40px;
+height: 40px;
+display: flex;
+align-items: center;
+justify-content: center;
+transition: .2s;
   }
-  .course-row button svg{
+.course-row button svg{
     fill: #C00C0C;
     
   }
@@ -504,37 +506,47 @@ fill: #55606c;
     transform: scale(.93);
     background: #C00C0C30;
   }
+
   .course-row input[type=text] , .course-row input[type=number] {
             width: 90%;
             padding: 13px;
             margin-bottom: .4em;
             font-size: 17px;
-            border: 1.2px solid #464BFF3D;
+            border: 1.5px solid #464BFF3D;
             border-radius: 8px;
             outline: none;
             transition: .1s;
             font-family: "young";
             background: #fff;
-            flex-basis: 90%;
+        }
+        .course-row input[type="text"] {
+  flex-basis: 50%;
+}
+        .course-row input[type="number"]{
+          flex-basis: 20%;
+          text-align: center;
+        }
+        .course-row select {
+          flex-basis: 30%;
         }
         .course-row input[type=text], .course-row input[type=number]::placeholder{
           font-size: 16px;
         }
-        .course-row input[type=text] , select ,.course-row input[type=number]:focus{
-          border: 1px solid #464BFF;
-        
-        }
-        select:focus{
-          outline: none; !important
+                .course-row input[type="text"]:focus , select:focus ,.course-row input[type="number"]:focus{
+          border: 1.5px solid #464BFF;
+outline: 3px solid #464BFF14;
         }
   .gpa-display {
     text-align: right;
     margin-top: 10px;
-    font-weight: bold;
+    font-weight: 200;
     padding: 10px;
     border-radius: 10px;
-    font-family: "officecode";
+    font-family: "young";
     color: #3F3F4A;
+  }
+  .gpa-display span{
+    font-weight: officecode;
   }
   .progress-circle {
     width: 120px;
@@ -557,14 +569,32 @@ fill: #55606c;
     align-items: center;
     justify-content: center;
   margin-top: 1em;
+  position: relative;
   }
+  .course-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 40px; /* Matches inputs & delete button */
+  font-weight: 600;
+  font-family: lexend;
+  font-size: .95em;
+}
+.course-header span{
+  text-align: center;
+}
+
+/*.course-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 40px; 
+  gap: 10px;
+  margin-bottom: 0px;
+  align-items: center;
+}*/
   </style>
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/header-functions.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/share-global.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/cgpa-calculator-nigeria.js" defer crossorigin="anonymous"></script>
-
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
