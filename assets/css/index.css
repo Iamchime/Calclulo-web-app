@@ -311,7 +311,7 @@ text-decoration: none;
 .lists-of-calcs:hover{
   transform: translateY(-5px);
 }
-.lists-of-calcs h1{
+.lists-of-calcs h3{
   font-weight: 400;
   margin-bottom: 5px;
   font-size: 1em;
@@ -547,7 +547,7 @@ footer .quick-links a{
 footer .quick-links a:hover{
   color: #434559;
 }
-footer h2{
+footer h3{
   font-family: lexend;
   font-size: 1em;
   margin-bottom: -10px;

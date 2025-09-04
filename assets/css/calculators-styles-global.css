@@ -1412,7 +1412,7 @@ border-radius: 10px;
 padding: 10px;
 font-family: "young";
   }
-  .description-txt h1,.description-txt h2{
+  .description-txt h3,.description-txt h2{
     font-family: lexend;
     font-weight: 400;
     font-size: 1em;
@@ -1609,7 +1609,7 @@ footer .quick-links a{
 footer .quick-links a:hover{
   color: #434559;
 }
-footer h2{
+footer h3{
   font-family: lexend;
   font-size: 1em;
   margin-bottom: -10px;
