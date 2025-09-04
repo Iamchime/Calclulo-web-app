@@ -27,7 +27,7 @@ function addSemester() {
 
     <!-- Table-like header -->
     <div class="course-header">
-      <span>Course Name</span>
+      <span>Course</span>
       <span>Grade</span>
       <span>Credits</span>
       <span></span> <!-- For delete button space -->
