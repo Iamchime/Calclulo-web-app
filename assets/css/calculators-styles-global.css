@@ -1198,6 +1198,7 @@ summary {
   font-family: "young";
   user-select: none;
   letter-spacing: .5px;
+  color: #575865;
 }
 summary::before {
   content: "";
