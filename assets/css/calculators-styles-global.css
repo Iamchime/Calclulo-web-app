@@ -1415,8 +1415,11 @@ font-family: "young";
   .description-txt h3,.description-txt h2{
     font-family: lexend;
     font-weight: 400;
-    font-size: 1em;
-  
+    font-size: 1.1em;
+  }
+  .description-txt strong{
+    font-family: lexend;
+font-weight: 400;
   }
   .description-txt a{
     transition: .3s;
