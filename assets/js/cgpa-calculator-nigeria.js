@@ -174,6 +174,26 @@ function addSemester() {
     });
     localStorage.setItem("cgpa_data", JSON.stringify(data));
   }
+function clearCGPARecords() {
+  // Remove all semesters
+  const semestersContainer = document.getElementById("semestersContainer");
+  semestersContainer.innerHTML = "";
+  
+  // Reset semester count
+  semesterCount = 0;
+  
+  // Reset CGPA and total units display
+  document.getElementById("cgpaDisplay").textContent = "0.00";
+  document.getElementById("totalUnits").textContent = "0";
+  
+  // Reset the progress circle
+  const circle = document.getElementById("progressCircle");
+  circle.style.setProperty('--percent', '0%');
+  circle.textContent = "0.00";
+  
+  // Clear saved data from localStorage
+  localStorage.removeItem("cgpa_data");
+}
 
   // Load from localStorage on page load
   window.onload = () => {
