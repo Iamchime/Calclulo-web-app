@@ -27,7 +27,7 @@ function addSemester() {
 
     <!-- Table-like header -->
     <div class="course-header">
-      <span>Course</span>
+      <span>Course Name</span>
       <span>Grade</span>
       <span>Credits</span>
       <span></span> <!-- For delete button space -->
@@ -70,7 +70,7 @@ function addSemester() {
     courseDiv.innerHTML = `
   
   
-      <input type="text" placeholder="Course Name">
+      <input type="text" placeholder="Course">
       <select>
         <option value="5">A</option>
         <option value="4">B</option>
