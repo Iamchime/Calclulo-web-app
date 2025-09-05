@@ -22,7 +22,10 @@ function calculateResults() {
   
   const selectedThreshold = usageThresholds[bagType];
   const comparisonText = uses >= selectedThreshold ?
-    `<span style="color: green;"><strong>Great choice!</strong> Your usage exceeds the break-even point of ${selectedThreshold} uses.</span>` :
+    `<span style="color: green;"><strong>Great choice!</strong> Your usage exceeds the break-even point of ${selectedThreshold.toLocaleString(undefined, {
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+})} uses.</span>` :
     `<span style="color: red;"><strong> Not sustainable yet.</strong> You need to use it at least <strong>${selectedThreshold.toLocaleString(undefined, {
   minimumFractionDigits: 0,
   maximumFractionDigits: 0
