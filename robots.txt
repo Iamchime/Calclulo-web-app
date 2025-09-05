@@ -1,6 +1,4 @@
 User-agent: *
-Disallow: /admin/
-Disallow: /test/
 Allow: /
 
 Sitemap: https://calclulo.com/sitemap.xml
