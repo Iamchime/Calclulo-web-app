@@ -92,7 +92,7 @@ window.addEventListener('appinstalled', () => {
     const cookieBox = document.createElement("div");
     cookieBox.className = "cookie-wrapper";
     cookieBox.innerHTML = `
-    <img src="../assets/icons/cookie.svg"/>
+    <img src="/assets/icons/cookie.svg"/>
       <h2>Cookies Consent</h2> 
       <div class="cookie-data">    
         <p>We use cookies to improve your experience on our website. By using our website, you’re agreeing to the collection of data as described in our <a class="from-cookie-to-tos" href="/privacy">Privacy Policy</a></p>    
