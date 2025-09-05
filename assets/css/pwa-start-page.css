@@ -259,51 +259,7 @@ text-decoration: none;
   fill: #42445AC4;
   height: 18px;
 }
-.lists-of-calcs{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  
-  user-select: none;
-  padding: 20px;
-  border-radius: 15px;
-  background: #fff;
-  box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
-  width: 100%;
-  transition: .3s;
-}
-.lists-of-calcs:hover{
-  transform: translateY(-5px);
-}
-.lists-of-calcs a{
-  font-family: young;
-  cursor: help;
-  text-decoration: none;
-  color: #464BFF;
-  background: #464BFF14;
-  width: 65px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  border-radius: 30px;
-  transition: .4s;
-}
-.lists-of-calcs a:hover{
-  background: #464BFF2B;
-}
-.lists-of-calcs svg{
-  background: #464BFF17;
-  fill: #464BFF;
-  padding: 6px;
-  border-radius: 12px;
-}
-.lists-of-calcs span {
-  font-family: young;
-  line-height: 1.4;
-  color: #505262;
-  font-size: .95em;
-}
+
 .favourites #favorites-svg{
   fill: #464BFF;
 }
@@ -391,45 +347,4 @@ color: #4A4B5D;
 .calculator-categories-two a svg{
   fill: #4A4B5D;
   height: 20px;
-}
-footer{
-  width: 100%;
-  padding: .5em;
-  display: flex;
-flex-direction: column;
-align-items: center;
-justify-content: center;
-gap: 1em;
-margin-top: 3em;
-font-family: "Nunito";
-border-radius: 20px;
-}
-footer .quick-links{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1em;
-}
-footer .quick-links a{
-  text-decoration: none;
-  cursor: help;
-  color: #6B6E8FDB;
-  font-size: .9em;
-  transition: .3s;
-}
-footer .quick-links a:hover{
-  color: #434559;
-}
-footer span{
-  display: flex;
-align-items: center;
-justify-content: center;
-font-size: .95em;
-color: #6B6E8FDB;
-gap: .3em;
-}
-footer span svg{
-  fill: red;
-  width: 1.2em;
 }
