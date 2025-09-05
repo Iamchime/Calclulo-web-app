@@ -2,12 +2,12 @@
 /*const CACHE_NAME = 'calclulo-cache-v1';
 const urlsToCache = [
   '/',
-  '/pwa-start-page.html',
+  '/pwa-start-page',
   '/assets/css/pwa-start-page.css',
   '/assets/js/pwa-start-page.js',
   '/assets/js/favourites.js',
   '/assets/css/favourites.css',
-  '/favourites.html',
+  '/favourites',
   '/assets/js/favourites-list.js',
   '/assets/js/header-functions.js',
   '/assets/css/search.css',
@@ -30,12 +30,12 @@ self.addEventListener('fetch', event => {
 const CACHE_NAME = 'calclulo-cache-v2';
 const urlsToCache = [
   '/',
-  '/pwa-start-page.html',
+  '/pwa-start-page',
   '/assets/css/pwa-start-page.css',
   '/assets/js/pwa-start-page.js',
   '/assets/js/favourites.js',
   '/assets/css/favourites.css',
-  '/favourites.html',
+  '/favourites',
   '/assets/js/favourites-list.js',
   '/assets/js/header-functions.js',
   '/assets/css/search.css',

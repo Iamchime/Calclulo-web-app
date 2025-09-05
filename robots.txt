@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /*.html$
+Disallow: /*$
 
 User-agent: *
 Allow: /ads.txt

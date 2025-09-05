@@ -9,21 +9,21 @@
   const updateHomeLink = () => {
     if (!homeLink) return;
     if (isStandalone) {
-      homeLink.setAttribute("href", "/pwa-start-page.html");
+      homeLink.setAttribute("href", "/pwa-start-page");
     } else {
-      homeLink.setAttribute("href", "/index.html");
+      homeLink.setAttribute("href", "/index");
     }
   };
   
   // Update the link on page load
   updateHomeLink();
   
-  // Auto-redirect if user is on index.html but should be on pwa-start-page.html
+  // Auto-redirect if user is on index but should be on pwa-start-page
   if (
     (isStandalone) &&
-    window.location.pathname === "/index.html"
+    window.location.pathname === "/index"
   ) {
-    window.location.replace("/pwa-start-page.html");
+    window.location.replace("/pwa-start-page");
   }
   
   // Listen for orientation changes
@@ -95,7 +95,7 @@ window.addEventListener('appinstalled', () => {
     <img src="../assets/icons/cookie.svg"/>
       <h2>Cookies Consent</h2> 
       <div class="cookie-data">    
-        <p>We use cookies to improve your experience on our website. By using our website, you’re agreeing to the collection of data as described in our <a class="from-cookie-to-tos" href="/privacy.html">Privacy Policy</a></p>    
+        <p>We use cookies to improve your experience on our website. By using our website, you’re agreeing to the collection of data as described in our <a class="from-cookie-to-tos" href="/privacy">Privacy Policy</a></p>    
       </div>    
       <button id="accept-cookieBtn">I understand</button>
       <button id="decline-cookieBtn">Decline</button>

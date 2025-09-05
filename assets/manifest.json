@@ -1,7 +1,7 @@
 {
   "name": "Calclulo",
   "short_name": "Calclulo",
-  "start_url": "/pwa-start-page.html",
+  "start_url": "/pwa-start-page",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#3B82F6",
