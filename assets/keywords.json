@@ -881,6 +881,14 @@
   ],
   "category": "Statistics",
   "link": "/statistics/coin-flipper.html"
+},
+{
+  "tool": "Annealing Temperature Calculator",
+  "relatedKeywords": [
+    "Calculate Annealing Temperature"
+  ],
+  "category": "Biology",
+  "link": "/biology/annealing-temperature-calculator.html"
 }
   ]
 }
