@@ -16,8 +16,8 @@ if ('serviceWorker' in navigator) {
         console.log(`#${index + 1}: ${toolObj.tool}`);
       });
     })
-    .catch(err => console.error("❌ Error loading JSON:", err));*/
-
+    .catch(err => console.error("❌ Error loading JSON:", err));
+*/
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-input-index");
   const searchResults = document.querySelector(".search-results-index");
