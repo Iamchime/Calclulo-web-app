@@ -1,3 +1,4 @@
+alert()
 document.addEventListener("DOMContentLoaded", () => {
 document.querySelectorAll("#height, #weight, #age, #activity, input[name='gender']")
   .forEach(input => {
