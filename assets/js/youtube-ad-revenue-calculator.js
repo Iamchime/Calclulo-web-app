@@ -20,4 +20,7 @@ document.getElementById('youtubeViews').addEventListener('input', calculateResul
 document.getElementById('cpm').addEventListener('input', calculateResults);
 
 // Run calculation on page load (optional)
-calculateResults();
+setTimeout(({
+  calculateResults();
+}
+),2000)
