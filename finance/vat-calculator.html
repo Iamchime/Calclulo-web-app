@@ -204,7 +204,7 @@ Everyday Life
     </label>
     
     <div class="currency-or-unit-input">
-  <input inputmode="numeric" type="text" id="vatRate">
+  <input   inputmode="numeric" pattern="[0-9]*" type="text" id="vatRate">
   <span style="padding-right: 10px;color: #464BFF;" class="unit-display">%
   </span>
 </div>
@@ -302,7 +302,7 @@ Everyday Life
     <div class="currency-or-unit-input">
   <span class="currency-or-unit-display" >$
   </span>
-    <input type="text" inputmode="numeric" id="price"  step="any" min="0">
+    <input type="text"   inputmode="numeric" pattern="[0-9]*" id="price"  step="any" min="0">
     </div>
     <span class="input-tips">Enter the price to calculate VAT for.</span>
     <div class="input-options">
@@ -350,7 +350,7 @@ Everyday Life
     <div class="currency-or-unit-input">
   <span class="currency-or-unit-display" >$
   </span>
-    <input type="text" class="result" id="vatAmount" inputmode="numeric">
+    <input type="text" class="result" id="vatAmount"   inputmode="numeric" pattern="[0-9]*">
     </div>
     <div class="input-options">
    <div class="input-options-item">
@@ -396,7 +396,7 @@ Everyday Life
     <div class="currency-or-unit-input">
   <span class="currency-or-unit-display" >$
   </span>
-    <input type="text" inputmode="numeric" class="result" id="resultPrice" >
+    <input type="text"   inputmode="numeric" pattern="[0-9]*" class="result" id="resultPrice" >
     </div>
     <div class="input-options">
    <div class="input-options-item">

@@ -203,7 +203,7 @@ Everyday Life
     
     </label>
     <div class="input-select-wrap">
-    <input inputmode="numeric" style="flex-basis: 50%;" type="text" id="fileSize" >
+    <input   inputmode="numeric" pattern="[0-9]*" style="flex-basis: 50%;" type="text" id="fileSize" >
     <select style="flex-basis: 50%;" id="fileUnit">
       <option value="B">Bytes</option>
       <option value="KB">KB</option>
@@ -260,7 +260,7 @@ Everyday Life
 <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
     
     </label>
-    <input inputmode="numeric" type="text" id="uploadSpeed">
+    <input   inputmode="numeric" pattern="[0-9]*" type="text" id="uploadSpeed">
     <select  id="speedUnit">
       <option value="bps">bps</option>
       <option value="Kbps">Kbps</option>
@@ -317,14 +317,14 @@ Everyday Life
     <label>Estimated Upload Time <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
     
     <div style="display: flex;gap: 3px;" class="currency-or-unit-input">
-  <input style="text-align: center;padding: 0;" inputmode="numeric" type="text" id="hoursResult" class="result">
+  <input style="text-align: center;padding: 0;"   inputmode="numeric" pattern="[0-9]*" type="text" id="hoursResult" class="result">
   <span class="unit-display">hrs
   </span>
-  <input style="text-align: center;padding: 0;" inputmode="numeric" type="text" id="minutesResult" class="result">
+  <input style="text-align: center;padding: 0;"   inputmode="numeric" pattern="[0-9]*" type="text" id="minutesResult" class="result">
   <span class="unit-display">min
   </span>
   
-  <input style="text-align: center;padding: 0;font-size: .9em;" inputmode="numeric" type="text" id="secondsResult" class="result">
+  <input style="text-align: center;padding: 0;font-size: .9em;"   inputmode="numeric" pattern="[0-9]*" type="text" id="secondsResult" class="result">
   <span class="unit-display">sec
   </span>
 </div>

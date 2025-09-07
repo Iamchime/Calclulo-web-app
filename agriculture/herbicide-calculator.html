@@ -213,7 +213,7 @@ Everyday Life
     </svg>
   </label>
   
-  <input inputmode="numeric" type="text" id="dosage">
+  <input   inputmode="numeric" pattern="[0-9]*" type="text" id="dosage"/>
   
   <span class="input-tips">Amount of herbicide recommended per hectare, usually provided on the product label. Example: 2 L/H</span>
   
@@ -261,7 +261,7 @@ Everyday Life
     
     <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
     </label>
-    <input inputmode="numeric" type="text"  id="waterVolume">
+    <input   inputmode="numeric" pattern="[0-9]*" type="text"  id="waterVolume">
     <span class="input-tips"> Amount of water typically required to spray 100 square meters. Adjust based on your sprayer and crop type</span>
     <div class="input-options">
    <div class="input-options-item">
@@ -305,7 +305,7 @@ Everyday Life
     <svg id="input-tip-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
 <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
     </label>
-    <input inputmode="numeric" type="text" id="sprayerCapacity">
+    <input   inputmode="numeric" pattern="[0-9]*" type="text" id="sprayerCapacity">
     <span class="input-tips">Total volume your sprayer tank can hold in liters. This helps calculate how many refills are needed</span>
     <div class="input-options">
    <div class="input-options-item">
@@ -348,7 +348,7 @@ Everyday Life
     
     <div class="currency-or-unit-input">
   
-<input inputmode="numeric" type="text" id="volumeOfHerbicide" class="result">
+<input   inputmode="numeric" pattern="[0-9]*" type="text" id="volumeOfHerbicide" class="result">
 <span style="padding-right: 10px;" class="unit-display" >ml
 </span>
   </div>
@@ -566,7 +566,7 @@ Everyday Life
 <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/share-global.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/herbicide-calculator.js" defer crossorigin="anonymous"></script>
-<!---->
+
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
 </body>
