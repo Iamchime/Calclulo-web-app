@@ -43,3 +43,7 @@ document.getElementById('price').addEventListener('input', calculateResults);
 document.querySelectorAll('input[name="mode"]').forEach(el => {
   el.addEventListener('change', calculateResults);
 });
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

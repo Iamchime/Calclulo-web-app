@@ -93,3 +93,7 @@ function speedUnitToBps(speed, unit, timeUnit) {
 
   return bps;
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

@@ -19,5 +19,6 @@ function calculateResults() {
 document.getElementById('whopViews').addEventListener('input', calculateResults);
 document.getElementById('cpm').addEventListener('input', calculateResults);
 
-// Run calculation on page load (optional)
-calculateResults();
+window.addEventListener("load", () => {
+  calculateResults();
+});

@@ -193,7 +193,6 @@
     }
   });
 
-  // Initial calculation (in case values are prefilled)
   document.addEventListener("DOMContentLoaded", calculateAnnealingTemperature);
   calculateAnnealingTemperature();
 })();

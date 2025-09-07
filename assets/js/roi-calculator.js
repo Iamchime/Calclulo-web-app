@@ -57,3 +57,7 @@ function calculateResults() {
 document
   .querySelectorAll("#amountInvested, #amountReturned, #dateFrom, #dateTo")
   .forEach((input) => input.addEventListener("input", calculateResults));
+  
+  window.addEventListener("load", () => {
+  calculateResults();
+});

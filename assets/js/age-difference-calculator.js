@@ -101,5 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
     input.addEventListener("input", autoCalculate)
   );
   
-  // Reset button clears everything
+  window.addEventListener("load", () => {
+ autoCalculate();
+});
 });

@@ -91,3 +91,7 @@ document.querySelectorAll('input[name="bagtype"], #numberofuse, #numberofbagdisp
   el.addEventListener('input', calculateResults);
   el.addEventListener('change', calculateResults);
 });
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

@@ -104,6 +104,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Reset button listener
   document.getElementById("reset-btn").addEventListener("click", resetFields);
   
-  // Initial calculation on page load
+window.addEventListener("load", () => {
   calculateResults();
+});
 });

@@ -1,4 +1,3 @@
-// Attach automatic calculation to all relevant inputs
 document.querySelectorAll("#height, #weight, #age, #activity, input[name='gender']")
   .forEach(input => {
     input.addEventListener("input", calculateResults);
@@ -50,3 +49,7 @@ function calculateResults() {
         (${Math.round(satFatKcal).toLocaleString()} kcal) – the less the better!
     `;
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

@@ -1,4 +1,3 @@
-// Attach auto-calculation to all relevant fields
 document.querySelectorAll(
   "#Serumcreatinine, #fileUnit, #age, #female, #male, #black, #notBlack"
 ).forEach(input => {
@@ -79,13 +78,12 @@ function showErrorGFR(message) {
   error.textContent = message;
   document.querySelector(".container").appendChild(error);
 }
-// Remove error box if exists
+
 function removeErrorBox() {
   const existing = document.getElementById("error-txt");
   if (existing) existing.remove();
 }
 
-// Create or get results box
 function getOrCreateResultBox() {
   let box = document.querySelector(".gfr-result-box");
   if (!box) {
@@ -95,3 +93,7 @@ function getOrCreateResultBox() {
   }
   return box;
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

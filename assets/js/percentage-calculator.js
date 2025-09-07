@@ -69,3 +69,7 @@ document.querySelectorAll("#numberiswhatpercentof, #numbtwo").forEach(input =>
 document.querySelectorAll("#increaseorDecreaseInputOne, #increaseorDecreaseInputTwo").forEach(input =>
   input.addEventListener("input", calculateIncreaseOrDecrease)
 );
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

@@ -1,4 +1,3 @@
-// Set today's date as the default
 function setTodayAsDefaultDate() {
   const today = new Date().toISOString().split("T")[0];
   const lastPeriodInput = document.getElementById("lastPeriod");
@@ -50,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
   cycleInput.addEventListener("input", calculateResults);
   lastPeriodInput.addEventListener("input", calculateResults);
   
-  // First calculation on load
+  window.addEventListener("load", () => {
   calculateResults();
+});
 });

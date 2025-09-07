@@ -117,8 +117,11 @@ function calculateResults() {
   });
 }
 
-// Auto-calculate on input change
 ["ingredientSelect", "weightInput", "massUnits", "cupType", "DensityNumb", "densityUnit"].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", calculateResults);
+});
+
+window.addEventListener("load", () => {
+  calculateResults();
 });

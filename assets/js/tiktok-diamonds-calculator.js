@@ -33,3 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // Auto-calculate on input
   diamondInput.addEventListener("input", calculateResults);
 });
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

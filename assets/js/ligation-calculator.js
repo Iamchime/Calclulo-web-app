@@ -1,4 +1,3 @@
-// Auto-calculate whenever inputs or selects change
 document.addEventListener("DOMContentLoaded", () => {
   const inputs = [
     'vectorAmount', 'vectorLength', 'insertAmount', 'insertLength', 'molarRatio', 'reactionVolume'
@@ -113,3 +112,7 @@ function convertVolumeToUl(volume, unit) {
     default: return volume;
   }
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

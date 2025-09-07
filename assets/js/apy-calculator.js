@@ -52,5 +52,5 @@ function calculateResults() {
   el.addEventListener('change', calculateResults);
 });
 
-// Initial calculation on page load
-document.addEventListener('DOMContentLoaded', calculateResults);
+
+window.addEventListener('DOMContentLoaded', calculateResults);

@@ -1,4 +1,3 @@
-// Function to calculate results
 function calculateResults() {
   const P = parseFloat(document.getElementById("loanAmount").value.replace(/,/g, ''));
   const years = parseInt(document.getElementById("Years").value) || 0;
@@ -90,5 +89,8 @@ function enableAutoCalculation() {
   });
 }
 
-// Initialize automatic calculation when page loads
-document.addEventListener("DOMContentLoaded", enableAutoCalculation);
+window.addEventListener("DOMContentLoaded", enableAutoCalculation);
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

@@ -63,3 +63,7 @@ function calculateResults() {
     calculateResults();
   });
 });
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

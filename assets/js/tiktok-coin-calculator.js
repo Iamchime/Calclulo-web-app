@@ -63,3 +63,7 @@ quickAmounts.forEach((btn) => {
     calculateResults();
   });
 });
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

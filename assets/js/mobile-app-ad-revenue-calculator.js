@@ -1,7 +1,5 @@
-
 function toNumber(value) {
   if (value == null) return NaN;
-  // remove everything except digits, dot and minus
   const cleaned = String(value).replace(/[^0-9.\-]/g, "");
   return cleaned === "" ? NaN : parseFloat(cleaned);
 }
@@ -25,7 +23,6 @@ function calculateResults() {
   document.getElementById('estimatedRevenue').value = out;
 }
 
-// Auto-calc on input
 document.addEventListener('DOMContentLoaded', () => {
   ['visits','pageViewsPerVisit','adsPerPage','pageRPM']
     .forEach(id => {
@@ -34,5 +31,9 @@ document.addEventListener('DOMContentLoaded', () => {
       el.addEventListener('input', calculateResults);
       el.addEventListener('change', calculateResults);
     });
-  calculateResults(); // initial compute
+  calculateResults();
+});
+
+window.addEventListener("load", () => {
+  calculateResults();
 });

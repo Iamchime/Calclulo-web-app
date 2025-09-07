@@ -1,4 +1,3 @@
-// ---------- helpers ----------
 function parseNumber(val) {
   if (val == null || val === "") return 0;
   return Number(val.toString().replace(/,/g, "")) || 0;
@@ -145,5 +144,6 @@ function calculatePAYE() {
   "annual-rent"
 ].forEach(id => attach(id, calculatePAYE));
 
-// initial run
-calculatePAYE();
+window.addEventListener("load", () => {
+  calculatePAYE();
+});

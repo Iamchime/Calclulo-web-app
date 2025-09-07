@@ -1,4 +1,3 @@
-// Function to calculate results automatically
 function calculateResults() {
   const adSpendInput = document.querySelector('#adspend');
   const avgCpcInput = document.querySelector('#averageCpc');
@@ -62,4 +61,8 @@ function calculateResults() {
 // Attach automatic calculation on input change
 document.querySelectorAll('#adspend, #averageCpc, #leadConversionRate').forEach(input => {
   input.addEventListener('input', calculateResults);
+});
+
+window.addEventListener("load", () => {
+  calculateResults();
 });

@@ -63,3 +63,7 @@ function formatResultHTML(resultText) {
     <button class="download" onclick="downloadTxt()">Download Results</button>
   `;
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

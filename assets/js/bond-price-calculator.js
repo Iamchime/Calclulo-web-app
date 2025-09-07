@@ -146,4 +146,4 @@ function enableAutoCalculation() {
   // initial run if fields are prefilled
   calculateResults();
 }
-document.addEventListener("DOMContentLoaded", enableAutoCalculation);
+window.addEventListener("DOMContentLoaded", enableAutoCalculation);

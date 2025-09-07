@@ -56,3 +56,7 @@ function formatViews(number) {
   if (number >= 1_000) return (number / 1_000).toFixed(1) + 'k';
   return Math.ceil(number);
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

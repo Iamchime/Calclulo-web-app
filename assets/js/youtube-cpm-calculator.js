@@ -25,3 +25,7 @@ function calculateResults() {
   const cpm = (cost / views) * 1000;
   cpmOutput.value = cpm.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

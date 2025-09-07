@@ -52,4 +52,8 @@ function enableAutoCalculation() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', enableAutoCalculation);
+window.addEventListener('DOMContentLoaded', enableAutoCalculation);
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

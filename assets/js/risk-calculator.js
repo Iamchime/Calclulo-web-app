@@ -40,3 +40,7 @@ function calculateResults() {
 document.querySelectorAll("#probabilityOfFailureOne, #LossOne, #probabilityOfFailureTwo, #LossTwo").forEach(input => {
   input.addEventListener("input", calculateResults);
 });
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

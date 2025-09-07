@@ -87,4 +87,7 @@ document.getElementById("secondsResult").value = seconds.toLocaleString(undefine
     el.addEventListener("input", calculateResults);
     el.addEventListener("change", calculateResults); // for dropdowns
   });
+  window.addEventListener("load", () => {
+  calculateResults();
+});
 });

@@ -96,5 +96,7 @@ document.addEventListener("DOMContentLoaded", function() {
   }
   
   [dayInput, monthInput, yearInput].forEach(input => input.addEventListener("input", autoCalculate));
-  
+ window.addEventListener("load", () => {
+  autoCalculate();
+});
 });

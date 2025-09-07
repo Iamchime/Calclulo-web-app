@@ -1,4 +1,3 @@
-// Function to calculate revenue automatically
 function calculateResults() {
   // Get input values safely, allowing numbers like 15,000
   const views = parseFloat(document.getElementById('tiktokViews').value.replace(/,/g, '')) || 0;
@@ -19,5 +18,6 @@ function calculateResults() {
 document.getElementById('tiktokViews').addEventListener('input', calculateResults);
 document.getElementById('cpm').addEventListener('input', calculateResults);
 
-// Run calculation on page load (optional)
-calculateResults();
+window.addEventListener("load", () => {
+  calculateResults();
+});

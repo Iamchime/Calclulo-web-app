@@ -39,3 +39,7 @@ document.addEventListener("input", function(e) {
     calculateResults();
   }
 });
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

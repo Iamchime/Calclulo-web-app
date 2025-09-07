@@ -1,4 +1,3 @@
-// Function to calculate the results
 function calculateResults() {
   const priceUSD = parseFloat(document.getElementById("carPriceUSD").value.replace(/,/g, ''));
   const exchangeRate = parseFloat(document.getElementById("exchangeRate").value.replace(/,/g, ''));
@@ -54,3 +53,7 @@ function clearResults() {
 // Attach automatic calculation on input
 document.getElementById("carPriceUSD").addEventListener("input", calculateResults);
 document.getElementById("exchangeRate").addEventListener("input", calculateResults);
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

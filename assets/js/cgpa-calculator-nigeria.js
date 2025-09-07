@@ -38,25 +38,7 @@ function addSemester() {
   </details>`;
   document.getElementById("semestersContainer").appendChild(semesterDiv);
 }
-  /*function addSemester() {
-    semesterCount++;
-    const semesterDiv = document.createElement("div");
-    semesterDiv.className = "semester";
-    semesterDiv.dataset.semester = semesterCount;
-    semesterDiv.innerHTML = `
-      <div class="semester-title">
-        <h3>Semester ${semesterCount}</h3>
-        <div class="btn-wrap">
-          <button class="btn" onclick="addCourse(this)">Add Course</button>
-          <button class="btn" onclick="clearCourses(this)">Clear All</button>
-          <button id="deleteBtn" class="btn" onclick="deleteSemester(this)">Delete Semester</button>
-        </div>
-      </div>
-      <div class="courses"></div>
-      <div class="gpa-display">Semester GPA: <span class="semester-gpa">0.00</span></div>
-    `;
-    document.getElementById("semestersContainer").appendChild(semesterDiv);
-  }*/
+
 
   function deleteSemester(btn) {
     const sem = btn.closest(".semester");

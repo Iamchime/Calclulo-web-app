@@ -26,5 +26,6 @@ document.querySelectorAll('input[name="sensitivityType"]').forEach(radio => {
   radio.addEventListener('change', calculateResults);
 });
 
-// Calculate once on page load (optional)
-calculateResults();
+window.addEventListener("load", () => {
+  calculateResults();
+});

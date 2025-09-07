@@ -1,4 +1,3 @@
-// Handle utilities checkbox visibility
 const utilityCheckbox = document.getElementById('include-utilities');
 const utilitiesGroup = document.getElementById('utilities-group');
 
@@ -46,3 +45,6 @@ function calculateResults() {
 document.querySelectorAll('#income, #income-frequency, #monthly-debt, #rent-ratio, #utility-cost, #include-utilities')
   .forEach(input => input.addEventListener('input', calculateResults));
   
+  window.addEventListener("load", () => {
+  calculateResults();
+});

@@ -135,3 +135,7 @@ function calculateCaffeine() {
 // Auto-calculate on input change
 document.querySelectorAll("#bodyWeight, #bodyWeightUnits, #coffeeSelect, input[name='sensitivity']")
   .forEach(el => el.addEventListener("input", calculateCaffeine));
+  
+  window.addEventListener("load", () => {
+  calculateCaffeine();
+});

@@ -41,3 +41,7 @@ function calculateResults() {
   // Format number with commas
   document.getElementById("EstimatedMonthlyBandwidth").value = monthlyUsageGB.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});

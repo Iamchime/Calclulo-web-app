@@ -16,3 +16,7 @@ function calculateResults() {
 // Auto-calculate on input change
 document.querySelectorAll('#visits, #pageViewsPerVisit, #adsPerPage, #pageRPM')
   .forEach(input => input.addEventListener('input', calculateResults));
+  
+  window.addEventListener("load", () => {
+  calculateResults();
+});

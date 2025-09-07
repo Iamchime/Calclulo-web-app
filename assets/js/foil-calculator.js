@@ -77,10 +77,10 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("input", calculateResults);
   });
   
-  // Attach mode toggle
-  linearRadio.addEventListener("change", toggleExponentGroups);
+linearRadio.addEventListener("change", toggleExponentGroups);
   generalRadio.addEventListener("change", toggleExponentGroups);
-  
-  // Initial state
+});
 
+window.addEventListener("load", () => {
+  calculateResults();
 });

@@ -132,3 +132,10 @@ function updateResult() {
 [yearInput, monthInput, dayInput].forEach(input => {
   input.addEventListener("input", updateResult);
 });
+
+// Auto-calculate on page load if there's already a value
+window.addEventListener("DOMContentLoaded", () => {
+  if (yearInput.value.trim() !== "" || monthInput.value.trim() !== "" || dayInput.value.trim() !== "") {
+    updateResult();
+  }
+});

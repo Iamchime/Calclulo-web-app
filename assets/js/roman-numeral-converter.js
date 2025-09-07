@@ -134,3 +134,10 @@ inputField.addEventListener("input", (e) => {
   const value = e.target.value;
   displayResult(value);
 });
+
+// Auto-calculate on page load if there's already a value
+window.addEventListener("DOMContentLoaded", () => {
+  if (inputField.value.trim() !== "") {
+    displayResult(inputField.value);
+  }
+});

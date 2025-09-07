@@ -1,4 +1,3 @@
-// Attach event listeners for automatic calculation
 document.getElementById('clicks').addEventListener('input', calculateResults);
 document.getElementById('impressions').addEventListener('input', calculateResults);
 
@@ -18,3 +17,7 @@ function calculateResults() {
   maximumFractionDigits: 2
 });
 }
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
