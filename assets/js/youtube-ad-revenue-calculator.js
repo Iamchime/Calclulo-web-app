@@ -20,7 +20,10 @@ document.getElementById('youtubeViews').addEventListener('input', calculateResul
 document.getElementById('cpm').addEventListener('input', calculateResults);
 
 // Run calculation on page load (optional)
-setTimeout(() => {
+window.addEventListener("load", () => {
+  // Run calculateResults immediately after page fully loads
   calculateResults();
-  alert("Calculation completed!");
-}, 2000);
+  
+  // Show alert after 2 seconds
+  
+});
