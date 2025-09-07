@@ -22,5 +22,5 @@ document.getElementById('cpm').addEventListener('input', calculateResults);
 // Run calculation on page load (optional)
 setTimeout(({
   calculateResults();
-}
-),2000)
+  alert();
+}),2000);
