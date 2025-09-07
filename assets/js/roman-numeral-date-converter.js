@@ -117,10 +117,10 @@ function updateResult() {
 
   resultDiv.innerHTML = `
     <div>
-      <label>Result:</label><br>
+      <h3>Result:</h3><br>
       ${fullDate} = ${fullRoman}
       <hr>
-      <label>Breakdown:</label><br>
+      <h3>Breakdown:</h3><br>
       Year: ${yearVal || "-"} = ${yearRoman || "-"}<br>
       Month: ${monthVal || "-"} = ${monthRoman || "-"}<br>
       Day: ${dayVal || "-"} = ${dayRoman || "-"}
