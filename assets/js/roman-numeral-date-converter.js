@@ -112,7 +112,7 @@ function updateResult() {
     return;
   }
 
-  let fullDate = `${yearVal || "???"}/${monthVal || "???"}/${dayVal || "???"}`;
+  let fullDate = `${yearVal|| "???"}/${monthVal || "???"}/${dayVal || "???"}`;
   let fullRoman = `${yearRoman || "???"}/${monthRoman || "???"}/${dayRoman || "???"}`;
 
   resultDiv.innerHTML = `
@@ -121,9 +121,9 @@ function updateResult() {
       ${fullDate} = ${fullRoman}
       <hr>
       <label>Breakdown:</label><br>
-      Year → ${yearVal || "-"} = ${yearRoman || "-"}<br>
-      Month → ${monthVal || "-"} = ${monthRoman || "-"}<br>
-      Day → ${dayVal || "-"} = ${dayRoman || "-"}
+      Year: ${yearVal || "-"} = ${yearRoman || "-"}<br>
+      Month: ${monthVal || "-"} = ${monthRoman || "-"}<br>
+      Day: ${dayVal || "-"} = ${dayRoman || "-"}
     </div>
   `;
 }
