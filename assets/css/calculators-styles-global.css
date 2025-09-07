@@ -1221,11 +1221,14 @@ summary::before {
 details[open] summary::before {
   transform: translateY(-50%) rotate(180deg);
 }
+
+
 .quick-actions-btn{
   display: flex;
 align-items: center;
 gap: .5em;
 margin-top: 1.5em;
+max-width: 576px;
 flex-wrap: wrap;
 }
 .quick-actions-btn button{
@@ -1269,29 +1272,6 @@ color: #4F5163;
   background: #464BFF26;
 }
 .fav-btn.fav-active .fav-icon {
-  fill: #464BFF;
-}
-.save-inputs-value.active {
-  border-color: #464BFF;
-  color: #464BFF;
-}
-.save-inputs-value.active:hover {
-  background: #464BFF26;
-}
-.save-inputs-value.active svg {
-  fill: #464BFF;
-}
-.auto-calc-btn{
-color: #4F5163;
-}
-.auto-calc-btn.active {
-  border: 1px solid #464BFF;
-  color: #464BFF;
-}
-.auto-calc-btn.active:hover {
-  background: #464BFF26;
-}
-.auto-calc-btn.active svg {
   fill: #464BFF;
 }
 
