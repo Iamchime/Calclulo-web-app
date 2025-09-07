@@ -58,7 +58,7 @@ function calculateResults() {
   
   // Display results
   resultBox.innerHTML = `
-  <label>Gfr Calculation Results</label>
+  <h3>Gfr Calculation Results</h3>
     <div class="resultLine">
       <strong>MDRD 4-Variable Equation:</strong> ${mdrd.toFixed(1)} mL/min/1.73 m²
     </div>
