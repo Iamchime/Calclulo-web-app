@@ -1,5 +1,5 @@
 alert()
-document.addEventListener("DOMContentLoaded", () => {
+/*document.addEventListener("DOMContentLoaded", () => {
 document.querySelectorAll("#height, #weight, #age, #activity, input[name='gender']")
   .forEach(input => {
     input.addEventListener("input", calculateResults);
@@ -55,4 +55,4 @@ function calculateResults() {
 window.addEventListener("load", () => {
   calculateResults();
 });
-});
+});*/
