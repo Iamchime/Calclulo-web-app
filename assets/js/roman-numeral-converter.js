@@ -1,7 +1,7 @@
 const inputField = document.getElementById("NumberOrRomanNumeral");
 const resultDiv = document.getElementById("resultdiv");
 
-// Roman numeral mappings including overlines
+// Roman numeral mappings including overlines (keep the same order, highest first)
 const romanMap = [
   { value: 1000000, numeral: "M̅" },
   { value: 900000, numeral: "C̅M̅" },
@@ -30,110 +30,107 @@ const romanMap = [
   { value: 1, numeral: "I" },
 ];
 
+// Utility: normalize strings for comparisons (helps with combining overline characters)
+function norm(s) {
+  return (s || "").normalize("NFC");
+}
+
 // Convert number → Roman numeral
 function numberToRoman(num) {
-  if (num < 1 || num > 3999999) {
+  if (!Number.isInteger(num) || num < 1 || num > 3999999) {
     showMessage("Please enter a number between 1 and 3,999,999.", "error");
     return null;
   }
   
   let result = "";
-  let steps = [];
-  
-  romanMap.forEach(({ value, numeral }) => {
+  for (let { value, numeral } of romanMap) {
     let count = Math.floor(num / value);
     if (count > 0) {
-      for (let i = 0; i < count; i++) {
-        result += numeral;
-        steps.push(`${numeral} = ${value}`);
-      }
+      result += numeral.repeat(count);
       num -= value * count;
     }
-  });
-  
-  return { roman: result, steps };
+  }
+  return norm(result);
 }
 
 // Convert Roman numeral → number
-function romanToNumber(roman) {
-  roman = roman.toUpperCase();
+function romanToNumber(romanInput) {
+  if (!romanInput || typeof romanInput !== "string") {
+    showMessage("Please enter a Roman numeral.", "error");
+    return null;
+  }
+  
+  let roman = norm(romanInput).toUpperCase().replace(/\s+/g, "");
   let index = 0;
   let result = 0;
-  let steps = [];
   
-  for (let { value, numeral } of romanMap) {
-    while (roman.startsWith(numeral, index)) {
-      result += value;
-      steps.push(`${numeral} = ${value}`);
-      index += numeral.length;
+  while (index < roman.length) {
+    let matched = false;
+    
+    for (let { value, numeral } of romanMap) {
+      const n = norm(numeral).toUpperCase();
+      if (roman.startsWith(n, index)) {
+        result += value;
+        index += n.length;
+        matched = true;
+        break;
+      }
+    }
+    
+    if (!matched) {
+      showMessage("Hmm… that doesn't seem like a valid Roman numeral.", "error");
+      return null;
     }
   }
   
-  // Validate correctness
-  const checkRoman = numberToRoman(result)?.roman || "";
+  const checkRoman = numberToRoman(result) || "";
   if (checkRoman !== roman) {
     showMessage("Hmm… that doesn't seem like a valid Roman numeral.", "error");
     return null;
   }
   
-  return { number: result, steps };
+  return result;
 }
 
-// Display detailed results
+// Display results only
 function displayResult(input) {
   resultDiv.innerHTML = ""; // Clear previous results
   if (!input) return;
   
-  if (/^\d+$/.test(input)) {
-    // Input is a number
-    const num = parseInt(input);
-    const conversion = numberToRoman(num);
-    if (!conversion) return;
-    
-    const { roman, steps } = conversion;
+  const trimmed = String(input).trim();
+  const cleanedNumberStr = trimmed.replace(/[,\s]+/g, "");
+  
+  // If input is a number
+  if (/^\d+$/.test(cleanedNumberStr)) {
+    const num = parseInt(cleanedNumberStr, 10);
+    const roman = numberToRoman(num);
+    if (!roman) return;
     
     resultDiv.innerHTML = `
       <div>
         <h3 style="margin-bottom:8px;">Conversion Result</h3>
-        <p><strong>Number:</strong> ${num}</p>
+        <p><strong>Number:</strong> ${num.toLocaleString()}</p>
         <p><strong>Roman Numeral:</strong> ${roman}</p>
-        <hr>
-        <h4>How we got this result:</h4>
-        <div style="font-family:monospace;background:#f9f9f9;padding:8px;border-radius:4px;">
-          ${steps.map(step => `<div>➜ ${step}</div>`).join("")}
-        </div>
-        <p style="margin-top:10px;color:#666;font-size:0.9em;">
-          Each Roman numeral above represents a specific value, and we add them together to reach the final result.
-        </p>
       </div>
     `;
-  } else {
-    // Input is a Roman numeral
-    const conversion = romanToNumber(input);
-    if (!conversion) return;
-    
-    const { number, steps } = conversion;
-    
-    resultDiv.innerHTML = `
-      <div>
-        <h3 style="margin-bottom:8px;">Conversion Result:</h3>
-        <p><strong>Roman Numeral:</strong> ${input.toUpperCase()}</p>
-        <p><strong>Number:</strong> ${number}</p>
-        <hr>
-        <h4>How we got this result:</h4>
-        <div style="background:#f9f9f9;padding:10px;border-radius:8px;">
-          ${steps.map(step => `<div>➜ ${step}</div>`).join("")}
-        </div>
-        <p style="margin-top:10px;color:#666;font-size: .9em;">
-          We added up the individual Roman numeral values step by step to get the final number.
-        </p>
-      </div>
-    `;
+    return;
   }
+  
+  // Otherwise treat as Roman input
+  const number = romanToNumber(trimmed);
+  if (number === null) return;
+  
+  resultDiv.innerHTML = `
+    <div>
+      <h3 style="margin-bottom:8px;">Conversion Result</h3>
+      <p><strong>Roman Numeral:</strong> ${norm(trimmed).toUpperCase()}</p>
+      <p><strong>Number:</strong> ${number.toLocaleString()}</p>
+    </div>
+  `;
 }
 
 // Auto-calculate on input
 inputField.addEventListener("input", (e) => {
-  const value = e.target.value.trim();
+  const value = e.target.value;
   displayResult(value);
 });
