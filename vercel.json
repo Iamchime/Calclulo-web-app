@@ -7,11 +7,11 @@
    "destination": "/new-page",
    "permanent": true
  },
- {
+   {
    "source": "/another-old",
    "destination": "/another-new",
    "permanent": true
-    }
+     }
   ],
   "headers": [
     {
