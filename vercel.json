@@ -3,7 +3,7 @@
   "trailingSlash": false,
   "redirects": [
     {
-      "source": "/:path*.html",
+      "source": "/:path*",
       "destination": "/:path*",
       "permanent": true
     }
