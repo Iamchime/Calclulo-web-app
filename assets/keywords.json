@@ -905,6 +905,38 @@
   ],
   "category": "Conversion",
   "link": "/conversion/roman-numeral-converter"
+},
+{
+  "tool": "Conception Calculator",
+  "relatedKeywords": [
+    "How to calculate conception", "pregnancy calculators"
+  ],
+  "category": "Health",
+  "link": "/health/conception-calculator"
+},
+{
+  "tool": "Atom Calculator",
+  "relatedKeywords": [
+    "How to calculate atom","periodic table"
+  ],
+  "category": "Chemistry",
+  "link": "/chemistry/atom-calculator"
+},
+{
+  "tool": "Tip Calculator",
+  "relatedKeywords": [
+    "how to calculate tip"
+  ],
+  "category": "Other",
+  "link": "/other/tip-calculator"
+},
+{
+  "tool": "75 Attendance Calculator",
+  "relatedKeywords": [
+    "how to calculate 75 attendance"
+  ],
+  "category": "Education",
+  "link": "/education/75-attendance-calculator.html"
 }
   ]
 }

@@ -300,7 +300,7 @@ Clear all changes
       <li>Roman syntax: verify that subtractive notation is used only where allowed (e.g., I before V or X, X before L or C, C before D or M), and prevent impossible sequences (like IC for 99, which is nonstandard).</li>
       <li>Overline handling: if the calculator supports overline/vinculum notation, it needs a consistent parser for those marks (or for an alternate textual representation such as a prefix/suffix) and clear documentation for users on how to type them.</li>
     </ul>
-  </p>  <p>
+    <p>
     <strong>3) The conversion algorithm</strong><br>
     For number → Roman, converters generally use a greedy mapping: starting with the largest available Roman value (including overlined values where supported), the algorithm subtracts the largest applicable numeral repeatedly, appending the corresponding symbol to the result until the whole number is converted. This yields the shortest, conventional Roman form. For Roman → number the inverse process scans the input from left to right, matching the largest valid numeral at each position and summing their values. A robust converter also validates by converting back (round-trip) — i.e., convert the parsed total back to Roman and ensure it matches the user’s input — and uses that test to detect invalid or nonstandard forms.
   </p>  <p>
