@@ -1334,3 +1334,44 @@ function clearError(input) {
 function clearError(input) {
   
 }
+
+/********** list the total number of calculators in a category *********/
+
+document.addEventListener("DOMContentLoaded", async () => {
+    try {
+        // Fetch JSON file
+        const response = await fetch("/assets/keywords.json");
+        const data = await response.json();
+        const tools = data.tools || [];
+
+        // Count calculators by category (normalize names)
+        const categoryCount = {};
+        tools.forEach(tool => {
+            let category = tool.category.trim().toLowerCase();
+            // Remove words like "calculators" or "calculator" for easier matching
+            category = category.replace(/calculators?/gi, "").trim();
+
+            if (!categoryCount[category]) {
+                categoryCount[category] = 0;
+            }
+            categoryCount[category]++;
+        });
+
+        // Select all spans and update numbers
+        document.querySelectorAll(".description-header-info-calculator-numb").forEach(span => {
+            const dataCategory = span.dataset.nameCategory?.trim().toLowerCase() || "";
+
+            // Normalize like above
+            const normalizedCategory = dataCategory.replace(/calculators?/gi, "").trim();
+
+            // Find matching count
+            const count = categoryCount[normalizedCategory] || 0;
+
+            // Update span text
+            span.textContent = `${count} calculator${count !== 1 ? "s" : ""}`;
+        });
+
+    } catch (error) {
+        console.error("Error loading calculator counts:", error);
+    }
+});

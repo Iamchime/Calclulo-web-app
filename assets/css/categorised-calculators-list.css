@@ -251,6 +251,12 @@ display: block;
   font-weight: 900;
   font-size: 2em;
 }
+.description-header-info-calculator-numb{
+  font-size: 1em;
+color: #42445AD4;
+margin-top: 1.5em;
+}
+
 .category-info-p{
   line-height: 1.5;
 font-size: .92em;

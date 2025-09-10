@@ -456,7 +456,7 @@
     "nutrition planning tool"
   ],
   "category": "health",
-  "link": "/everyday-life"
+  "link": "/health/fat-Intake-calculator"
 },
 {
   "tool": "New Year Countdown",
@@ -472,7 +472,7 @@
     "new year countdown online",
     "2025 countdown timer"
   ],
-  "category": "Other Calculators",
+  "category": "Everyday life Calculators",
   "link": "/everyday-life/new-year-countdown-calculator"
 },
 {
@@ -489,7 +489,7 @@
     "halloween countdown online",
     "2025 halloween timer"
   ],
-  "category": "Other Calculators",
+  "category": "Everyday life Calculators",
   "link": "/everyday-life/halloween-countdown-calculator"
 },
 {
@@ -506,7 +506,7 @@
     "easter countdown online",
     "2025 easter countdown"
   ],
-  "category": "Other Calculators",
+  "category": "Everyday life Calculators",
   "link": "/everyday-life/easter-countdown"
 },
 {
