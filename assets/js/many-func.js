@@ -32,6 +32,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       
       // Update span text
       span.textContent = `${count} calculator${count !== 1 ? "s" : ""}`;
+      
+      if(count == 0)
+      span.textContent = `no calculator`;
     });
     
   } catch (error) {
