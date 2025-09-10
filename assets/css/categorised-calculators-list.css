@@ -326,10 +326,10 @@ fill: #fff;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
-  gap: 1em;
+  gap: 1.2em;
 }
 .calculators-lists h1{
-  font-size: 1.1em;
+  font-size: 1.3em;
   font-family: lexend;
   font-weight: 400;
 }

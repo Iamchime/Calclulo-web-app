@@ -302,8 +302,8 @@
     "risk score calculator",
     "risk factor tool"
   ],
-  "category": "Other Calculators",
-  "link": "/other/risk-calculator"
+  "category": "Statistics Calculators",
+  "link": "/statistics/risk-calculator"
 },
 {
   "tool": "ROI Calculator",
@@ -937,6 +937,14 @@
   ],
   "category": "Education",
   "link": "/education/75-attendance-calculator"
+},
+{
+  "tool": "On Base Percentage Calculator",
+  "relatedKeywords": [
+    "how to calculate on base percentage"
+  ],
+  "category": "Sports",
+  "link": "/sports/on-base-percentage-calculator"
 }
   ]
 }
