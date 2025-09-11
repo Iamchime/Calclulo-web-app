@@ -1,29 +1,10 @@
-function calculateResults() {
-  // Function to clean and parse numbers properly
-  function cleanNumber(value) {
-    return parseFloat(value.replace(/,/g, '')) || 0;
-  }
+function cleanNumber(value) {
+  return parseFloat(value.replace(/,/g, '')) || 0;
+}
 
-  const principal = cleanNumber(document.getElementById('initialDeposit').value);
+function updateFromAPR() {
   const apr = cleanNumber(document.getElementById('AnnualPercentageRateOfCharge').value);
-  const term = cleanNumber(document.getElementById('Term').value);
-  const termUnit = document.getElementById('TermDate').value;
   const frequency = document.getElementById('compoundingFrequency').value;
-
-  if (principal <= 0 || isNaN(apr) || term <= 0) {
-    document.getElementById('Finaldeposit').value = '';
-    document.getElementById('AnnualPercentageYield').value = '';
-    return;
-  }
-
-  let years;
-  switch (termUnit) {
-    case 'days': years = term / 365; break;
-    case 'weeks': years = term / 52; break;
-    case 'mons': years = term / 12; break;
-    case 'years':
-    default: years = term;
-  }
 
   const periods = {
     'Yearly': 1,
@@ -37,27 +18,112 @@ function calculateResults() {
   const n = periods[frequency];
   const r = apr / 100;
 
-  // --- APY Calculation ---
-  const apy = (Math.pow(1 + r / n, n) - 1) * 100;
+  if (!apr || !n) {
+    document.getElementById('AnnualPercentageYield').value = '';
+    return r;
+  }
 
-  // --- Final Deposit Calculation ---
+  const apy = (Math.pow(1 + r / n, n) - 1) * 100;
+  document.getElementById('AnnualPercentageYield').value = apy.toFixed(2);
+  return r;
+}
+
+function updateFromAPY() {
+  const apy = cleanNumber(document.getElementById('AnnualPercentageYield').value);
+  const frequency = document.getElementById('compoundingFrequency').value;
+
+  const periods = {
+    'Yearly': 1,
+    'Half-Yearly': 2,
+    'Quarterly': 4,
+    'Monthly': 12,
+    'Weekly': 52,
+    'Daily': 365
+  };
+
+  const n = periods[frequency];
+  const r = Math.pow(1 + apy / 100, 1 / n) - 1;
+
+  if (!apy || !n) {
+    document.getElementById('AnnualPercentageRateOfCharge').value = '';
+    return 0;
+  }
+
+  const apr = r * n * 100;
+  document.getElementById('AnnualPercentageRateOfCharge').value = apr.toFixed(2);
+  return apr / 100;
+}
+
+function calculateResults(source = 'apr') {
+  const principal = cleanNumber(document.getElementById('initialDeposit').value);
+  const term = cleanNumber(document.getElementById('Term').value);
+  const termUnit = document.getElementById('TermDate').value;
+
+  let r;
+  if (source === 'apr') {
+    r = updateFromAPR();
+  } else if (source === 'apy') {
+    r = updateFromAPY() / 100;
+  }
+
+  if (principal <= 0 || isNaN(r) || term <= 0) {
+    document.getElementById('Finaldeposit').value = '';
+    return;
+  }
+
+  let years;
+  switch (termUnit) {
+    case 'days': years = term / 365; break;
+    case 'weeks': years = term / 52; break;
+    case 'mons': years = term / 12; break;
+    case 'years':
+    default: years = term;
+  }
+
+  const frequency = document.getElementById('compoundingFrequency').value;
+  const periods = {
+    'Yearly': 1,
+    'Half-Yearly': 2,
+    'Quarterly': 4,
+    'Monthly': 12,
+    'Weekly': 52,
+    'Daily': 365
+  };
+
+  const n = periods[frequency];
+
   const amount = principal * Math.pow(1 + r / n, n * years);
 
-  // Update APY field
-  document.getElementById('AnnualPercentageYield').value = apy.toFixed(4) + '%';
-
-  // Format result nicely with commas
   document.getElementById('Finaldeposit').value = amount.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
 }
 
-// Auto-calculate whenever any input changes
-['initialDeposit', 'AnnualPercentageRateOfCharge', 'Term', 'TermDate', 'compoundingFrequency'].forEach(id => {
+// --- Event bindings ---
+['initialDeposit', 'Term', 'TermDate', 'compoundingFrequency'].forEach(id => {
   const el = document.getElementById(id);
-  el.addEventListener('input', calculateResults);
-  el.addEventListener('change', calculateResults);
+  el.addEventListener('input', () => calculateResults());
+  el.addEventListener('change', () => calculateResults());
 });
 
-window.addEventListener('DOMContentLoaded', calculateResults);
+// Special handling for APR ↔ APY two-way binding
+const aprEl = document.getElementById('AnnualPercentageRateOfCharge');
+const apyEl = document.getElementById('AnnualPercentageYield');
+
+aprEl.addEventListener('input', () => {
+  setActiveInput(aprEl);
+  calculateResults('apr');
+});
+
+apyEl.addEventListener('input', () => {
+  setActiveInput(apyEl);
+  calculateResults('apy');
+});
+
+function setActiveInput(el) {
+  [aprEl, apyEl].forEach(e => e.classList.add('result'));
+  el.classList.remove('result');
+}
+
+window.addEventListener('DOMContentLoaded', () => calculateResults('apr'));
