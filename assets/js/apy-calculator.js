@@ -42,14 +42,14 @@ function updateFromAPY() {
   };
 
   const n = periods[frequency];
-  const r = Math.pow(1 + apy / 100, 1 / n) - 1;
-
   if (!apy || !n) {
     document.getElementById('AnnualPercentageRateOfCharge').value = '';
     return 0;
   }
 
+  const r = Math.pow(1 + apy / 100, 1 / n) - 1;
   const apr = r * n * 100;
+
   document.getElementById('AnnualPercentageRateOfCharge').value = apr.toFixed(2);
   return apr / 100;
 }
@@ -63,7 +63,9 @@ function calculateResults(source = 'apr') {
   if (source === 'apr') {
     r = updateFromAPR();
   } else if (source === 'apy') {
-    r = updateFromAPY() / 100;
+    // only update APR, do NOT calculate final balance
+    updateFromAPY();
+    return;
   }
 
   if (principal <= 0 || isNaN(r) || term <= 0) {
@@ -118,7 +120,7 @@ aprEl.addEventListener('input', () => {
 
 apyEl.addEventListener('input', () => {
   setActiveInput(apyEl);
-  calculateResults('apy');
+  calculateResults('apy'); // updates APR but does NOT recalc final balance
 });
 
 function setActiveInput(el) {
