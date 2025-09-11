@@ -1378,3 +1378,5 @@ function clearError(input) {
 function clearError(input) {
   
 }
+
+/****** dragging containers *************/

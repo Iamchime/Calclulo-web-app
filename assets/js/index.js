@@ -5,19 +5,7 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.error('Service worker registration failed:', err));
   });
 }
-/*
-  fetch('/assets/keywords.json')
-    .then(res => res.json())
-    .then(data => {
-      const tools = data.tools;
-      console.log("✅ Total calculators:", tools.length);
-      
-      tools.forEach((toolObj, index) => {
-        console.log(`#${index + 1}: ${toolObj.tool}`);
-      });
-    })
-    .catch(err => console.error("❌ Error loading JSON:", err));
-*/
+
 document.addEventListener("DOMContentLoaded", () => {
   const searchInput = document.getElementById("search-input-index");
   const searchResults = document.querySelector(".search-results-index");
@@ -111,3 +99,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 /*****************/
+
+  fetch('/assets/keywords.json')
+    .then(res => res.json())
+    .then(data => {
+      const tools = data.tools;
+      console.log("✅ Total calculators:", tools.length);
+      
+      tools.forEach((toolObj, index) => {
+        console.log(`#${index + 1}: ${toolObj.tool}`);
+      });
+    })
+    .catch(err => console.error("❌ Error loading JSON:", err));

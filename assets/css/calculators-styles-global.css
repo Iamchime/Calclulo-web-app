@@ -1685,6 +1685,24 @@ padding-top: 2em;
 .calculator-categories-footer a{
   margin-right: 5em;
 }
+/* Visual while dragging */
+.container.isdragging {
+  cursor: grabbing;
+  transform: scale(1.03);
+  box-shadow: 0 28px 60px rgba(12,20,30,0.18);
+  z-index: 9999;
+  transition: none; /* immediate while following pointer */
+  pointer-events: none;
+}
+
+/* internal placeholder (created/removed automatically) */
+._drag_placeholder {
+  border-radius: 10px;
+  height: 48px; /* replaced on creation */
+  background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
+  border: 1px dashed rgba(0,0,0,0.06);
+  box-sizing: border-box;
+}
 }
 @media (min-width: 700px) {
   
