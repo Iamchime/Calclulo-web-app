@@ -12,6 +12,7 @@ function calculateResults() {
 
   if (principal <= 0 || isNaN(apr) || term <= 0) {
     document.getElementById('Finaldeposit').value = '';
+    document.getElementById('AnnualPercentageYield').value = '';
     return;
   }
 
@@ -36,7 +37,14 @@ function calculateResults() {
   const n = periods[frequency];
   const r = apr / 100;
 
+  // --- APY Calculation ---
+  const apy = (Math.pow(1 + r / n, n) - 1) * 100;
+
+  // --- Final Deposit Calculation ---
   const amount = principal * Math.pow(1 + r / n, n * years);
+
+  // Update APY field
+  document.getElementById('AnnualPercentageYield').value = apy.toFixed(4) + '%';
 
   // Format result nicely with commas
   document.getElementById('Finaldeposit').value = amount.toLocaleString(undefined, {
@@ -51,6 +59,5 @@ function calculateResults() {
   el.addEventListener('input', calculateResults);
   el.addEventListener('change', calculateResults);
 });
-
 
 window.addEventListener('DOMContentLoaded', calculateResults);
