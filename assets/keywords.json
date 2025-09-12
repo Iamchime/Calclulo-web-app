@@ -961,6 +961,30 @@
   ],
   "category": "Math calculators",
   "link": "/math/percent-off-calculator"
+},
+{
+  "tool": "Minutes to Hours Converter",
+  "relatedKeywords": [
+    "convert minutes to hours"
+  ],
+  "category": "Conversion",
+  "link": "/conversion/minutes-to-hours-converter"
+},
+{
+  "tool": "Hours to Week Conversion",
+  "relatedKeywords": [
+    "convert hours to week"
+  ],
+  "category": "Conversion",
+  "link": "/conversion/hours-to-week-conversion"
+},
+{
+  "tool": "Square Footage Calculator",
+  "relatedKeywords": [
+    "calculate square footage"
+  ],
+  "category": "Construction",
+  "link": "/construction/square-footage-calculator"
 }
   ]
 }

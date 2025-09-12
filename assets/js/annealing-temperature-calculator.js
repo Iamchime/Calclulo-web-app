@@ -61,7 +61,7 @@
     safeSetValue(inputEl, converted);
   }
 
-  // --- Main calculation (Omni) ---
+  // --- Main calculation ---
   // Ta = 0.3 * Tm_primer + 0.7 * Tm_target - 14.9  (perform in Celsius)
   function calculateAnnealingTemperature() {
     const primerRaw = parseNumber(primerInput.value);

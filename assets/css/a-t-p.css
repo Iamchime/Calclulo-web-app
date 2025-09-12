@@ -1,3 +1,6 @@
+html {
+  scroll-behavior: smooth;
+}
 @font-face {
   font-family: 'Young';
   src: url("/assets/fonts/young.woff2");

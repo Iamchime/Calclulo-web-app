@@ -1,3 +1,6 @@
+html {
+  scroll-behavior: smooth;
+}
 @font-face {
   font-family: 'Nunito';
   src: url("../fonts/Nunito-Regular.woff2");
@@ -774,10 +777,33 @@ border: none;
 }
 .unit-display{
   font-family: young;
-  display: flex;align-items: center;justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-
+.currency-or-unit-input-select{
+  display: flex;
+align-items: center;
+justify-content: flex-start;
+margin-right: -1em;
+gap: .5em;
+border-top-left-radius: 12px;
+border-bottom-left-radius: 12px;
+padding: 5px;
+padding-right: 10px;
+width: 35%;
+transition: .25s;
+}
+.currency-or-unit-input-select select{
+  border: none;
+  outline: none;
+  margin: 0;
+  background-color: transparent;
+  color: #464BFF;
+}
+.currency-or-unit-input-select:focus-within{
+  background: #61628B30;
+}
 .currency-popup-overlay {
   position: fixed;
   inset: 0;
@@ -1409,16 +1435,11 @@ font-weight: 400;
   }
   .description-txt a{
     transition: .3s;
-    padding: .1em;
     cursor: help;
-    text-decoration: none;
-    color: #464BFFAB;
-    background: #464BFF1A;
-    border-radius: 8px;
-    padding: .2em;
+    color: #3337D9;
   }
   .description-txt a:hover{
-    background: #464BFF30;
+    color: #2E31AD;
   }
   .description-txt p{
     color: #515353;
@@ -1431,7 +1452,12 @@ line-height: 1.7;
   line-height: 1.7;
   display: flex;
   flex-direction: column;
-  gap: .3em;
+  gap: .2.5em;
+}
+ul li::marker {
+  color: red;
+  font-size: 1.4em;
+  color: #464BFF36;
 }
 .description-txt ol {
   color: #515353;
@@ -1439,7 +1465,7 @@ line-height: 1.7;
   line-height: 1.7;
   display: flex;
   flex-direction: column;
-  gap: .3em;
+  gap: .2.5em;
 }
    .description-txt strong{
      font-family: lexend;
