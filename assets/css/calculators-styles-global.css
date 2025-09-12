@@ -263,7 +263,7 @@ color: #42445ACC;
 margin-bottom: .5em;
 }
 .hero-sec{
-  max-width: 550px;
+  max-width: 400px;
 }
 .hero-text-wrap{
   font-weight: 900;
@@ -276,6 +276,7 @@ margin-bottom: .5em;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
   font-family: "Young";
+  max-width: 400px;
 }
 
 .hero-sec-one {
@@ -323,7 +324,7 @@ transition: .3s;
 
 .container {
        width: 90%;
-       max-width: 550px;
+       max-width: 400px;
        position: relative;
        background: #fff;
 border-radius: 20px;
@@ -1254,7 +1255,7 @@ details[open] summary::before {
 align-items: center;
 gap: .5em;
 margin-top: 1.5em;
-max-width: 576px;
+max-width: 400px;
 flex-wrap: wrap;
 }
 .quick-actions-btn button{
@@ -1304,7 +1305,7 @@ color: #4F5163;
  .similar-calculators-wrap{
    display: flex;
    flex-direction: column;
-   max-width: 550px;
+   max-width: 400px;
    background: #fff;
    padding: 15px;
    width: 90%;
@@ -1419,7 +1420,7 @@ align-items: flex-start;
 justify-content: flex-start;
 gap: 1em;
 margin-top: 1em;
-max-width: 550px;
+max-width: 400px;
 border-radius: 10px;
 padding: 10px;
 font-family: "young";
@@ -1677,6 +1678,9 @@ footer span svg{
   .side-nav{
     width: 350px;
   }
+  .sec-one{
+    /*margin-left: 10em;*/
+  }
  .container{
    background: #fff;
 border-radius: 20px;
@@ -1684,10 +1688,13 @@ border: 1px solid #42445A1C;
 padding: 12px;
 margin-bottom: 1em;
 padding-top: 2em;
+margin-left: 6em
  }
- .calculator-info-p{
-   background: transparent;
-   padding: 0;
+ .last-updated-text{
+   padding: 15px;
+ }
+ .description-txt,.hero-sec,.quick-actions-btn,.last-updated-text,.similar-calculators-wrap{
+   margin-left: 6em
  }
  .quick-actions-btn button{
    background: #fff;
