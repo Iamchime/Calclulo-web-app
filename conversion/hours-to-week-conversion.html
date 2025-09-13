@@ -391,7 +391,7 @@ Clear all changes
     <li><a href="#how-to-convert-hours-to-weeks-manually">How to convert hours to weeks manually</a></li>
     <li><a href="#weeks-to-hours-conversion-manually">Weeks to hours conversion manually</a></li>
     <li><a href="#how-to-use-the-hours-to-week-converter">How to use the Hours to Week Converter</a></li>
-    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#faq">FAQs</a></li>
   </ul>  <h2>Description of what the calculator does</h2>
   <p>
     The <strong>Hours to Week Converter</strong> is a simple but powerful tool that converts between <strong>hours</strong> and <strong>weeks</strong> instantly and accurately. At its core the calculator uses the unambiguous relationship that one week equals <strong>168 hours</strong> (7 days × 24 hours). You can type a value in <strong>hours</strong> and the calculator will produce the equivalent number of <strong>weeks</strong>, or type a value in <strong>weeks</strong> and it will show the matching number of <strong>hours</strong>. The converter handles whole numbers and fractional values, and it will also accept numbers that include commas (for readability) by cleaning them out before calculating.
@@ -479,18 +479,18 @@ Clear all changes
     <strong>Project planning:</strong> Convert a 320-hour estimate into weeks to communicate timeline (320 ÷ 168 ≈ 1.9048 weeks → ~1 week and 6 days). <strong>Payroll:</strong> Convert vacation measured in weeks to hours for payroll systems. <strong>Server monitoring:</strong> Convert multi-week uptime percentages into hours for SLA reporting. In every case, showing both the decimal weeks and the mixed-unit breakdown reduces confusion among stakeholders.
   </p>  <p>
     Exporting and integrating results: Because the UI marks calculated fields with a class, you can script exports to CSV or copy values programmatically. When integrating with other systems, send the raw numeric values (without thousands separators) and include metadata indicating the unit and the week definition used (calendar or business week).
-  </p>  <h2 id="faq">FAQ</h2>
+  </p>  <h2 id="faq">FAQs</h2>
   <p>
-    <strong>Q — Is one week always exactly 168 hours?</strong>
+    <strong> Is one week always exactly 168 hours?</strong>
     In the context of simple duration math, yes: a calendar week is always exactly 7 days, and each day is 24 hours, so 7 × 24 = 168 hours. This is the definition used for converting durations between hours and weeks. However, in some real-world scheduling contexts you might encounter complications: daylight saving time (DST) shifts can make a particular calendar week have 167 or 169 clock-hours in regions that observe DST because clocks jump forward or back by an hour when DST starts or ends. Leap seconds (rare adjustments added by time authorities) are another example of tiny irregularities in absolute timekeeping. Those phenomena affect wall-clock time but are irrelevant when you are converting abstract durations in civil units — for example "how many hours are in 3 weeks" — which uses the fixed 168-hour convention. If you must represent exact clock time across DST boundaries, calculate using real timestamps (with timezone-aware tools) rather than a static hours-to-weeks conversion.
   </p>  <p>
-    <strong>Q — Can I convert workweeks instead of calendar weeks?</strong>
+    <strong> Can I convert workweeks instead of calendar weeks?</strong>
     Yes — but you must be explicit about what a “workweek” means in your environment. Many employers treat a workweek as 40 hours (5 days × 8 hours), but some countries or organizations use 35, 37.5, or another norm. If you need to convert between workweeks and hours for payroll or staffing, multiply weeks by the organization’s hours-per-workweek constant (for example 1 workweek = 40 hours). The Hours to Week Converter described here uses the calendar-week definition by default but can be adapted to a work-week mode if that is the conversational need.
   </p>  <p>
-    <strong>Q — How should I handle fractional weeks in reports?</strong>
+    <strong> How should I handle fractional weeks in reports?</strong>
     It depends on audience and purpose. For human-facing schedules, convert fractional weeks into days and hours so stakeholders easily understand the schedule (e.g., 1.42857 weeks → 1 week and 3 days). For data analysis, keep a consistent decimal precision (for instance two decimal places) and document the precision. For billing or payroll, follow your organization’s rounding policy: some systems round to the nearest minute or second, others round to the nearest hour. Always record the rounding rule with the result to avoid disputes.
   </p>  <p>
-    <strong>Q — Why does the calculator accept commas and still work?</strong>
+    <strong> Why does the calculator accept commas and still work?</strong>
     Commas are common thousands separators inserted for readability (for example, 12,000). A robust converter strips these characters before parsing the numeric value so the arithmetic is correct. The display may optionally reinsert separators for readability after the computation. This prevents parsing errors (for example some parsers interpret commas as decimal separators in some locales) and keeps the math reliable.
   </p>
 </div>

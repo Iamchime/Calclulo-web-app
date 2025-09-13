@@ -530,27 +530,27 @@ Clear all changes
     A worked example to tie it together: suppose you have attended P = 32 classes out of T = 40 so far. Current percentage = (32 ÷ 40) × 100 = 80%. The calculator computes how many you can miss and still stay ≥ 75%: m_max = floor((4/3)P − T) = floor(42.666… − 40) = 2. So you could miss two more classes (making your new total 32/42 ≈ 76.19%) and still be above 75%. If you miss three classes, your new percentage would be 32/43 ≈ 74.42% — below the target.
   </p>  <p>
     Implementation note (for developers): the arithmetic is tiny, but UI matters: show the current percentage with two decimal places, show a human-readable sentence (e.g., “You must attend at least 14 consecutive classes to reach 75%”), and flag edge conditions (0 total classes, already at or above target, or impossible to reach target within a reasonable horizon). Also show the algebraic formula or a short explanation so users understand the logic — that’s the sort of clarity users appreciate in helpful support docs.
-  </p>  <h2>FAQ</h2>
+  </p>  <h2>FAQs</h2>
   <p>
-    Q: Can my college “condone” less than 75% attendance so I can take the exam?  
+    Can my college “condone” less than 75% attendance so I can take the exam?  
     A: Many institutions permit condonation — an administrative exception that temporarily treats a shortfall as acceptable for exam eligibility — but the rules are strict. Condonation is typically discretionary, limited to a capped percentage (commonly up to 10% in several colleges), and only granted for documented, genuine reasons (medical emergencies, bereavement, participation in accredited sports or official duties, etc.). You usually must submit a formal application with supporting documents a specified number of days before exams; the academic committee or principal decides on merit. Do not rely on condonation as a plan; treat it as last-resort remediation.
   </p>  <p>
-    Q: Do online classes, practical labs or tutorials count the same as lectures toward the 75%?  
+    Do online classes, practical labs or tutorials count the same as lectures toward the 75%?  
     A: That depends entirely on your institution’s attendance policy. Some colleges count any scheduled contact (lecture, lab, tutorial) equally; some weight practicals differently; others have separate thresholds for theory and practical components. Many institutions also drew new rules around online participation after the COVID-19 pandemic, specifying which forms of synchronous and asynchronous activity qualify as “present.” The calculator is agnostic — it converts the counts you give into percentages — so check the official handbook to know which sessions to include in P and T.
   </p>  <p>
-    Q: If I have excused medical leave, will those days automatically count as present?  
+    If I have excused medical leave, will those days automatically count as present?  
     A: Usually not automatically. Many institutions require medical leave to be submitted and approved; approved leaves may be treated as excused and sometimes excluded from the denominator (T) or counted differently depending on the bye-laws. Others count them in the denominator but allow condonation. Always keep original medical certificates and follow the prescribed filing process and deadlines.
   </p>  <p>
-    Q: Does attendance affect grading beyond eligibility?  
+    Does attendance affect grading beyond eligibility?  
     A: Yes — some universities fold attendance into internal assessment marks or participation credit. For example, internal assessment schemes sometimes award small marks for class participation and attendance tiers (e.g., 0–5 marks depending on the presence bracket). The exact effect depends on the course syllabus and the college’s evaluation scheme — attendance can be both a pass/fail gate and a component of continuous assessment.
   </p>  <p>
-    Q: Are 75% rules common only in one country?  
+    Are 75% rules common only in one country?  
     A: No. While 75% is especially visible in Indian university and board contexts, comparable thresholds appear globally in specific types of programmes (vocational certificates, professional courses, institute-level rules) and for visa compliance in some countries. The enforcement mechanism and how absences are treated vary, so check local rules for precise consequences.
   </p>  <p>
-    Q: I used the calculator and it says I need dozens of classes to reach 75%. Is that realistic?  
+    I used the calculator and it says I need dozens of classes to reach 75%. Is that realistic?  
     A: Yes — if your current attendance is far below 75%, the algebra shows the number of future classes you must attend grows quickly. For example, if your attendance is 50% halfway through the term, reaching 75% before the term ends may be mathematically impossible without extraordinary measures (like re-taking the course). The formula in the calculator tells you the minimum number — use that figure to decide whether to pursue condonation, extra credit, or course repeat strategies.
   </p>  <p>
-    Q: Where should I go for official clarification?  
+    Where should I go for official clarification?  
     A: Always consult your institution’s academic regulations, examination bye-laws, or the examinations office. National exam boards publish bye-laws (for example, the CBSE has published rules on attendance and condonation) and these are the definitive sources for eligibility and documentation requirements.
   </p>  
   </section>

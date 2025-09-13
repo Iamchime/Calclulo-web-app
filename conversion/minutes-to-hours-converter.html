@@ -445,7 +445,7 @@ Clear all changes
     <li><a href="#units">What are the standard time units and where do they come from?</a></li>
     <li><a href="#convert">How to convert between hours, minutes, and seconds?</a></li>
     <li><a href="#use">How to use the minutes to hours converter?</a></li>
-    <li><a href="#faq">FAQ</a></li>
+    <li><a href="#faq">FAQs</a></li>
   </ul> 
   <p>
     The Minutes to Hours Converter is a small, practical tool designed to <strong>turn minutes into hours</strong>, and vice versa, with precision and a human-friendly display. It accepts numbers typed with or without thousands separators (commas), correctly parses decimals, and returns results in two useful forms: a decimal hour value (for example <strong>2.50 hours</strong>) and a clean <strong>hh:mm:ss breakdown</strong> (for example <strong>2 hours 30 minutes 0 seconds</strong>). The converter handles fractional minutes and seconds, applies controlled rounding rules, and provides consistent formatting so results are both predictable and easy to read.
@@ -535,29 +535,29 @@ seconds = totalSeconds % 60
       <li>Enter <strong>125.5</strong> minutes → convert to seconds (7,530), then hh:mm:ss: <strong>2:05:30</strong>.</li>
       <li>Enter <strong>3600</strong> seconds → Minutes: <strong>60.00</strong>, Hours: <strong>1.00</strong>, hh:mm:ss: <strong>1:00:00</strong>.</li>
     </ul>
-  </p>  <h2 id="faq">FAQ </h2>
+  </p>  <h2 id="faq">FAQs</h2>
   <p>
-    Q: Why does the converter show fixed decimals like “2.00” instead of “2”?
+    Why does the converter show fixed decimals like “2.00” instead of “2”?
     <br>
     A: Fixed decimals are a deliberate display choice to keep values visually consistent. When hours are shown with a set minimum fraction (for example two decimal places), every value lines up easily in tables and comparisons. If you prefer fewer decimals, the converter can be configured to use a different minimumFractionDigits setting — many tools default to two but developers choose what best fits billing or display needs.
   </p>  <p>
-    Q: How should I enter numbers if my region uses commas as decimal separators?
+    How should I enter numbers if my region uses commas as decimal separators?
     <br>
     A: The simplest, most reliable approach is to accept a standardized input format (period/dot as decimal separator and comma as thousands separator) and strip thousands separators programmatically before parsing. For an audience that primarily uses comma decimals, implement a locale-aware parser that first detects the pattern (e.g., presence of both dots and commas) and normalises input accordingly. This prevents misinterpretation where “1,5” might be read as one-and-a-half or one thousand five depending on assumptions.
   </p>  <p>
-    Q: Does the converter introduce floating point errors?
+    Does the converter introduce floating point errors?
     <br>
     A: It can if you rely exclusively on decimal arithmetic. Best practice is to convert minutes to an integer count of seconds (or milliseconds if needed) and do all arithmetic in integers, only formatting back into decimals when preparing the user-visible output. This prevents small floating-point inaccuracies and makes rounding behaviour deterministic.
   </p>  <p>
-    Q: What rounding policy is safest for billing or legal contexts?
+    What rounding policy is safest for billing or legal contexts?
     <br>
     A: For billing, be explicit and consistent: either always round up to the nearest billing increment (protects against underbilling), or round to the nearest increment (fair but can swing both ways). Many services bill in 15-minute increments or per-minute with round-to-nearest. Implement a configurable rounding function so the converter can be adapted to your business rule.
   </p>  <p>
-    Q: Can the converter handle negative durations or extremely large values?
+    Can the converter handle negative durations or extremely large values?
     <br>
     A: Negative durations are supported if the UI and business logic expect them (for example, showing a time difference when an end time is earlier than a start time). For very large values, present an alternate scale (days, weeks) in addition to formatted minutes/hours so users can quickly grasp magnitude. Use integer arithmetic (BigInt where necessary) to avoid overflow or precision loss.
   </p>  <p>
-    Q: Is the hh:mm:ss result suitable for display in logs and timestamps?
+    Is the hh:mm:ss result suitable for display in logs and timestamps?
     <br>
     A: Yes — hh:mm:ss is a compact human-readable representation of a duration. For storing or comparing durations, prefer total seconds or ISO 8601 duration strings (e.g., PT2H30M). For UI display, hh:mm:ss is often the clearest format for end users.
   </p>  <p>
