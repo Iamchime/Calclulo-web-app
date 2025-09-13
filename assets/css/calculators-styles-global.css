@@ -1195,13 +1195,15 @@ input[type="date"]{
   right: 0;
 }
 .visible-tips {
-  background: #464BFF14;
+  background: #FCF7E1;
+  /*background: #464BFF14;*/
   padding: 1em;
   border-radius: 10px;
   font-family: "young";
   line-height: 1.6;
   font-size: 13px;
-  color: #464BFF;
+  color: #593913;
+  /*color: #464BFF;*/
   width: 90%;
   user-select: none;
   letter-spacing: .35px;

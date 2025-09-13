@@ -54,7 +54,10 @@ function calculateAreaAndCost() {
     // Convert unit price to per m²
     let pricePerM2 = unitPrice / priceUnitToMeters[unitPriceUnit];
     let totalCost = areaMeters * pricePerM2;
-    document.getElementById('total-cost').value = totalCost.toLocaleString(undefined, { style: 'currency', currency: 'USD' });
+    document.getElementById('total-cost').value = totalCost.toLocaleString(undefined, {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
   } else {
     document.getElementById('total-cost').value = '';
   }
