@@ -1555,15 +1555,32 @@ font-family: young;
 #decline-cookieBtn:hover{
   background: #484A582E;
 }
-/* Flash effect animation */
-@keyframes flashEffect {
-  0% { background-color: rgba(255, 255, 0, 0.3); }
-  50% { background-color: rgba(255, 255, 0, 0.6); }
-  100% { background-color: transparent; }
+/* Overlay styling */
+.container {
+  position: relative; /* ensure overlay positions correctly */
+  overflow: hidden;   /* clip overlay to container */
 }
 
-.container.flash-animate {
-  animation: flashEffect 0.8s ease-in-out;
+.container::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  /*background: rgba(255, 255, 255, 0.6);*/
+  background: #FFFFFFFA;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.container.flash-overlay::after {
+  opacity: 1;
+  animation: fadeOutOverlay 0.8s forwards;
+}
+
+@keyframes fadeOutOverlay {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
 }
 footer{
   width: 100%;
@@ -1739,24 +1756,7 @@ margin-left: 6em
 .calculator-categories-footer a{
   margin-right: 5em;
 }
-/* Visual while dragging */
-.container.isdragging {
-  cursor: grabbing;
-  transform: scale(1.03);
-  box-shadow: 0 28px 60px rgba(12,20,30,0.18);
-  z-index: 9999;
-  transition: none; /* immediate while following pointer */
-  pointer-events: none;
-}
 
-/* internal placeholder (created/removed automatically) */
-._drag_placeholder {
-  border-radius: 10px;
-  height: 48px; /* replaced on creation */
-  background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.01));
-  border: 1px dashed rgba(0,0,0,0.06);
-  box-sizing: border-box;
-}
 }
 @media (min-width: 700px) {
   
