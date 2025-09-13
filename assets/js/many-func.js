@@ -726,11 +726,12 @@ function resetCalculator() {
     // Reset all input fields except read-only ones
     const inputs = container.querySelectorAll("input:not([readonly])");
     inputs.forEach(input => {
-      if (input.type === "radio" || input.type === "checkbox") {
+      input.value = "";
+      /*if (input.type === "radio" || input.type === "checkbox") {
         input.checked = false;
       } else {
         input.value = "";
-      }
+      }*/
     });
     
     // Reset all selects to their first option
