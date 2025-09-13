@@ -985,6 +985,14 @@
   ],
   "category": "Construction",
   "link": "/construction/square-footage-calculator"
+},
+{
+  "tool": "Decimal to Percent Converter",
+  "relatedKeywords": [
+    "convert decimal to percent"
+  ],
+  "category": "Math",
+  "link": "/math/decimal-to-percent-converter"
 }
   ]
 }
