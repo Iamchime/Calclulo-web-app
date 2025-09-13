@@ -53,7 +53,7 @@ header {
   right: 0;
   left: 0;
   height: 60px;
-  box-shadow: #464BFF2E 0px 1px 4px;
+  box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;
   background: #fff;
   z-index: 10;
 }
