@@ -745,8 +745,12 @@ function resetCalculator() {
     });
     
     // 🔥 Add overlay animation
-    container.classList.add("flash-overlay");
-    setTimeout(() => container.classList.remove("flash-overlay"), 800);
+container.classList.add("flash-overlay", "flash");
+
+// Remove animation classes after 800ms
+setTimeout(() => {
+  container.classList.remove("flash", "flash-overlay");
+}, 800);
   });
   
   // extra results divs...
@@ -784,6 +788,7 @@ function resetCalculator() {
   // Remove error text if it exists
   const errorMessages = document.querySelectorAll(".error-message");
   errorMessages.forEach(msg => msg.remove());
+  
 }
 
 /********* flash results ******/

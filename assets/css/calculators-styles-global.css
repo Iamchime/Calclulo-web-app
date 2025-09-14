@@ -1556,9 +1556,9 @@ font-family: young;
   background: #484A582E;
 }
 /* Overlay styling */
-.container {
-  position: relative; /* ensure overlay positions correctly */
-  overflow: hidden;   /* clip overlay to container */
+.container.flash {
+  position: relative;
+  overflow: hidden;
 }
 
 .container::after {
