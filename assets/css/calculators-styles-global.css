@@ -249,7 +249,7 @@ display: block;
   pointer-events: all;
 }
 .sec-one{
-  padding-top: 7em;
+  padding-top: 10em;
   width: 95%;
   position: relative;
   display: flex;
@@ -1598,6 +1598,25 @@ box-shadow: rgba(0, 0, 0, 0.06) 0 18px 10px;
 }
 
 /********* Adsterra ***********/
+.adsterra-anchor-fixed {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+padding-top: 5em;
+text-align: center;
+background: transparent;
+/*box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;*/
+z-index: 999;
+
+}
+.adsterra-anchor-fixed iframe {
+margin: auto;
+display: block;
+border-radius: 13px;
+padding: 4px;
+background: #fff;
+}
 .adsterra-anchor {
   position: fixed;
   bottom: 0;
@@ -1744,7 +1763,7 @@ margin-left: 6em
    padding: 15px;
  }
  .description-txt,.hero-sec,.quick-actions-btn,.last-updated-text,.similar-calculators-wrap{
-   margin-left: 6em
+   margin-left: 6em;
  }
  .quick-actions-btn button{
    background: #fff;
