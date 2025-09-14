@@ -1596,6 +1596,26 @@ background: #fff;
 margin-bottom: -10px;
 box-shadow: rgba(0, 0, 0, 0.06) 0 18px 10px;
 }
+
+/********* Adsterra ***********/
+.adsterra-anchor {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  background: #fff;
+box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;
+border-top-right-radius: 12px;
+border-top-left-radius: 12px;
+}
+.adsterra-anchor iframe {
+  margin: auto;
+  display: block;
+  border-radius: 13px;
+  padding: 10px;
+}
+/********* Adsterra ***********/
 footer .quick-links{
   display: flex;
   padding: 12px;
