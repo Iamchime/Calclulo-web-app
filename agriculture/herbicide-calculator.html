@@ -427,19 +427,46 @@ Clear all changes
     </div>
 <div class="description-txt">
   <!--------- Monetag --------->
-  <script>
-  window.onload = function() {
-    setTimeout(function() {
-      // Insert Monetag interstitial script here
-      (function(s){s.dataset.zone='9872745',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))
-      (function(s, u, z, p) {
-        s.src = u, s.setAttribute('data-zone', z), p.appendChild(s);
-      })(document.createElement('script'),
-        'https://iclickcdn.com/tag.min.js',
-        'YOUR_ZONE_ID',
-        document.body);
-    }, 10000); // 10000ms = 10 seconds
-  };
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    let allowInterstitial = false;
+    
+    // Enable interstitials after 30 seconds
+    setTimeout(() => {
+      allowInterstitial = true;
+    }, 30000);
+    
+    // Capture link clicks
+    document.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", function(e) {
+        if (allowInterstitial) {
+          e.preventDefault(); // stop immediate navigation
+          let targetUrl = this.href;
+          
+          // Show Monetag Interstitial
+          (function(s) {
+            s.dataset.zone = '9872745';
+            s.src = 'https://groleegni.net/vignette.min.js';
+            (document.body || document.documentElement).appendChild(s);
+          })(document.createElement('script'));
+          
+          (function(s, u, z, p) {
+            s.src = u;
+            s.setAttribute('data-zone', z);
+            p.appendChild(s);
+          })(document.createElement('script'),
+            'https://iclickcdn.com/tag.min.js',
+            'YOUR_ZONE_ID',
+            document.body);
+          
+          // Redirect after 8 seconds
+          setTimeout(() => {
+            window.location.href = targetUrl;
+          }, 8000);
+        }
+      });
+    });
+  });
 </script>
 <!--------- Monetag --------->
  <p>
