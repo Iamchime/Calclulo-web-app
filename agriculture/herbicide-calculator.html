@@ -426,7 +426,22 @@ Clear all changes
       </div>
     </div>
 <div class="description-txt">
-  <script>(function(s){s.dataset.zone='9872745',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
+  <!--------- Monetag --------->
+  <script>
+  window.onload = function() {
+    setTimeout(function() {
+      // Insert Monetag interstitial script here
+      (function(s){s.dataset.zone='9872745',s.src='https://groleegni.net/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))
+      (function(s, u, z, p) {
+        s.src = u, s.setAttribute('data-zone', z), p.appendChild(s);
+      })(document.createElement('script'),
+        'https://iclickcdn.com/tag.min.js',
+        'YOUR_ZONE_ID',
+        document.body);
+    }, 10000); // 10000ms = 10 seconds
+  };
+</script>
+<!--------- Monetag --------->
  <p>
    The application rates and calculations of herbicides may differ considerably depending on the farming methods and size of the land along with the local recommendations. This is the herbicide calculator, which adheres to common procedures common in farmland, particularly small scale farmers in areas such as Africa, South America, and some of Asia. The tool assists in converting dosage levels of a herbicide to smaller pieces of land making sure to apply it effectively and correctly even when dealing with small plots and hand-held sprayers.
  </p>
