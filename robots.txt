@@ -1,4 +1,5 @@
 User-agent: *
+Disallow: /favourites
 Allow: /
 
 Sitemap: https://calclulo.com/sitemap.xml

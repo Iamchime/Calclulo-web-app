@@ -337,7 +337,7 @@ fill: #fff;
   justify-content: flex-start;
   gap: 1.2em;
 }
-.calculators-lists h1{
+.calculators-lists h2{
   font-size: 1.3em;
   font-family: lexend;
   font-weight: 400;
