@@ -1603,9 +1603,10 @@ position: fixed;
 top: 0;
 left: 0;
 width: 100%;
-padding-top: 5em;
+padding-top: 4em;
 text-align: center;
-background: transparent;
+background: #fff;
+padding-bottom: 5px;
 /*box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;*/
 z-index: 999;
 
