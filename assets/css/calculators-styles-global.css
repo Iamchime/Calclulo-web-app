@@ -1597,45 +1597,7 @@ margin-bottom: -10px;
 box-shadow: rgba(0, 0, 0, 0.06) 0 18px 10px;
 }
 
-/********* Adsterra ***********/
-.adsterra-anchor-fixed {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-padding-top: 4em;
-text-align: center;
-background: #fff;
-padding-bottom: 5px;
-/*box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;*/
-z-index: 999;
 
-}
-.adsterra-anchor-fixed iframe {
-margin: auto;
-display: block;
-border-radius: 13px;
-padding: 4px;
-background: #fff;
-}
-.adsterra-anchor {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  background: #fff;
-box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;
-border-top-right-radius: 12px;
-border-top-left-radius: 12px;
-}
-.adsterra-anchor iframe {
-  margin: auto;
-  display: block;
-  border-radius: 13px;
-  padding: 8px;
-}
-/********* Adsterra ***********/
 footer .quick-links{
   display: flex;
   padding: 12px;
