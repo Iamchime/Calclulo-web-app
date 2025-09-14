@@ -31,3 +31,40 @@ fill: #55606c;
 width: 1.2em;
 margin-right: 10px;
 }
+
+
+
+
+
+<!------ Adsterra -------->
+<div class="adsterra-anchor-fixed">
+  <script type="text/javascript">
+    atOptions = {
+      'key': '7bb9e23e1f2a3af8def78984ec27c5b7',
+      'format': 'iframe',
+      'height': 50,
+      'width': 320,
+      'params': {}
+    };
+  </script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/7bb9e23e1f2a3af8def78984ec27c5b7/invoke.js"></script>
+</div>
+<!------ Adsterra --------->
+
+
+.adsterra-anchor-fixed {
+position: fixed;
+top: 60px;
+left: 0;
+width: 100%;
+text-align: center;
+background: #fff;
+box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;
+z-index: 999;
+}
+.adsterra-anchor-fixed iframe {
+margin: auto;
+display: block;
+border-radius: 13px;
+padding: 8px;
+}

@@ -60,7 +60,7 @@ header {
   height: 60px;
   box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;
   background: #fff;
-  z-index: 10;
+  z-index: 1000;
 }
 header img {
   width: 60px;
@@ -1613,7 +1613,7 @@ border-top-left-radius: 12px;
   margin: auto;
   display: block;
   border-radius: 13px;
-  padding: 10px;
+  padding: 8px;
 }
 /********* Adsterra ***********/
 footer .quick-links{
