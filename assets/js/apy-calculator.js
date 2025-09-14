@@ -1,131 +1,179 @@
-function cleanNumber(value) {
-  return parseFloat(value.replace(/,/g, '')) || 0;
+
+let isSyncing = false;
+
+// Utility: parse numeric input (commas allowed). Returns Number or NaN.
+function getNumberFrom(id) {
+  const el = document.getElementById(id);
+  if (!el) return NaN;
+  const raw = String(el.value ?? '').trim();
+  if (raw === '') return NaN;
+  const num = Number(raw.replace(/,/g, ''));
+  return Number.isFinite(num) ? num : NaN;
 }
 
+// Utility: set value programmatically without triggering cascading loops
+function setValueSafe(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  try {
+    isSyncing = true;
+    el.value = val;
+  } finally {
+    // small timeout to allow input events to finish before clearing flag
+    setTimeout(() => { isSyncing = false; }, 0);
+  }
+}
+
+// Normalize frequency option to an integer number of periods per year
+function periodsPerYear(frequencyValue) {
+  if (!frequencyValue) return NaN;
+  const normalized = String(frequencyValue).replace(/[\s-]/g, '').toLowerCase();
+  switch (normalized) {
+    case 'yearly':
+    case 'annual':
+      return 1;
+    case 'halfyearly':
+    case 'halfyear':
+      return 2;
+    case 'quarterly':
+      return 4;
+    case 'monthly':
+      return 12;
+    case 'weekly':
+      return 52;
+    case 'daily':
+      return 365;
+    default:
+      return NaN;
+  }
+}
+
+// Update APY field from APR input. Returns nominal APR as decimal (e.g., 2.1193)
 function updateFromAPR() {
-  const apr = cleanNumber(document.getElementById('AnnualPercentageRateOfCharge').value);
-  const frequency = document.getElementById('compoundingFrequency').value;
+  const aprNum = getNumberFrom('AnnualPercentageRateOfCharge'); // percent, e.g., 211.93
+  const freqEl = document.getElementById('compoundingFrequency');
+  const n = periodsPerYear(freqEl ? freqEl.value : null);
 
-  const periods = {
-    'Yearly': 1,
-    'Half-Yearly': 2,
-    'Quarterly': 4,
-    'Monthly': 12,
-    'Weekly': 52,
-    'Daily': 365
-  };
-
-  const n = periods[frequency];
-  const r = apr / 100;
-
-  if (!apr || !n) {
-    document.getElementById('AnnualPercentageYield').value = '';
-    return r;
+  if (!Number.isFinite(aprNum) || !Number.isFinite(n)) {
+    setValueSafe('AnnualPercentageYield', '');
+    return NaN;
   }
 
-  const apy = (Math.pow(1 + r / n, n) - 1) * 100;
-  document.getElementById('AnnualPercentageYield').value = apy.toFixed(2);
-  return r;
+  const aprDecimal = aprNum / 100; // nominal APR as decimal
+  const apyDecimal = Math.pow(1 + aprDecimal / n, n) - 1;
+  const apyPercent = apyDecimal * 100;
+  setValueSafe('AnnualPercentageYield', apyPercent.toFixed(2));
+  return aprDecimal;
 }
 
+// Update APR field from APY input. Returns nominal APR as decimal (e.g., 2.1193)
 function updateFromAPY() {
-  const apy = cleanNumber(document.getElementById('AnnualPercentageYield').value);
-  const frequency = document.getElementById('compoundingFrequency').value;
+  const apyNum = getNumberFrom('AnnualPercentageYield'); // percent, e.g., 604
+  const freqEl = document.getElementById('compoundingFrequency');
+  const n = periodsPerYear(freqEl ? freqEl.value : null);
 
-  const periods = {
-    'Yearly': 1,
-    'Half-Yearly': 2,
-    'Quarterly': 4,
-    'Monthly': 12,
-    'Weekly': 52,
-    'Daily': 365
-  };
-
-  const n = periods[frequency];
-  if (!apy || !n) {
-    document.getElementById('AnnualPercentageRateOfCharge').value = '';
-    return 0;
+  if (!Number.isFinite(apyNum) || !Number.isFinite(n)) {
+    setValueSafe('AnnualPercentageRateOfCharge', '');
+    return NaN;
   }
 
-  const r = Math.pow(1 + apy / 100, 1 / n) - 1;
-  const apr = r * n * 100;
-
-  document.getElementById('AnnualPercentageRateOfCharge').value = apr.toFixed(2);
-  return apr / 100;
+  const apyDecimal = apyNum / 100;
+  // periodic rate
+  const periodic = Math.pow(1 + apyDecimal, 1 / n) - 1;
+  const aprDecimal = periodic * n; // nominal APR in decimal
+  const aprPercent = aprDecimal * 100;
+  setValueSafe('AnnualPercentageRateOfCharge', aprPercent.toFixed(2));
+  return aprDecimal;
 }
 
+// Calculate final deposit amount using the nominal APR decimal returned by the update functions
 function calculateResults(source = 'apr') {
-  const principal = cleanNumber(document.getElementById('initialDeposit').value);
-  const term = cleanNumber(document.getElementById('Term').value);
-  const termUnit = document.getElementById('TermDate').value;
+  // prevent running while programmatically updating fields
+  if (isSyncing) return;
 
-  let r;
+  const principal = getNumberFrom('initialDeposit');
+  const term = getNumberFrom('Term');
+  const termUnitEl = document.getElementById('TermDate');
+  const termUnit = termUnitEl ? termUnitEl.value : 'years';
+
+  let aprDecimal = NaN;
   if (source === 'apr') {
-    r = updateFromAPR();
+    aprDecimal = updateFromAPR(); // returns nominal APR decimal (apr/100)
   } else if (source === 'apy') {
-    // only update APR, do NOT calculate final balance
-    updateFromAPY();
+    aprDecimal = updateFromAPY();
+  } else {
+    // fallback: try reading APR field directly
+    const aprNum = getNumberFrom('AnnualPercentageRateOfCharge');
+    aprDecimal = Number.isFinite(aprNum) ? aprNum / 100 : NaN;
+  }
+
+  // If any required value is missing or invalid, clear output and stop
+  if (!Number.isFinite(principal) || principal <= 0 ||
+      !Number.isFinite(term) || term <= 0 ||
+      !Number.isFinite(aprDecimal)) {
+    setValueSafe('Finaldeposit', '');
     return;
   }
 
-  if (principal <= 0 || isNaN(r) || term <= 0) {
-    document.getElementById('Finaldeposit').value = '';
-    return;
-  }
-
+  // convert term to years
   let years;
-  switch (termUnit) {
+  switch ((termUnit || '').toString().toLowerCase()) {
     case 'days': years = term / 365; break;
     case 'weeks': years = term / 52; break;
-    case 'mons': years = term / 12; break;
+    case 'mons': case 'months': years = term / 12; break;
     case 'years':
     default: years = term;
   }
 
-  const frequency = document.getElementById('compoundingFrequency').value;
-  const periods = {
-    'Yearly': 1,
-    'Half-Yearly': 2,
-    'Quarterly': 4,
-    'Monthly': 12,
-    'Weekly': 52,
-    'Daily': 365
-  };
+  const freqEl = document.getElementById('compoundingFrequency');
+  const n = periodsPerYear(freqEl ? freqEl.value : null);
+  if (!Number.isFinite(n)) {
+    setValueSafe('Finaldeposit', '');
+    return;
+  }
 
-  const n = periods[frequency];
+  const amount = principal * Math.pow(1 + aprDecimal / n, n * years);
 
-  const amount = principal * Math.pow(1 + r / n, n * years);
-
-  document.getElementById('Finaldeposit').value = amount.toLocaleString(undefined, {
+  // format output with two decimals and thousands separators
+  const formatted = amount.toLocaleString(undefined, {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2
   });
+  setValueSafe('Finaldeposit', formatted);
 }
 
-// --- Event bindings ---
+// --- Event bindings (guarded) ---
 ['initialDeposit', 'Term', 'TermDate', 'compoundingFrequency'].forEach(id => {
   const el = document.getElementById(id);
+  if (!el) return;
   el.addEventListener('input', () => calculateResults());
   el.addEventListener('change', () => calculateResults());
 });
 
-// Special handling for APR ↔ APY two-way binding
+// Two-way binding for APR <-> APY with recursion guard
 const aprEl = document.getElementById('AnnualPercentageRateOfCharge');
 const apyEl = document.getElementById('AnnualPercentageYield');
 
-aprEl.addEventListener('input', () => {
-  setActiveInput(aprEl);
-  calculateResults('apr');
-});
-
-apyEl.addEventListener('input', () => {
-  setActiveInput(apyEl);
-  calculateResults('apy'); // updates APR but does NOT recalc final balance
-});
+if (aprEl) {
+  aprEl.addEventListener('input', () => {
+    if (isSyncing) return;
+    setActiveInput(aprEl);
+    calculateResults('apr');
+  });
+}
+if (apyEl) {
+  apyEl.addEventListener('input', () => {
+    if (isSyncing) return;
+    setActiveInput(apyEl);
+    calculateResults('apy');
+  });
+}
 
 function setActiveInput(el) {
-  [aprEl, apyEl].forEach(e => e.classList.add('result'));
+  if (!el) return;
+  [aprEl, apyEl].forEach(e => { if (e) e.classList.add('result'); });
   el.classList.remove('result');
 }
 
+// initial compute on load
 window.addEventListener('DOMContentLoaded', () => calculateResults('apr'));
