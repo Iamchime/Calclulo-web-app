@@ -163,14 +163,15 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /****** closing side bar when links are clicked *************/
-let sideBar = document.querySelector(".side-nav");
 
 document.querySelectorAll(".side-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
-    // remove the sidebar before redirect
     closeNav();
-    
-    // let the link redirect naturally after sidebar closes
-    // (no need to preventDefault unless you want custom handling)
   });
+});
+
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".search-results-a")) {
+    closeNav();
+  }
 });

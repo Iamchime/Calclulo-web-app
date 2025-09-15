@@ -1365,7 +1365,6 @@ function clearError(input) {
 }
 
 /****** closing side bar when links are clicked *************/
-//let sideBar = document.querySelector(".side-nav");
 
 document.querySelectorAll(".side-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
@@ -1373,8 +1372,6 @@ document.querySelectorAll(".side-nav a").forEach((link) => {
   });
 });
 
-//let resultsDivSearch = document.querySelector(".search-results-div");
-// Assuming your results are inside a container like .search-results
 document.addEventListener("click", (e) => {
   if (e.target.closest(".search-results-a")) {
     closeNav();
