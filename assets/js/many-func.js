@@ -1374,12 +1374,15 @@ document.querySelectorAll(".side-nav a").forEach((link) => {
 });
 
 //let resultsDivSearch = document.querySelector(".search-results-div");
-if (document.querySelectorAll(".search-results-a"))
-document.querySelectorAll(".search-results-a").forEach((link) => {
-  link.addEventListener("click", (e) => {
-    closeNav();
+const links = document.querySelectorAll(".search-results-a");
+
+if (links.length > 0) {
+  links.forEach((link) => {
+    link.addEventListener("click", () => {
+      closeNav();
+    });
   });
-});
+}
 
 
 /******************* read more or less ******************/
