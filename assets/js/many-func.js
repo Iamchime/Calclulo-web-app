@@ -1364,4 +1364,6 @@ function clearError(input) {
   
 }
 
-/****** dragging containers *************/
+/****** closing side bar when links are clicked *************/
+let sideBar = document.querySelector(".side-nav");
+document.querySelectorAll("a").forEach((link) => {sideBar.onclick = e => sideBar.classList.add("active")})
