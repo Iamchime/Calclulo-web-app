@@ -1365,7 +1365,7 @@ function clearError(input) {
 }
 
 /****** closing side bar when links are clicked *************/
-let sideBar = document.querySelector(".side-nav");
+//let sideBar = document.querySelector(".side-nav");
 
 document.querySelectorAll(".side-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
@@ -1373,9 +1373,9 @@ document.querySelectorAll(".side-nav a").forEach((link) => {
   });
 });
 
-let resultsDivSearch = document.querySelector(".search-results-div");
+//let resultsDivSearch = document.querySelector(".search-results-div");
 
-document.querySelectorAll(".search-results-div a").forEach((link) => {
+document.querySelectorAll(".search-results-a").forEach((link) => {
   link.addEventListener("click", (e) => {
     closeNav();
   });
