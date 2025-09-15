@@ -747,10 +747,7 @@ function resetCalculator() {
     // 🔥 Add overlay animation
 container.classList.add("flash-overlay", "flash");
 
-// Remove animation classes after 800ms
-setTimeout(() => {
-  container.classList.remove("flash", "flash-overlay");
-}, 800);
+container.onanimationend = () => container.classList.remove("flash", "flash-overlay");
   });
   
   // extra results divs...
