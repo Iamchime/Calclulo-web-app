@@ -1366,4 +1366,13 @@ function clearError(input) {
 
 /****** closing side bar when links are clicked *************/
 let sideBar = document.querySelector(".side-nav");
-document.querySelectorAll("a").forEach((link) => {sideBar.onclick = e => sideBar.classList.add("active")})
+
+document.querySelectorAll(".side-nav a").forEach((link) => {
+  link.addEventListener("click", (e) => {
+    // remove the sidebar before redirect
+    sideBar.classList.remove("active");
+    
+    // let the link redirect naturally after sidebar closes
+    // (no need to preventDefault unless you want custom handling)
+  });
+});
