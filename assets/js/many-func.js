@@ -1374,7 +1374,7 @@ document.querySelectorAll(".side-nav a").forEach((link) => {
 });
 
 //let resultsDivSearch = document.querySelector(".search-results-div");
-
+if (document.querySelectorAll(".search-results-a"))
 document.querySelectorAll(".search-results-a").forEach((link) => {
   link.addEventListener("click", (e) => {
     closeNav();
