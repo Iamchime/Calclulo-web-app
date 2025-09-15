@@ -1,5 +1,8 @@
 User-agent: *
 Disallow: /favourites
+Disallow: /404
+Disallow: /pwa-start-page
+
 Allow: /
 
 Sitemap: https://calclulo.com/sitemap.xml
