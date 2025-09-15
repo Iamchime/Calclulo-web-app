@@ -195,10 +195,278 @@ Everyday Life
 </h1>
 
 <p data-name-category="statistics" class="description-header-info-calculator-numb"></p>
-
-  <p class="category-info-p">
-    winning the lottery? Or how dangerous to make such a bet? Never mind, perhaps you only want to know how many times you would have to toss a dice, before your roll comes out your winning number. These are all statistics problems all the way down to it stuff, and we have simple calculators so that you do not have to struggle with them. Our odds calculators to probability tools will assist in being smarter and see problems through at a faster rate. On the trip you can even learn time wasting tricks to impress your friends to get the best tricks to show them how their guarantees of victory are almost impossible (and you alone know how much math goes behind such a trick 😉).
+<!--
+<div class="category-info">
+  <p class="category-info-p clamped" id="categoryText">
+    
   </p>
+
+  <button class="read-more-btn" id="toggleBtn"
+          aria-expanded="false" aria-controls="categoryText">
+    <span id="btnText">Read more</span>
+    
+    <svg class="chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+      <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</div>
+
+<style>
+
+  .category-info { max-width: 800px; }
+  .category-info-p { margin: 0; line-height: 1.5; }
+
+  /* Multi line clamp with ellipsis (modern browsers) */
+  .clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4; /* preview lines count — change as needed */
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* subtle fade for non-clamp fallback */
+  .clamped::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.6em;
+    background: linear-gradient(transparent, white);
+  }
+
+  /* when expanded, remove clamp */
+  .category-info-p.expanded {
+    -webkit-line-clamp: unset;
+    display: block;
+  }
+  .category-info-p.expanded::after { display: none; }
+
+  .read-more-btn {
+    margin-top: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    text-decoration: underline;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    padding: 4px;
+    color: #0073e6;
+  }
+
+  .chev { width: 14px; height: 9px; transition: transform 250ms ease; }
+  .read-more-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+
+  /* hide button when JS determines it's not needed */
+  .read-more-btn.hidden { display: none; }
+</style>
+
+<script>
+  (function () {
+    const text = document.getElementById('categoryText');
+    const btn = document.getElementById('toggleBtn');
+    const btnText = document.getElementById('btnText');
+    const storageKey = 'categoryTextExpanded_v1';
+
+    function updateButton(expanded) {
+      btn.setAttribute('aria-expanded', expanded);
+      btnText.textContent = expanded ? 'Read less' : 'Read more';
+    }
+
+    function setExpanded(expanded, save = true) {
+      if (expanded) text.classList.add('expanded');
+      else text.classList.remove('expanded');
+      updateButton(expanded);
+      if (save) localStorage.setItem(storageKey, expanded ? '1' : '0');
+    }
+
+    // Determine if the full text is larger than the clamped preview.
+    // We clone the node to measure natural height without clamp styles.
+    function needsToggle() {
+      const clone = text.cloneNode(true);
+      // put clone offscreen so it doesn't affect layout
+      clone.style.position = 'absolute';
+      clone.style.visibility = 'hidden';
+      clone.style.display = 'block';
+      clone.style.webkitLineClamp = 'unset';
+      clone.style.maxHeight = 'none';
+      document.body.appendChild(clone);
+      const fullHeight = clone.getBoundingClientRect().height;
+      document.body.removeChild(clone);
+      const visibleHeight = text.getBoundingClientRect().height;
+      return fullHeight > (visibleHeight + 1); // small tolerance
+    }
+
+    // Toggle on click
+    btn.addEventListener('click', () => {
+      setExpanded(!text.classList.contains('expanded'));
+    });
+
+    // on load: hide button if not needed, restore saved state
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        if (!needsToggle()) {
+          btn.classList.add('hidden');
+        } else {
+          // restore previous state
+          const saved = localStorage.getItem(storageKey);
+          if (saved === '1') setExpanded(true, false);
+        }
+      } catch (e) {
+        // graceful fallback: show the button if measurement fails
+        console.warn('Read more toggle measurement failed', e);
+      }
+    });
+  })();
+</script>-->
+<!-- HTML -->
+<div class="category-info">
+  <p class="category-info-p clamped" id="categoryText">
+    winning the lottery? Or how dangerous to make such a bet? Never mind, perhaps you only want to know how many times you would have to toss a dice, before your roll comes out your winning number. These are all statistics problems all the way down to it stuff, and we have simple calculators so that you do not have to struggle with them. Our odds calculators to probability tools will assist in being smarter and see problems through at a faster rate. On the trip you can even learn time wasting tricks to impress your friends to get the best tricks to show them how their guarantees of victory are almost impossible (and you alone know how much math goes behind such a trick 😉
+�).
+  </p>
+
+  <button class="read-more-btn" id="toggleBtn"
+          aria-expanded="false" aria-controls="categoryText">
+    <span id="btnText">Read more</span>
+
+    <!-- exact SVG you provided (kept intact) -->
+    <svg class="chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+      <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+</div>
+
+<!-- CSS -->
+<style>
+  .category-info { max-width: 800px; }
+  .category-info-p { margin: 0; line-height: 1.5; }
+
+  /* clamp with ellipsis */
+  .clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4; /* change number of preview lines here */
+    overflow: hidden;
+    position: relative;
+  }
+  .clamped::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.6em;
+    background: linear-gradient(transparent, white);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  .category-info-p.expanded {
+    -webkit-line-clamp: unset;
+    display: block;
+  }
+  .category-info-p.expanded::after { display: none; }
+
+  .read-more-btn {
+    font-family: young;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    padding: 4px;
+    color: #2F33C2;
+    user-select: none;
+    text-decoration: underline dashed #2F33C2 2px;
+  }
+ .read-more-btn:hover{
+   color: #282B93;
+ }
+  /* ---------- exact inline SVG styling ---------- */
+  .chev {
+    width: 14px;
+    height: 9px;
+    /* the path uses stroke="currentColor" so setting color affects stroke */
+    color: #3539EA;           /* your requested color */
+    transform-origin: 50% 50%;
+    transition: transform 320ms cubic-bezier(.2,.9,.2,1); /* smooth */
+    will-change: transform;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  /* rotate when expanded */
+  .read-more-btn[aria-expanded="true"] .chev {
+    transform: rotate(180deg);
+  }
+
+  /* hide button when not needed */
+  .read-more-btn.hidden { display: none; }
+</style>
+
+<!-- JS -->
+<script>
+  (function () {
+    const text = document.getElementById('categoryText');
+    const btn = document.getElementById('toggleBtn');
+    const btnText = document.getElementById('btnText');
+    const storageKey = 'categoryTextExpanded_v1';
+
+    function updateButton(expanded) {
+      btn.setAttribute('aria-expanded', expanded);
+      btnText.textContent = expanded ? 'Read less' : 'Read more';
+    }
+
+    function setExpanded(expanded, save = true) {
+      if (expanded) text.classList.add('expanded');
+      else text.classList.remove('expanded');
+      updateButton(expanded);
+      if (save) localStorage.setItem(storageKey, expanded ? '1' : '0');
+    }
+
+    // Measure whether the text overflows the clamped preview.
+    function needsToggle() {
+      // Clone original paragraph, remove clamp class to measure full height
+      const clone = text.cloneNode(true);
+      clone.style.position = 'absolute';
+      clone.style.visibility = 'hidden';
+      clone.style.display = 'block';
+      clone.classList.remove('clamped');
+      clone.classList.remove('expanded');
+      document.body.appendChild(clone);
+      const fullH = clone.getBoundingClientRect().height;
+      document.body.removeChild(clone);
+      const visibleH = text.getBoundingClientRect().height;
+      return fullH > (visibleH + 1);
+    }
+
+    btn.addEventListener('click', () => {
+      setExpanded(!text.classList.contains('expanded'));
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        if (!needsToggle()) {
+          btn.classList.add('hidden');
+          return;
+        }
+        const saved = localStorage.getItem(storageKey);
+        if (saved === '1') setExpanded(true, false);
+      } catch (e) {
+        console.warn('Read more measurement failed', e);
+      }
+    });
+  })();
+</script>
+  
 </div>
 
 <div class="calculators-lists">
