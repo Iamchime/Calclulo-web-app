@@ -1376,3 +1376,59 @@ document.querySelectorAll(".side-nav a").forEach((link) => {
     // (no need to preventDefault unless you want custom handling)
   });
 });
+
+
+/******************* read more or less ******************/
+
+ (function() {
+   if(document.getElementById('categoryText')){
+   const text = document.getElementById('categoryText');
+   const btn = document.getElementById('toggleBtn');
+   const btnText = document.getElementById('btnText');
+   const storageKey = 'categoryTextExpanded_v1';
+   
+   function updateButton(expanded) {
+     btn.setAttribute('aria-expanded', expanded);
+     btnText.textContent = expanded ? 'Read less' : 'Read more';
+   }
+   
+   function setExpanded(expanded, save = true) {
+     if (expanded) text.classList.add('expanded');
+     else text.classList.remove('expanded');
+     updateButton(expanded);
+     if (save) localStorage.setItem(storageKey, expanded ? '1' : '0');
+   }
+   
+   // Measure whether the text overflows the clamped preview.
+   function needsToggle() {
+     // Clone original paragraph, remove clamp class to measure full height
+     const clone = text.cloneNode(true);
+     clone.style.position = 'absolute';
+     clone.style.visibility = 'hidden';
+     clone.style.display = 'block';
+     clone.classList.remove('clamped');
+     clone.classList.remove('expanded');
+     document.body.appendChild(clone);
+     const fullH = clone.getBoundingClientRect().height;
+     document.body.removeChild(clone);
+     const visibleH = text.getBoundingClientRect().height;
+     return fullH > (visibleH + 1);
+   }
+   
+   btn.addEventListener('click', () => {
+     setExpanded(!text.classList.contains('expanded'));
+   });
+   
+   window.addEventListener('DOMContentLoaded', () => {
+     try {
+       if (!needsToggle()) {
+         btn.classList.add('hidden');
+         return;
+       }
+       const saved = localStorage.getItem(storageKey);
+       if (saved === '1') setExpanded(true, false);
+     } catch (e) {
+       console.warn('Read more measurement failed', e);
+     }
+   });
+}else return })();

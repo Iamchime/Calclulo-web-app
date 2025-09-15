@@ -58,7 +58,7 @@
 })();
 
 /****** closing side bar when links are clicked *************/
-let sideBar = document.querySelector(".side-nav");
+let sideBarFavourite = document.querySelector(".side-nav");
 
 document.querySelectorAll(".side-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {

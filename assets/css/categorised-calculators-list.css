@@ -261,13 +261,81 @@ margin-top: 1.5em;
 }
 
 .category-info-p{
-  line-height: 1.5;
-font-size: .92em;
+  line-height: 1.75;
+font-size: 1em;
 color: #42445ACC;
 margin-top: 1.5em;
 margin-bottom: 1.5em;
 font-family: "Young";
 }
+  .category-info { max-width: 800px; }
+  .category-info-p { margin: 0; line-height: 1.5; }
+
+  .clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4; 
+    overflow: hidden;
+    position: relative;
+    padding-bottom: .3em;
+  }
+  .clamped::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1.6em;
+    background: linear-gradient(transparent, white);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  .category-info-p.expanded {
+    -webkit-line-clamp: unset;
+    display: block;
+  }
+  .category-info-p.expanded::after { display: none; }
+
+  .read-more-btn {
+    font-family: young;
+    margin-top: 8px;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    padding: 4px;
+    color: #2F33C2;
+    user-select: none;
+    text-decoration: underline;
+  }
+ .read-more-btn:hover{
+   color: #282B93;
+}
+.read-more-btn:hover .chev{
+  color: #2F33C2;
+}
+
+  .chev {
+    width: 14px;
+    height: 9px;
+
+    color: #3539EA;
+    transform-origin: 50% 50%;
+    transition: transform 320ms cubic-bezier(.2,.9,.2,1);
+    will-change: transform;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  .read-more-btn[aria-expanded="true"] .chev {
+    transform: rotate(180deg);
+  }
+
+  .read-more-btn.hidden { display: none; }
 
 .hero-sec-one {
   display: flex;

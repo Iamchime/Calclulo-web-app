@@ -196,9 +196,17 @@ Everyday Life
 
 <p data-name-category="finance" class="description-header-info-calculator-numb"></p>
 
-  <p class="category-info-p">
+  <p class="category-info-p clamped" id="categoryText">
   Money is involved in almost all aspects of life, such as shopping, saving, and investments and management of a business. However, it can also be overwhelming to track it all, and when numbers and decisions begin to mount the process can become overwhelming. Our finance calculators come in at that point. They make complicated tasks seem simple as it provides you with straightforward answers to questions related to budgeting, savings, loans, investments, and others. These tools will allow you to be in control of your finances, be it when struggling with personal expenses, planning or operating a business.
   </p>
+  <button class="read-more-btn" id="toggleBtn"
+          aria-expanded="false" aria-controls="categoryText">
+    <span id="btnText">Read more</span>
+
+    <svg class="chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
+      <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
 </div>
 
 <div class="calculators-lists">
