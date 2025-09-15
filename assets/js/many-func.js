@@ -1374,15 +1374,12 @@ document.querySelectorAll(".side-nav a").forEach((link) => {
 });
 
 //let resultsDivSearch = document.querySelector(".search-results-div");
-const links = document.querySelectorAll(".search-results-a");
-
-if (links.length > 0) {
-  links.forEach((link) => {
-    link.addEventListener("click", () => {
-      closeNav();
-    });
-  });
-}
+// Assuming your results are inside a container like .search-results
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".search-results-a")) {
+    closeNav();
+  }
+});
 
 
 /******************* read more or less ******************/
