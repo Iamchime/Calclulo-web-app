@@ -1369,11 +1369,15 @@ let sideBar = document.querySelector(".side-nav");
 
 document.querySelectorAll(".side-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
-    // remove the sidebar before redirect
     closeNav();
-    
-    // let the link redirect naturally after sidebar closes
-    // (no need to preventDefault unless you want custom handling)
+  });
+});
+
+let resultsDivSearch = document.querySelector(".search-results-div");
+
+document.querySelectorAll(".search-results-div a").forEach((link) => {
+  link.addEventListener("click", (e) => {
+    closeNav();
   });
 });
 

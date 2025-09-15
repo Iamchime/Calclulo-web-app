@@ -69,3 +69,11 @@ document.querySelectorAll(".side-nav a").forEach((link) => {
     // (no need to preventDefault unless you want custom handling)
   });
 });
+
+let resultsDivSearchFavourite = document.querySelector(".search-results-div");
+
+document.querySelectorAll(".search-results-div a").forEach((link) => {
+  link.addEventListener("click", (e) => {
+    closeNav();
+  });
+});
