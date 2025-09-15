@@ -56,3 +56,16 @@
     });
   });
 })();
+
+/****** closing side bar when links are clicked *************/
+let sideBar = document.querySelector(".side-nav");
+
+document.querySelectorAll(".side-nav a").forEach((link) => {
+  link.addEventListener("click", (e) => {
+    // remove the sidebar before redirect
+    closeNav();
+    
+    // let the link redirect naturally after sidebar closes
+    // (no need to preventDefault unless you want custom handling)
+  });
+});
