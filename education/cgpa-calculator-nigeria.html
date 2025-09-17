@@ -192,7 +192,7 @@ Everyday Life
 </div>
 
 <div class="ng-cgpa-container">
-  <div class="summary">
+  <div class="container summary">
     <div><strong>CGPA:</strong> <span id="cgpaDisplay">0.00</span></div>
     <div><strong>Units Total:</strong> <span id="totalUnits">0</span></div>
     <div class="progress-circle" id="progressCircle" style="--percent: 0%">0.00</div>
@@ -371,10 +371,9 @@ Everyday Life
 
   <style>
 .ng-cgpa-container{
-  width: 90%;
-  max-width: 550px;
+  width: 100%;
+  max-width: 432px;
   position: relative;
-  padding: 15px;
 }
 summary{
   display: flex;
@@ -382,15 +381,16 @@ summary{
   position: relative;
 }
 div[semesterNG] {
-  width: 100%;
-  /*max-width: 550px;*/
+  width: 90%;
+  max-width: 400px;
   position: relative;
- /* padding: 15px;*/
+ padding: 15px;
+margin-left: 0;
 }
   .summary {
     text-align: center;
-    margin-bottom: 20px;
     font-size: 18px;
+margin-left: 0;
   }
   
 .btn-wrap{
@@ -582,13 +582,6 @@ outline: 3px solid #464BFF14;
   text-align: center;
 }
 
-/*.course-row {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 40px; 
-  gap: 10px;
-  margin-bottom: 0px;
-  align-items: center;
-}*/
   </style>
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
