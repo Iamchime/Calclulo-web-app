@@ -8,8 +8,8 @@ html {
   font-style: normal;
 }
 @font-face {
-  font-family: 'OfficeCode';
-  src: url("/assets/fonts/officecodepro-medium.woff2");
+  font-family: 'zalando';
+  src: url("/assets/fonts/ZalandoSansExpanded-Medium.woff2");
   font-weight: 400;
   font-style: normal;
 }
@@ -620,9 +620,11 @@ margin-bottom: 15px;
             outline: 3px solid transparent;
             outline: none;
             transition: .25s;
-            font-family: "OfficeCode";
+            font-family: "zalando";
             background: #fff;
-         /* height: 20px;*/
+            font-size: 1em;
+          height: 20px;
+          letter-spacing: 1px;
         }
         .input-group input::placeholder{
           font-size: 16px;
@@ -765,7 +767,7 @@ border-radius: 8px;
 outline: 3px solid transparent;
 outline: none;
 transition: .25s;
-font-family: "OfficeCode";
+font-family: "zalando";
 background: #fff;
 height: 20px;
 overflow: hidden;
@@ -802,6 +804,7 @@ color: #42445AED;
 background: #fff;
 outline: none;
 border: none;
+font-family: zalando;
 }
 .unit-display{
   font-family: young;
@@ -947,7 +950,7 @@ outline: none;
 .symbol {
   font-weight: 600;
   width: 50px;
-  font-family: officecode;
+  font-family: zalando;
   color: #42445ACC;
 }
 
@@ -1481,7 +1484,6 @@ line-height: 1.72;
   margin-top: -1em;
 }
 ul li::marker {
-  color: red;
   font-size: 1.4em;
   color: #464BFF36;
 }

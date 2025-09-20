@@ -508,7 +508,7 @@ const currencies = [
   { code: "MAD", name: "Moroccan Dirham", symbol: "د.م.", sign: "MAD" },
   { code: "EGP", name: "Egyptian Pound", symbol: "£", sign: "E£" },
   
-  // --- Major Cryptocurrencies ---
+  // --- Cryptocurrencies ---
 { code: "BTC", name: "Bitcoin", symbol: "₿", sign: "₿" },
 { code: "ETH", name: "Ethereum", symbol: "Ξ", sign: "ETH" },
 { code: "BNB", name: "BNB", symbol: "BNB", sign: "BNB" },
