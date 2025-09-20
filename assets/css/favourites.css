@@ -160,6 +160,38 @@ transition: .3s;
 .searchBtn-2:active {
   transform: scale(.9);
 }
+/******************* search **********************/
+.search-results-div .search-results-a {
+  border-radius: .3em;
+  margin: .4em;
+  cursor: none;
+  font-size: .85em;
+  transition: .2s;
+  position: relative;
+  display: block;
+padding: 10px;
+text-decoration: none;
+color: #333;
+border: none;
+}
+
+.search-results-div .search-results-a:hover {
+  background: #4F51630F;
+}
+
+.search-results-div p {
+  font-size: .85em;
+  text-align: center;
+}
+.search-results-div .search-results-a span{
+  margin-left: .4em;
+  text-transform: lowercase;
+  color: #42445A94;
+}
+.search-results-a{
+  display: flex;
+}
+/*******************************/
 .side-nav {
   position: fixed;
   top: 0;

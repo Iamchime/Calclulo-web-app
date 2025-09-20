@@ -7,7 +7,7 @@
 
 <title>404 - Page Not Found</title>   <!-- Google Tag Manager --> <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5BVJ6KMT');</script> <!-- End Google Tag Manager -->
 <link rel="stylesheet" href="/assets/css/calculators-styles-global.css" />
-<link rel="stylesheet" href="/assets/css/search.css" />
+
 
 <link href="/favicons/favicon.png" rel="icon" sizes="48x48">
 <link href="/favicons/favicon-128.png" rel="icon" sizes="128x128">
@@ -353,8 +353,88 @@ transition: .2s;
 </style>
 
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
-<script src="/assets/js/header-functions.js" defer crossorigin="anonymous"></script>
-<script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
+
+<script defer crossorigin="anonymous">
+  /*********** header functions **************/
+const hamburger = document.querySelector("#hamburger-menu");
+const nav = document.querySelector(".side-nav");
+const closeBtn = document.querySelector(".close-nav-btn");
+const searchBtn = document.querySelector("#search-btn");
+const searchGlobalInput = document.querySelector("#search-global-input");
+
+let overlay = null;
+let isNavOpen = false;
+let isAnimating = false;
+
+function openNav() {
+  if (isNavOpen || isAnimating) return; // Prevent if already open or animating
+
+  isAnimating = true;
+  nav.classList.add("active");
+  document.body.classList.add("no-scroll");
+
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+    document.body.appendChild(overlay);
+
+    // Click outside closes nav
+    overlay.addEventListener("click", closeNav);
+  }
+
+  // Use requestAnimationFrame for fade-in
+  requestAnimationFrame(() => {
+    overlay.classList.add("visible");
+  });
+
+  isNavOpen = true;
+
+  // Wait for fade-in transition to complete before allowing another toggle
+  overlay.addEventListener(
+    "transitionend",
+    () => {
+      isAnimating = false;
+    },
+    { once: true }
+  );
+}
+
+function closeNav() {
+  if (!isNavOpen || isAnimating) return; // Prevent if already closed or animating
+
+  isAnimating = true;
+  nav.classList.remove("active");
+  document.body.classList.remove("no-scroll");
+
+  if (overlay) {
+    overlay.classList.remove("visible");
+
+    // Remove overlay after fade-out transition
+    overlay.addEventListener(
+      "transitionend",
+      () => {
+        overlay?.remove();
+        overlay = null;
+        isAnimating = false;
+      },
+      { once: true }
+    );
+  } else {
+    isAnimating = false;
+  }
+  
+  isNavOpen = false;
+  searchGlobalInput.value = "";
+}
+
+searchBtn.addEventListener("click", () => {
+  openNav();
+  searchGlobalInput.focus();
+});
+hamburger.addEventListener("click", openNav);
+closeBtn.addEventListener("click", closeNav);
+/*******************************/
+</script>
 </body>
 
 </html>
