@@ -1892,7 +1892,7 @@ document.addEventListener("click", (e) => {
     });
 
     isDrawerOpen = true;
-    },150);
+    },15000);
   }
 
   function startCloseFlow() {
