@@ -10,8 +10,8 @@ let isNavOpen = false;
 let isAnimating = false;
 
 function openNav() {
-  if (isNavOpen || isAnimating) return; // Prevent if already open or animating
-
+  if (isNavOpen || isAnimating) return;
+  
   isAnimating = true;
   nav.classList.add("active");
   document.body.classList.add("no-scroll");
@@ -21,18 +21,15 @@ function openNav() {
     overlay.classList.add("overlay");
     document.body.appendChild(overlay);
 
-    // Click outside closes nav
     overlay.addEventListener("click", closeNav);
   }
 
-  // Use requestAnimationFrame for fade-in
   requestAnimationFrame(() => {
     overlay.classList.add("visible");
   });
 
   isNavOpen = true;
 
-  // Wait for fade-in transition to complete before allowing another toggle
   overlay.addEventListener(
     "transitionend",
     () => {
@@ -43,7 +40,7 @@ function openNav() {
 }
 
 function closeNav() {
-  if (!isNavOpen || isAnimating) return; // Prevent if already closed or animating
+  if (!isNavOpen || isAnimating) return;
 
   isAnimating = true;
   nav.classList.remove("active");
@@ -52,7 +49,6 @@ function closeNav() {
   if (overlay) {
     overlay.classList.remove("visible");
 
-    // Remove overlay after fade-out transition
     overlay.addEventListener(
       "transitionend",
       () => {
@@ -76,21 +72,21 @@ searchBtn.addEventListener("click", () => {
 });
 hamburger.addEventListener("click", openNav);
 closeBtn.addEventListener("click", closeNav);
+
 /*******************************/
 /********** list the total number of calculators in a category *********/
 
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // Fetch JSON file
+    
     const response = await fetch("/assets/keywords.json");
     const data = await response.json();
     const tools = data.tools || [];
     
-    // Count calculators by category (normalize names)
     const categoryCount = {};
     tools.forEach(tool => {
       let category = tool.category.trim().toLowerCase();
-      // Remove words like "calculators" or "calculator" for easier matching
+     
       category = category.replace(/calculators?/gi, "").trim();
       
       if (!categoryCount[category]) {
@@ -99,17 +95,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       categoryCount[category]++;
     });
     
-    // Select all spans and update numbers
     document.querySelectorAll(".description-header-info-calculator-numb").forEach(span => {
       const dataCategory = span.dataset.nameCategory?.trim().toLowerCase() || "";
       
-      // Normalize like above
       const normalizedCategory = dataCategory.replace(/calculators?/gi, "").trim();
       
-      // Find matching count
       const count = categoryCount[normalizedCategory] || 0;
       
-      // Update span text
       span.textContent = `${count} calculator${count !== 1 ? "s" : ""}`;
       
       if(count == 0)
@@ -121,14 +113,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-/************pwa helper
+/************ PWA helper
  ******/
  document.addEventListener("DOMContentLoaded", () => {
   const homeLink = document.querySelector(".home-link");
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches;
   
-  // Function to update the link dynamically
   const updateHomeLink = () => {
     if (!homeLink) return;
     if (isStandalone) {
@@ -138,26 +129,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
   
-  // Update the link on page load
-  updateHomeLink();
+updateHomeLink();
   
-  // Auto-redirect if user is on index but should be on pwa-start-page
   if (
     (isStandalone) &&
     window.location.pathname === "/index"
   ) {
     window.location.replace("/pwa-start-page");
   }
-  
-  // Listen for orientation changes
+
   window.addEventListener("resize", updateHomeLink);
 });
 
-/*********************************
- * Progressive Web App
- *********************************/
+/********************************
+  Progressive Web App
+ *******************************/
 
-// Register service worker
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
@@ -170,43 +157,39 @@ if ('serviceWorker' in navigator) {
 let deferredPrompt = null;
 const installBtn = document.getElementById('installPwaBtn');
 
-// Listen for the install prompt event
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
   
-  // Show the button when app is installable
   installBtn.style.display = 'inline-flex';
 });
 
-// Function to show install prompt when button is clicked
 function InstallPwa() {
   if (!deferredPrompt) {
     console.log("PWA install prompt is not available yet.");
     return;
   }
   
-  // Show install popup
   deferredPrompt.prompt();
   
-  // Wait for user action
   deferredPrompt.userChoice.then((choiceResult) => {
     if (choiceResult.outcome === 'accepted') {
       console.log('User accepted the PWA install prompt ✅');
     } else {
       console.log('User dismissed the PWA install prompt ❌');
     }
-    deferredPrompt = null; // Reset after use
-    installBtn.style.display = 'none'; // Hide button after installing
+    deferredPrompt = null;
+    
+    installBtn.style.display = 'none';
   });
 }
 
-// Hide install button if app is already installed
 window.addEventListener('appinstalled', () => {
   console.log('PWA installed successfully 🎉');
   deferredPrompt = null;
   installBtn.style.display = 'none';
 });
+
 /********** share global *************************/
 document.querySelector(".global-share-btn").addEventListener("click", () => {
   const overlay = document.createElement("div");
@@ -248,7 +231,7 @@ document.querySelector(".global-share-btn").addEventListener("click", () => {
   
   overlay.appendChild(modal);
   document.body.appendChild(overlay);
-  //
+  
   document.querySelectorAll('.share-to-social-icon-url a').forEach(link => {
     link.addEventListener('click', function(e) {
       e.preventDefault();
@@ -285,7 +268,7 @@ document.querySelector(".global-share-btn").addEventListener("click", () => {
   copyBtn.onclick = () => {
     navigator.clipboard.writeText(window.location.href);
   }
-  //
+  
   setTimeout(() => {
     overlay.classList.add("visible");
     modal.classList.add("visible");
@@ -305,11 +288,10 @@ document.querySelector(".global-share-btn").addEventListener("click", () => {
   
   modal.querySelector(".close-share-modal").addEventListener("click", closeModal);
 });
-/********************************/
+/*******************************/
 
-/*****************************
- * cookie management 
- */
+/***************************** cookie management 
+**************************/
  document.addEventListener("DOMContentLoaded", () => {
   if (!document.cookie.includes("accepted_cookies=yes")) {
     const cookieBox = document.createElement("div");
@@ -354,7 +336,7 @@ document.querySelectorAll('.input-group #input-tip-icon').forEach((icon) => {
     const group = icon.closest('.input-group');
     const tip = group.querySelector('.input-tips');
     
-    if (tip.classList.contains('animating')) return; // Ignore rapid clicks during active animation
+    if (tip.classList.contains('animating')) return; 
     
     if (tip.classList.contains('open')) {
       collapseTip(tip, icon);
@@ -788,12 +770,10 @@ function openCurrencyPopup() {
   createCurrencyPopup();
   const popup = document.getElementById("currencyPopup");
   
-  // Force a reflow so transition triggers properly
   void popup.offsetWidth;
   
   popup.classList.add("active");
   
-  // Disable background scrolling
   document.body.style.overflow = "hidden";
 }
 
@@ -802,13 +782,6 @@ function closeCurrencyPopup() {
   if (popup) {
     popup.classList.remove("active");
     
-    // Wait for fade-out before removing from DOM
-    
-    /*
-    setTimeout(() => {
-      popup.remove();
-      document.body.style.overflow = "";
-    }, 300); // Match CSS transition duration*/
     popup.ontransitionend = () => {
       popup.remove();
 document.body.style.overflow = "";
@@ -844,15 +817,15 @@ function loadSavedCurrency() {
     document.querySelectorAll(".currency-or-unit-display").forEach(span => {
       span.textContent = currency.symbol;
     });
-    //
+    
     document.querySelectorAll(".naira-to-selected-currency-car-custom-duty").forEach(span => {
   span.textContent = currency.symbol;
 });
-    //
+    
     document.querySelectorAll(".currency-display-for-tooltip").forEach(span => {
   span.textContent = currency.name;
 });
-    //
+    
     document.querySelectorAll(".currency-display-for-expanded-results").forEach(span => {
   span.textContent = currency.symbol;
 });
@@ -866,27 +839,20 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
-
 document.addEventListener("DOMContentLoaded", () => {
   const svgElements = document.querySelectorAll(".currency-select-svg");
   
   svgElements.forEach(svg => {
-    // Create tooltip element
     const tooltip = document.createElement("div");
     tooltip.className = "currency-tooltip";
     tooltip.textContent = "Choose your preferred Currency";
     document.body.appendChild(tooltip);
     
-    // Position the tooltip above the SVG
     const rect = svg.getBoundingClientRect();
-    tooltip.style.top = rect.top - 30 + "px"; // 35px above the SVG
+    tooltip.style.top = rect.top - 30 + "px";
     tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + "px";
     
-    
-    // Optional: show automatically for 3 seconds on page load
     setTimeout(() => {
-      
       
       tooltip.classList.add("visible");
       setTimeout(() => tooltip.classList.remove("visible"), 5000);
@@ -901,37 +867,33 @@ function resetCalculator() {
   const containers = document.querySelectorAll(".container");
   
   containers.forEach(container => {
-    // Reset all input fields except read-only ones
+
     const inputs = container.querySelectorAll("input:not([readonly]):not([type='radio']):not([type='checkbox'])");
     inputs.forEach(input => {
       input.value = "";
     });
     
-    // Reset all selects to their first option
     const selects = container.querySelectorAll("select");
     selects.forEach(select => {
       select.selectedIndex = 0;
     });
     
-    // ✅ Reset checkboxes (uncheck them)
     const checkboxes = container.querySelectorAll("input[type='checkbox']");
     checkboxes.forEach(checkbox => {
       checkbox.checked = false;
     });
     
-    // ✅ Reset radios (default to the first one or specific one like "No")
     const radioGroups = {};
     const radios = container.querySelectorAll("input[type='radio']");
     radios.forEach(radio => {
       if (!radioGroups[radio.name]) {
-        radioGroups[radio.name] = radio; // store first radio of each group
+        radioGroups[radio.name] = radio;
       }
     });
     Object.values(radioGroups).forEach(defaultRadio => {
       defaultRadio.checked = true;
     });
     
-    // Reset output fields if any
     const outputs = container.querySelectorAll("input[readonly], .result, .output");
     outputs.forEach(output => {
       if (output.tagName.toLowerCase() === "input") {
@@ -941,12 +903,10 @@ function resetCalculator() {
       }
     });
     
-    // 🔥 Add overlay animation
     container.classList.add("flash-overlay", "flash");
     container.onanimationend = () => container.classList.remove("flash", "flash-overlay");
   });
   
-  // extra results divs...
   const tiktokCoinsResult = document.querySelector(".tiktokCoinsResult");
   if (tiktokCoinsResult) tiktokCoinsResult.innerHTML = ``;
   const tiktokDiamondsResult = document.querySelector(".tiktokDiamondsResult");
@@ -978,13 +938,12 @@ function resetCalculator() {
   const bagFootPrintResult = document.querySelector(".bag-footprint-result");
   if (bagFootPrintResult) bagFootPrintResult.innerHTML = ``;
   
-  // Remove error text if it exists
   const errorMessages = document.querySelectorAll(".error-message");
   errorMessages.forEach(msg => msg.remove());
 }
 
 /********* flash results ******/
-(function () {
+(function() {
   if (!window.__valueSetterPatched) {
     window.__valueSetterPatched = true;
     const patch = (Ctor) => {
@@ -993,7 +952,7 @@ function resetCalculator() {
       if (!d || !d.configurable) return;
       Object.defineProperty(Ctor.prototype, 'value', {
         get: d.get,
-        set: function (v) {
+        set: function(v) {
           const old = d.get.call(this);
           d.set.call(this, v);
           if (old !== v) {
@@ -1009,39 +968,71 @@ function resetCalculator() {
     patch(HTMLTextAreaElement);
     patch(HTMLSelectElement);
   }
-
-  // 2) Flash helper with per-element timer so it’s reusable
+  
   const timers = new WeakMap();
+  
+  function clearFlash(el) {
+    if (timers.has(el)) {
+      clearTimeout(timers.get(el));
+      timers.delete(el);
+    }
+    el.classList.remove('flashResult');
+  }
+  
   function flash(el) {
+    // reset any pending timer
     if (timers.has(el)) clearTimeout(timers.get(el));
+    // add flash class (short-lived visual)
     el.classList.add('flashResult');
     timers.set(el, setTimeout(() => {
       el.classList.remove('flashResult');
       timers.delete(el);
-    }, 400)); // match your CSS transition
+    }, 400));
   }
-
-  // 3) Wire up existing and future .result elements
+  
+  function markResult(el) {
+    // mark as programmatic result and flash
+    el.classList.add('result');
+    flash(el);
+  }
+  
   function wire(el) {
     if (el.dataset.flashWired) return;
     el.dataset.flashWired = '1';
-
+    
+    // If this is an input-like element
     if (el.matches('input, textarea, select')) {
+      // User-driven events -> just flash
       el.addEventListener('input', () => flash(el));
       el.addEventListener('change', () => flash(el));
-      el.addEventListener('value-set', () => flash(el)); // programmatic changes
+      
+      // Programmatic changes -> mark result + flash
+      el.addEventListener('value-set', () => markResult(el));
+      
+      // When user focuses, remove programmatic mark and any flashing
+      el.addEventListener('focus', () => {
+        el.classList.remove('result');
+        clearFlash(el);
+      }, { passive: true });
     } else {
-      // spans/divs/etc. -> watch text changes
-      const mo = new MutationObserver(() => flash(el));
+      // Non-form element: consider DOM mutations programmatic changes
+      const mo = new MutationObserver(() => {
+        markResult(el);
+      });
       mo.observe(el, { childList: true, characterData: true, subtree: true });
+      // store the observer so it can be GC'd with element (no need to keep reference here)
+      // (If you need to disconnect later, you could store mo on el.__flashMo)
     }
   }
-
-  document.querySelectorAll('.result').forEach(wire);
-
-  // If results are injected later, wire them too
+  
+  // Initially wire existing inputs, textareas, selects, and other elements of interest.
+  // Change the selector below to include other non-form nodes you care about (e.g., '.result-source')
+  document.querySelectorAll('input, textarea, select, [data-flash-target]').forEach(wire);
+  
+  // Observe the document for new inputs/textarea/select elements or custom targets
   const addObserver = new MutationObserver(() => {
-    document.querySelectorAll('.result:not([data-flash-wired])').forEach(wire);
+    document.querySelectorAll('input:not([data-flash-wired]), textarea:not([data-flash-wired]), select:not([data-flash-wired]), [data-flash-target]:not([data-flash-wired])')
+      .forEach(wire);
   });
   addObserver.observe(document.documentElement, { childList: true, subtree: true });
 })();
@@ -1077,28 +1068,23 @@ document.querySelectorAll('#expanded-input-option-svg, .expanded-input-option-sv
 });
 
 function showBox(icon) {
-  // Create overlay (unchanged)
   overlayForExpandedOpt = document.createElement('div');
   overlayForExpandedOpt.className = 'overlay-blocker';
   document.body.appendChild(overlayForExpandedOpt);
   
-  // Use the existing box inside the same input-group
   const group = icon.closest('.input-group');
   const box = group?.querySelector('.input-options');
   if (!box) return;
   
-  // --- Accurate positioning relative to the box's offsetParent ---
   const parent = box.offsetParent || document.body;
   const iconRect = icon.getBoundingClientRect();
   const parentRect = parent.getBoundingClientRect();
   
   const GAP = 8;
   
-  // Align box's right edge with icon's right edge, drop just below icon
   const top = iconRect.bottom - parentRect.top + GAP;
   let left = iconRect.right - parentRect.left - (box.offsetWidth || 250);
   
-  // Clamp within parent bounds to avoid overflow
   const parentWidth = (parent === document.body || parent === document.documentElement) ?
     window.innerWidth :
     parent.clientWidth;
@@ -1109,14 +1095,12 @@ function showBox(icon) {
   box.style.top = `${Math.round(top)}px`;
   box.style.left = `${Math.round(left)}px`;
   
-  // Animate/show
   requestAnimationFrame(() => box.classList.add('show'));
   icon.classList.add('rotated');
   
   activeBox = box;
   activeIcon = icon;
   
-  // Outside click via overlay
   overlayForExpandedOpt.addEventListener('click', removeBox);
 }
 
@@ -1132,7 +1116,6 @@ function removeBox(callback) {
     if (activeIcon) activeIcon.classList.remove('rotated');
     
     setTimeout(() => {
-      // Do NOT remove the element; we only hide it
       activeBox = null;
       activeIcon = null;
       if (typeof callback === 'function') callback();
@@ -1142,7 +1125,6 @@ function removeBox(callback) {
   }
 }
 
-// Close when clicking outside (kept)
 document.addEventListener('click', function(e) {
   if (
     activeBox &&
@@ -1154,7 +1136,7 @@ document.addEventListener('click', function(e) {
   }
 });
 
-/****options features***/
+/******** options features ********/
 
   document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".input-group").forEach(group => {
@@ -1163,7 +1145,6 @@ document.addEventListener('click', function(e) {
     const optionsBox = group.querySelector(".input-options");
     const expandBtn  = group.querySelector(".expanded-input-option-svg");
 
-    // Find the MAIN label (the one that contains the expand svg)
     function getMainLabel(g) {
       const labels = g.querySelectorAll("label");
       for (const lb of labels) if (lb.querySelector(".expanded-input-option-svg")) return lb;
@@ -1172,7 +1153,6 @@ document.addEventListener('click', function(e) {
     const mainLabel = getMainLabel(group);
     if (!saveToggle || !mainLabel) return;
 
-    // -------- Indicator SVG ----------
     const indicatorSVG = `
       <svg class="indicate-save-inputs-svg" xmlns="http://www.w3.org/2000/svg"
            height="18px" viewBox="0 -960 960 960" width="18px" fill="#1f1f1f"
@@ -1187,7 +1167,6 @@ document.addEventListener('click', function(e) {
       if (saveToggle.checked) mainLabel.insertAdjacentHTML("beforeend", indicatorSVG);
     }
 
-    // -------- Label text helpers (keep icons intact) ----------
     function getLabelText() {
       const txt = Array.from(mainLabel.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
       return (txt ? txt.textContent : mainLabel.textContent).trim();
@@ -1201,16 +1180,13 @@ document.addEventListener('click', function(e) {
       txt.textContent = (str || "").trim() + " ";
     }
 
-    // -------- Collect real form inputs in the group (exclude the options panel) ----------
     const inputs = Array.from(group.querySelectorAll("input, textarea, select"))
       .filter(el => el !== saveToggle && !el.closest(".input-options"));
 
-    // Stable key for each element
     function keyFor(el, index) {
       return el.dataset.persistKey || el.name || el.id || `${el.tagName.toLowerCase()}:${el.type || ""}#${index}`;
     }
 
-    // Get/set value for different types
     function readValue(el) {
       if (el.type === "checkbox") return { t: "cb", v: el.checked };
       if (el.type === "radio")    return { t: "radio", name: el.name, v: el.checked ? el.value : null };
@@ -1235,12 +1211,11 @@ document.addEventListener('click', function(e) {
           if (!Array.isArray(rec.v)) break;
           Array.from(el.options).forEach(opt => { opt.selected = rec.v.includes(opt.value); });
           break;
-        default: // "val"
+        default:
           el.value = rec.v ?? "";
       }
     }
 
-    // -------- Persist/restore all inputs ----------
     function persistAllInputs() {
       if (!saveToggle.checked) return;
       const payload = { fields: {}, radios: {} };
@@ -1257,7 +1232,6 @@ document.addEventListener('click', function(e) {
         }
       });
 
-      // store radios as a block
       payload.fields["__radios__"] = { t: "radios", v: payload.radios };
       localStorage.setItem(`value-${inputId}`, JSON.stringify(payload));
     }
@@ -1285,7 +1259,6 @@ document.addEventListener('click', function(e) {
       }
     }
 
-    // -------- Restore toggle + label + values ----------
     const savedToggle = localStorage.getItem(`save-${inputId}`);
     if (savedToggle === "1") saveToggle.checked = true;
     else if (savedToggle === "0") saveToggle.checked = false;
@@ -1296,7 +1269,6 @@ document.addEventListener('click', function(e) {
     restoreAllInputs();
     updateLabelIndicator();
 
-    // -------- Save toggle changes ----------
     saveToggle.addEventListener("change", () => {
       localStorage.setItem(`save-${inputId}`, saveToggle.checked ? "1" : "0");
       if (!saveToggle.checked) {
@@ -1307,17 +1279,13 @@ document.addEventListener('click', function(e) {
       updateLabelIndicator();
     });
 
-    // -------- User-driven changes ----------
     inputs.forEach(el => {
       ["input","change","blur","keyup","paste","cut","drop"].forEach(ev =>
         el.addEventListener(ev, persistAllInputs)
       );
     });
 
-
-    // -------- Programmatic changes (value/checked/setAttribute/attributes) ----------
     inputs.forEach(el => {
-      // wrap .value if present
       const proto = Object.getPrototypeOf(el);
       const vDesc = proto && Object.getOwnPropertyDescriptor(proto, "value");
       if (vDesc && vDesc.configurable && typeof vDesc.set === "function") {
@@ -1328,7 +1296,7 @@ document.addEventListener('click', function(e) {
           set(v) { vDesc.set.call(this, v); Promise.resolve().then(persistAllInputs); }
         });
       }
-      // wrap .checked for checkbox/radio
+      
       if (el.type === "checkbox" || el.type === "radio") {
         const cDesc = proto && Object.getOwnPropertyDescriptor(proto, "checked");
         if (cDesc && cDesc.configurable && typeof cDesc.set === "function") {
@@ -1340,7 +1308,7 @@ document.addEventListener('click', function(e) {
           });
         }
       }
-      // wrap setAttribute
+    
       const origSetAttr = el.setAttribute.bind(el);
       el.setAttribute = function(name, val) {
         origSetAttr(name, val);
@@ -1349,16 +1317,15 @@ document.addEventListener('click', function(e) {
           Promise.resolve().then(persistAllInputs);
         }
       };
-      // mutation observer for attribute changes
+      
       const mo = new MutationObserver(() => persistAllInputs());
       mo.observe(el, { attributes: true, attributeFilter: ["value","checked","selected","aria-checked"] });
     });
 
-    // -------- Options actions (reset/rename/copy/paste) + close box ----------
     group.querySelectorAll(".input-options-item").forEach(option => {
       option.addEventListener("click", async () => {
         const action = option.dataset.action;
-        if (!action) return; // ignore the save toggle row
+        if (!action) return;
 
         switch (action) {
           case "reset":
@@ -1400,7 +1367,6 @@ if (pasteTarget) {
   try {
     const clipText = await navigator.clipboard.readText();
     pasteTarget.value = clipText;
-    // trigger your save/apply logic if needed:
     pasteTarget.dispatchEvent(new Event("input", { bubbles: true }));
   } catch (e) {
     console.warn("Clipboard read failed:", e);
@@ -1409,7 +1375,6 @@ if (pasteTarget) {
             break;
         }
 
-        // close the options box after action
         if (optionsBox) optionsBox.classList.remove("show");
         if (expandBtn)  expandBtn.classList.remove("rotated");
       });
@@ -1417,11 +1382,10 @@ if (pasteTarget) {
   });
 });
 
-/*************************************** long press to copy - tooltip 
- *******************************/
+/*************************************** long press to copy  tooltip *******************************/
  
  document.addEventListener("DOMContentLoaded", () => {
-  enableLongPressCopy(".input-tooltip-float", 600); // selector + hold duration
+  enableLongPressCopy(".input-tooltip-float", 600);
 });
 
 function enableLongPressCopy(selector, holdTime = 600) {
@@ -1429,11 +1393,9 @@ function enableLongPressCopy(selector, holdTime = 600) {
   let pressTimer;
   
   tooltips.forEach(tooltip => {
-    // Start detecting long-press (mouse + touch)
     tooltip.addEventListener("mousedown", startPress);
     tooltip.addEventListener("touchstart", startPress);
     
-    // Cancel long-press detection when released or moved away
     tooltip.addEventListener("mouseup", cancelPress);
     tooltip.addEventListener("mouseleave", cancelPress);
     tooltip.addEventListener("touchend", cancelPress);
@@ -1457,7 +1419,7 @@ function copyTooltipValue(tooltip) {
   });
 }
 
-/*******************************
+/****************************
  * error handling 
 ***************************/
 
@@ -1500,22 +1462,18 @@ function copyTooltipValue(tooltip) {
     activeMessages.push(msg);
     updateStack();
 
-    // Animate in
     requestAnimationFrame(() => {
       msg.style.opacity = '1';
       msg.style.transform = 'translateX(-50%) translateY(0) scale(1) rotate(0deg)';
     });
 
-    // Auto-remove
     let timer = setTimeout(() => removeMessage(msg), duration);
 
-    // Pause removal on hover
     msg.addEventListener('mouseenter', () => clearTimeout(timer));
     msg.addEventListener('mouseleave', () => {
       timer = setTimeout(() => removeMessage(msg), duration);
     });
 
-    // Click to dismiss
     msg.addEventListener('click', () => removeMessage(msg));
   }
 
@@ -1535,7 +1493,7 @@ function copyTooltipValue(tooltip) {
     activeMessages.forEach((msg, i) => {
       const scale = 1 - i * 0.05;
       const translateY = baseOffset + i * 10;
-      const rotate = (i % 2 === 0 ? -2 : 2) * i; // slight alternating rotation
+      const rotate = (i % 2 === 0 ? -2 : 2) * i;
       msg.style.top = translateY + 'px';
       msg.style.transform = `translateX(-50%) translateY(0) scale(${scale}) rotate(${rotate}deg)`;
     });
@@ -1584,9 +1542,8 @@ document.addEventListener("click", (e) => {
      if (save) localStorage.setItem(storageKey, expanded ? '1' : '0');
    }
    
-   // Measure whether the text overflows the clamped preview.
    function needsToggle() {
-     // Clone original paragraph, remove clamp class to measure full height
+
      const clone = text.cloneNode(true);
      clone.style.position = 'absolute';
      clone.style.visibility = 'hidden';

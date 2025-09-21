@@ -349,7 +349,7 @@ Everyday Life
     
     <div class="currency-or-unit-input">
   
-<input   inputmode="numeric" pattern="[0-9]*" type="text" id="volumeOfHerbicide" class="result">
+<input   inputmode="numeric" pattern="[0-9]*" type="text" id="volumeOfHerbicide">
 <span style="padding-right: 10px;" class="unit-display" >ml
 </span>
   </div>
@@ -580,7 +580,6 @@ Everyday Life
   const waterVolumeVal = waterVolumeInput.value.trim().replace(/,/g, '');
   const sprayerCapacityVal = sprayerCapacityInput.value.trim().replace(/,/g, '');
   
-  // Don't calculate or show errors until all inputs are filled
   if (!dosageVal || !waterVolumeVal || !sprayerCapacityVal) {
     resultInput.value = '';
     return;
@@ -612,7 +611,6 @@ Everyday Life
     return;
   }
   
-  // Perform the calculation
   const dosagePerSquareMeter = (dosage * 1000) / 10000;
   const areaCovered = (sprayerCapacity * 100) / waterVolume;
   const totalHerbicide = dosagePerSquareMeter * areaCovered;
@@ -623,7 +621,6 @@ Everyday Life
   });
 }
 
-// Attach real-time input listener
 ['dosage', 'waterVolume', 'sprayerCapacity'].forEach(id => {
   const input = document.getElementById(id);
   input.addEventListener('input', () => {
