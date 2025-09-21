@@ -569,24 +569,22 @@ Everyday Life
 
 <script defer crossorigin="anonymous">
 (() => {
-  // Elements
+  
   const exposedInput = document.getElementById('Exposed');
   const calvingInput = document.getElementById('Calvingstart');
   const postpartumInput = document.getElementById('EndOfPostpartum');
   const radios = document.querySelectorAll("input[name='FirsTtimeCalver']");
   const resultsDiv = document.querySelector('.resultsdiv');
 
-  // Omni-like constants (adjusted to match your screenshot)
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
-  const AVG_GESTATION = 283;      // base average
-  const EARLY_GESTATION = 279;    // earliest after exposure
-  const LATE_GESTATION = 287;     // latest after exposure
-  const FIRST_TIME_EXTRA = 15;    // Omni behaviour observed in screenshot
-  const POSTPARTUM_DAYS = 65;     // Omni behaviour observed in screenshot
+  const AVG_GESTATION = 283;
+  const EARLY_GESTATION = 279;
+  const LATE_GESTATION = 287;
+  const FIRST_TIME_EXTRA = 15;
+  const POSTPARTUM_DAYS = 65;
 
-  let lastChanged = null; // 'exposed' | 'calving'
-
-  // ---- UTC helpers (date-only arithmetic) ----
+  let lastChanged = null; 
+  
   const pad = n => String(n).padStart(2, '0');
 
   function parseDateInput(v){
@@ -616,7 +614,6 @@ Everyday Life
     return document.querySelector("input[name='FirsTtimeCalver']:checked").value === 'yes';
   }
 
-  // ---- calculations ----
   function calcFromExposed(exposedUTC){
     const extra = isFirstTime() ? FIRST_TIME_EXTRA : 0;
     const avg = AVG_GESTATION + extra;
@@ -637,7 +634,6 @@ Everyday Life
     return { exposed, due: calvingUTC, earliest, latest, postpartum };
   }
 
-  // ---- UI ----
   function clearResultClasses(){
     exposedInput.classList.remove('result');
     calvingInput.classList.remove('result');
@@ -653,7 +649,6 @@ Everyday Life
       const exposedUTC = parseDateInput(exposedInput.value);
       const { due, earliest, latest, postpartum } = calcFromExposed(exposedUTC);
 
-      // programmatic updates get .result
       calvingInput.value = toInputValue(due);
       calvingInput.classList.add('result');
 
@@ -706,13 +701,11 @@ Everyday Life
       return;
     }
 
-    // nothing to show
     resultsDiv.innerHTML = '';
   }
 
-  // ---- events ----
   exposedInput.addEventListener('input', () => {
-    exposedInput.classList.remove('result'); // manual edit clears result styling
+    exposedInput.classList.remove('result');
     lastChanged = 'exposed';
     updateResults();
   });
@@ -724,11 +717,10 @@ Everyday Life
   });
 
   radios.forEach(r => r.addEventListener('change', () => {
-    // recompute using same lastChanged (if any)
     updateResults();
   }));
 
-  // init if prefilled
+
   if (exposedInput.value){ lastChanged = 'exposed'; updateResults(); }
   else if (calvingInput.value){ lastChanged = 'calving'; updateResults(); }
 

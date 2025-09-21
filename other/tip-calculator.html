@@ -864,9 +864,77 @@ padding: 15px;
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  
+const billInput = document.getElementById("bill-price");
+const tipPercentInput = document.getElementById("tip-percent-tip-calculator");
+const tipAmountInput = document.getElementById("tipAmount");
+const totalBillInput = document.getElementById("total-tip-calculator");
 
-<script src="/assets/js/tip-calculator.js" defer crossorigin="anonymous"></script>
+const numberOfPeopleInput = document.getElementById("number-of-people");
+const tipPerPersonInput = document.getElementById("tip-per-person");
+const totalPerPersonInput = document.getElementById("total-per-person");
 
+
+document.querySelectorAll("#bill-price, #tip-percent-tip-calculator, #number-of-people")
+  .forEach(input => {
+    input.addEventListener("input", calculateTip);
+    input.addEventListener("keyup", calculateTip);
+  });
+
+function parseNumber(value) {
+  
+  if (!value) return 0;
+  return parseFloat(value.toString().replace(/,/g, "")) || 0;
+}
+
+function formatNumber(num) {
+  
+  return num.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function calculateTip() {
+  
+  const bill = parseNumber(billInput.value);
+  const tipPercent = parseNumber(tipPercentInput.value);
+  const numberOfPeople = parseNumber(numberOfPeopleInput.value);
+  
+  
+  if (bill <= 0 || tipPercent < 0) {
+    tipAmountInput.value = "";
+    totalBillInput.value = "";
+    tipPerPersonInput.value = "";
+    totalPerPersonInput.value = "";
+    return;
+  }
+  
+  
+  const tipAmount = (bill * tipPercent) / 100;
+  const totalBill = bill + tipAmount;
+  
+    tipAmountInput.value = formatNumber(tipAmount);
+  totalBillInput.value = formatNumber(totalBill);
+  
+  
+  if (numberOfPeople > 0) {
+    const tipPerPerson = tipAmount / numberOfPeople;
+    const totalPerPerson = totalBill / numberOfPeople;
+    
+    tipPerPersonInput.value = formatNumber(tipPerPerson);
+    totalPerPersonInput.value = formatNumber(totalPerPerson);
+  } else {
+    
+    tipPerPersonInput.value = "";
+    totalPerPersonInput.value = "";
+  }
+}
+
+
+window.addEventListener("DOMContentLoaded", calculateTip);
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

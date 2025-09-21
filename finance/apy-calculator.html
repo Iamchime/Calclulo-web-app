@@ -647,9 +647,182 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  let isSyncing = false;
 
-<script src="/assets/js/apy-calculator.js" defer crossorigin="anonymous"></script>
+function getNumberFrom(id) {
+  const el = document.getElementById(id);
+  if (!el) return NaN;
+  const raw = String(el.value ?? '').trim();
+  if (raw === '') return NaN;
+  const num = Number(raw.replace(/,/g, ''));
+  return Number.isFinite(num) ? num : NaN;
+}
 
+function setValueSafe(id, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  try {
+    isSyncing = true;
+    el.value = val;
+  } finally {
+    
+    setTimeout(() => { isSyncing = false; }, 0);
+  }
+}
+
+function periodsPerYear(frequencyValue) {
+  if (!frequencyValue) return NaN;
+  const normalized = String(frequencyValue).replace(/[\s-]/g, '').toLowerCase();
+  switch (normalized) {
+    case 'yearly':
+    case 'annual':
+      return 1;
+    case 'halfyearly':
+    case 'halfyear':
+      return 2;
+    case 'quarterly':
+      return 4;
+    case 'monthly':
+      return 12;
+    case 'weekly':
+      return 52;
+    case 'daily':
+      return 365;
+    default:
+      return NaN;
+  }
+}
+
+
+function updateFromAPR() {
+  const aprNum = getNumberFrom('AnnualPercentageRateOfCharge'); 
+  const freqEl = document.getElementById('compoundingFrequency');
+  const n = periodsPerYear(freqEl ? freqEl.value : null);
+
+  if (!Number.isFinite(aprNum) || !Number.isFinite(n)) {
+    setValueSafe('AnnualPercentageYield', '');
+    return NaN;
+  }
+
+  const aprDecimal = aprNum / 100; 
+  const apyDecimal = Math.pow(1 + aprDecimal / n, n) - 1;
+  const apyPercent = apyDecimal * 100;
+  setValueSafe('AnnualPercentageYield', apyPercent.toFixed(2));
+  return aprDecimal;
+}
+
+
+function updateFromAPY() {
+  const apyNum = getNumberFrom('AnnualPercentageYield'); 
+  const freqEl = document.getElementById('compoundingFrequency');
+  const n = periodsPerYear(freqEl ? freqEl.value : null);
+
+  if (!Number.isFinite(apyNum) || !Number.isFinite(n)) {
+    setValueSafe('AnnualPercentageRateOfCharge', '');
+    return NaN;
+  }
+
+  const apyDecimal = apyNum / 100;
+  
+  const periodic = Math.pow(1 + apyDecimal, 1 / n) - 1;
+  const aprDecimal = periodic * n; 
+  const aprPercent = aprDecimal * 100;
+  setValueSafe('AnnualPercentageRateOfCharge', aprPercent.toFixed(2));
+  return aprDecimal;
+}
+
+function calculateResults(source = 'apr') {
+
+  if (isSyncing) return;
+
+  const principal = getNumberFrom('initialDeposit');
+  const term = getNumberFrom('Term');
+  const termUnitEl = document.getElementById('TermDate');
+  const termUnit = termUnitEl ? termUnitEl.value : 'years';
+
+  let aprDecimal = NaN;
+  if (source === 'apr') {
+    aprDecimal = updateFromAPR(); 
+  } else if (source === 'apy') {
+    aprDecimal = updateFromAPY();
+  } else {
+    
+    const aprNum = getNumberFrom('AnnualPercentageRateOfCharge');
+    aprDecimal = Number.isFinite(aprNum) ? aprNum / 100 : NaN;
+  }
+
+  
+  if (!Number.isFinite(principal) || principal <= 0 ||
+      !Number.isFinite(term) || term <= 0 ||
+      !Number.isFinite(aprDecimal)) {
+    setValueSafe('Finaldeposit', '');
+    return;
+  }
+
+  
+  let years;
+  switch ((termUnit || '').toString().toLowerCase()) {
+    case 'days': years = term / 365; break;
+    case 'weeks': years = term / 52; break;
+    case 'mons': case 'months': years = term / 12; break;
+    case 'years':
+    default: years = term;
+  }
+
+  const freqEl = document.getElementById('compoundingFrequency');
+  const n = periodsPerYear(freqEl ? freqEl.value : null);
+  if (!Number.isFinite(n)) {
+    setValueSafe('Finaldeposit', '');
+    return;
+  }
+
+  const amount = principal * Math.pow(1 + aprDecimal / n, n * years);
+
+  
+  const formatted = amount.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  setValueSafe('Finaldeposit', formatted);
+}
+
+
+['initialDeposit', 'Term', 'TermDate', 'compoundingFrequency'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('input', () => calculateResults());
+  el.addEventListener('change', () => calculateResults());
+});
+
+
+const aprEl = document.getElementById('AnnualPercentageRateOfCharge');
+const apyEl = document.getElementById('AnnualPercentageYield');
+
+if (aprEl) {
+  aprEl.addEventListener('input', () => {
+    if (isSyncing) return;
+    setActiveInput(aprEl);
+    calculateResults('apr');
+  });
+}
+if (apyEl) {
+  apyEl.addEventListener('input', () => {
+    if (isSyncing) return;
+    setActiveInput(apyEl);
+    calculateResults('apy');
+  });
+}
+
+function setActiveInput(el) {
+  if (!el) return;
+  [aprEl, apyEl].forEach(e => { if (e) e.classList.add('result'); });
+  el.classList.remove('result');
+}
+
+
+window.addEventListener('DOMContentLoaded', () => calculateResults('apr'));
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

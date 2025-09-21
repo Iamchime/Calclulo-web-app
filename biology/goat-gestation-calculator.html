@@ -561,13 +561,12 @@ Everyday Life
   const breedRadios = document.querySelectorAll("input[name='breedType']");
 
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
-  const STANDARD_GESTATION = 150; // days
-  const MINIATURE_GESTATION = 145; // days
-  const WINDOW_DAYS = 5; // +/- window for earliest/latest
+  const STANDARD_GESTATION = 150;
+  const MINIATURE_GESTATION = 145; 
+  const WINDOW_DAYS = 5;
 
-  let lastChanged = null; // "breeding" | "kidding"
-
-  // --- helpers (UTC date-only)
+  let lastChanged = null;
+  
   const pad = n => String(n).padStart(2, "0");
 
   function parseDateInput(value) {
@@ -576,11 +575,11 @@ Everyday Life
     return new Date(Date.UTC(y, m - 1, d));
   }
 
-  function toInputValue(date) { // YYYY-MM-DD for <input type="date">
+  function toInputValue(date) {
     return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
   }
 
-  function formatDDMMYYYY(date) { // for display
+  function formatDDMMYYYY(date) {
     return `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
   }
 
@@ -598,7 +597,6 @@ Everyday Life
     return sel === "miniaturebreed" ? MINIATURE_GESTATION : STANDARD_GESTATION;
   }
 
-  // --- calculations ---
   function calcFromBreeding(breedingUTC) {
     const gest = getGestationDays();
     const due = addDaysUTC(breedingUTC, gest);
@@ -629,7 +627,6 @@ Everyday Life
       const breedingUTC = parseDateInput(breedingInput.value);
       const { due, earliest, latest, gest } = calcFromBreeding(breedingUTC);
 
-      // programmatic update
       kiddingInput.value = toInputValue(due);
       kiddingInput.classList.add("result");
 
@@ -654,7 +651,6 @@ Everyday Life
       const kiddingUTC = parseDateInput(kiddingInput.value);
       const { mating, earliest, latest, gest } = calcFromKidding(kiddingUTC);
 
-      // programmatic update
       breedingInput.value = toInputValue(mating);
       breedingInput.classList.add("result");
 
@@ -675,11 +671,9 @@ Everyday Life
       return;
     }
 
-    // nothing to show
     resultsDiv.innerHTML = "";
   }
 
-  // --- events ---
   breedingInput.addEventListener("input", () => {
     breedingInput.classList.remove("result");
     lastChanged = "breeding";
@@ -693,11 +687,10 @@ Everyday Life
   });
 
   breedRadios.forEach(r => r.addEventListener("change", () => {
-    // recalc using the same lastChanged input (if any)
+  
     if (lastChanged) updateResults();
   }));
 
-  // initialize if prefilled
   if (breedingInput.value) { lastChanged = "breeding"; updateResults(); }
   else if (kiddingInput.value) { lastChanged = "kidding"; updateResults(); }
 

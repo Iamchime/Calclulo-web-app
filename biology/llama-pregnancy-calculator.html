@@ -438,20 +438,19 @@ margin-top: -1em;
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
 <script defer crossorigin="anonymous">
 (() => {
-  // --- Omni-matching constants ---
-  const AVG_DAYS = 342;      // due = mating + AVG_DAYS
-  const EARLY_OFFSET = -10;  // earliest = due + EARLY_OFFSET (due - 10)
-  const LATE_OFFSET = 10;    // latest = due + LATE_OFFSET (due + 10)
+  
+  const AVG_DAYS = 342;
+  const EARLY_OFFSET = -10;
+  const LATE_OFFSET = 10;
+  
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-  // --- DOM ---
   const matingInput = document.getElementById('matingDate');
   const dueInput = document.getElementById('dueDate');
   const resultsDiv = document.querySelector('.resultsdiv');
 
-  let lastChanged = null; // 'mating' or 'due'
-
-  // --- Helpers (UTC date-only arithmetic) ---
+  let lastChanged = null;
+  
   const pad = n => String(n).padStart(2, '0');
 
   function parseDateInput(v) {
@@ -460,7 +459,7 @@ margin-top: -1em;
     return new Date(Date.UTC(y, m - 1, d));
   }
 
-  function toInputValue(date) { // Date -> YYYY-MM-DD for input
+  function toInputValue(date) {
     return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
   }
 
@@ -473,7 +472,7 @@ margin-top: -1em;
     return new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()));
   }
 
-  function shortDateUTC(date) { // "Aug 17, 2026"
+  function shortDateUTC(date) {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
   }
 
@@ -486,18 +485,16 @@ margin-top: -1em;
     dueInput.classList.remove('result');
   }
 
-  // --- Rendering (forward & reverse) ---
   function renderFromMating(matingUTC) {
     const dueUTC = addDaysUTC(matingUTC, AVG_DAYS);
     const earliestUTC = addDaysUTC(dueUTC, EARLY_OFFSET);
     const latestUTC = addDaysUTC(dueUTC, LATE_OFFSET);
 
-    // update due input programmatically and mark it
     dueInput.value = toInputValue(dueUTC);
     dueInput.classList.add('result');
 
     const today = todayUTC();
-    const daysUntil = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY); // positive => future
+    const daysUntil = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
 
     resultsDiv.innerHTML = `
       🦙 Your llama or alpaca is going to give birth in <strong>${Math.max(0, daysUntil)}</strong> day(s)!<br><br>
@@ -508,12 +505,11 @@ margin-top: -1em;
   }
 
   function renderFromDue(dueUTC) {
-    // reverse to mating = due - AVG_DAYS
+    
     const matingUTC = addDaysUTC(dueUTC, -AVG_DAYS);
     const earliestUTC = addDaysUTC(dueUTC, EARLY_OFFSET);
     const latestUTC = addDaysUTC(dueUTC, LATE_OFFSET);
 
-    // update mating input programmatically and mark it
     matingInput.value = toInputValue(matingUTC);
     matingInput.classList.add('result');
 
@@ -549,9 +545,8 @@ margin-top: -1em;
     resultsDiv.innerHTML = '';
   }
 
-  // --- Events ---
   matingInput.addEventListener('input', () => {
-    matingInput.classList.remove('result'); // user manually edited
+    matingInput.classList.remove('result');
     lastChanged = 'mating';
     updateResults();
   });
@@ -562,7 +557,6 @@ margin-top: -1em;
     updateResults();
   });
 
-  // initialize if inputs prefilled
   if (matingInput.value) { lastChanged = 'mating'; updateResults(); }
   else if (dueInput.value) { lastChanged = 'due'; updateResults(); }
 })();

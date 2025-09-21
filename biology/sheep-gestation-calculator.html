@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function parseDateInput(v) {
     if (!v) return null;
     const [y, m, d] = v.split('-').map(Number);
-    return new Date(Date.UTC(y, m - 1, d)); // UTC midnight
+    return new Date(Date.UTC(y, m - 1, d));
   }
   
   function toInputValue(date) {
@@ -466,7 +466,6 @@ document.addEventListener('DOMContentLoaded', () => {
     return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
   }
   
-  // Forward: mating -> lambing range
   function calculateFromMating() {
     const matingUTC = parseDateInput(matingInput.value);
     if (!matingUTC) {
@@ -480,7 +479,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const earlyDate = addDaysUTC(matingUTC, EARLY_DAYS);
     const lateDate = addDaysUTC(matingUTC, LATE_DAYS);
     
-    // programmatically fill lambing input and mark it
     lambingInput.value = toInputValue(avgDate);
     lambingInput.classList.add('result');
     
@@ -489,7 +487,6 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
   
-  // Reverse: lambing -> mating and range
   function calculateFromLambing() {
     const lambingUTC = parseDateInput(lambingInput.value);
     if (!lambingUTC) {
@@ -503,7 +500,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const earlyDate = addDaysUTC(matingUTC, EARLY_DAYS);
     const lateDate = addDaysUTC(matingUTC, LATE_DAYS);
     
-    // programmatically fill mating input and mark it
     matingInput.value = toInputValue(matingUTC);
     matingInput.classList.add('result');
     
@@ -512,18 +508,16 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
   
-  // Remove .result when the user edits manually
   matingInput.addEventListener('input', () => {
-    matingInput.classList.remove('result'); // user touched it
+    matingInput.classList.remove('result');
     calculateFromMating();
   });
   
   lambingInput.addEventListener('input', () => {
-    lambingInput.classList.remove('result'); // user touched it
+    lambingInput.classList.remove('result');
     calculateFromLambing();
   });
   
-  // Initialize if inputs are prefilled
   if (matingInput.value) calculateFromMating();
   else if (lambingInput.value) calculateFromLambing();
 });

@@ -436,20 +436,17 @@ margin-top: -1em;
 
 <script defer crossorigin="anonymous">
 (() => {
-  // Omni-matching swine constants (from your screenshot)
-  const AVG_DAYS = 114;     // due = breeding + 114
-  const EARLY_OFFSET = -2;  // earliest = due - 2
-  const LATE_OFFSET = 6;    // latest = due + 6
+  
+  const AVG_DAYS = 114;
+  const EARLY_OFFSET = -2;
+  const LATE_OFFSET = 6;
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-  // DOM
   const breedingInput = document.getElementById('breedingDate');
   const farrowingInput = document.getElementById('farrowingdate');
   const resultsDiv = document.querySelector('.resultsdiv');
 
-  let lastChanged = null; // 'breeding' | 'farrowing'
-
-  // --- UTC helpers (date-only arithmetic) ---
+  let lastChanged = null;
   const pad = n => String(n).padStart(2, '0');
 
   function parseDateInput(v) {
@@ -480,21 +477,17 @@ margin-top: -1em;
     farrowingInput.classList.remove('result');
   }
 
-  // --- Render when user enters a breeding date ---
   function renderFromBreeding(breedingUTC) {
     const dueUTC = addDaysUTC(breedingUTC, AVG_DAYS);
     const earliestUTC = addDaysUTC(dueUTC, EARLY_OFFSET);
     const latestUTC = addDaysUTC(dueUTC, LATE_OFFSET);
 
-    // programmatic update + mark
     farrowingInput.value = toInputValue(dueUTC);
     farrowingInput.classList.add('result');
 
-    // compute days until due (relative to today)
     const today = todayUTC();
     const daysUntil = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
 
-    // display (matches Omni screenshot wording)
     resultsDiv.innerHTML = `
       🐖 Your sow ${daysUntil >= 0
         ? `is going to farrow in <strong>${daysUntil}</strong> days!`
@@ -505,17 +498,14 @@ margin-top: -1em;
     `;
   }
 
-  // --- Render when user enters a farrowing (due) date (reverse) ---
   function renderFromFarrowing(dueUTC) {
     const breedingUTC = addDaysUTC(dueUTC, -AVG_DAYS);
     const earliestUTC = addDaysUTC(dueUTC, EARLY_OFFSET);
     const latestUTC = addDaysUTC(dueUTC, LATE_OFFSET);
 
-    // programmatic update + mark
     breedingInput.value = toInputValue(breedingUTC);
     breedingInput.classList.add('result');
 
-    // compute days until due (relative to today)
     const today = todayUTC();
     const daysUntil = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
 
@@ -529,7 +519,6 @@ margin-top: -1em;
     `;
   }
 
-  // --- Master update ---
   function updateResults() {
     resultsDiv.innerHTML = '';
     clearResultClasses();
@@ -551,9 +540,8 @@ margin-top: -1em;
     resultsDiv.innerHTML = '';
   }
 
-  // --- Event wiring ---
   breedingInput.addEventListener('input', () => {
-    // manual edit clears any existing .result marker on that field
+    
     breedingInput.classList.remove('result');
     lastChanged = 'breeding';
     updateResults();
@@ -565,7 +553,6 @@ margin-top: -1em;
     updateResults();
   });
 
-  // initialize if pre-filled
   if (breedingInput.value) { lastChanged = 'breeding'; updateResults(); }
   else if (farrowingInput.value) { lastChanged = 'farrowing'; updateResults(); }
 

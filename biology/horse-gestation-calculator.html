@@ -552,22 +552,21 @@ margin-top: -1em;
   const foalingInput = document.getElementById('foalingDate');
   const resultsDiv = document.querySelector('.resultsdiv');
 
-  // Omni-like constants (matching your screenshot)
-  const AVG_DAYS = 338;      // average gestation used to compute due = mating + AVG_DAYS
-  const EARLY_OFFSET = -7;   // earliest = due + EARLY_OFFSET  (i.e. due - 7)
-  const LATE_OFFSET = 8;     // latest = due + LATE_OFFSET    (i.e. due + 8)
+  const AVG_DAYS = 338;
+  const EARLY_OFFSET = -7;
+  const LATE_OFFSET = 8;
+  
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
 
-  let lastChanged = null; // "mating" | "foaling"
-
-  // --- UTC helpers (date-only to avoid timezone drift) ---
+  let lastChanged = null;
+  
   const pad = n => String(n).padStart(2, '0');
-  function parseDateInput(v) { // "YYYY-MM-DD" -> UTC Date
+  function parseDateInput(v) {
     if (!v) return null;
     const [y,m,d] = v.split('-').map(Number);
     return new Date(Date.UTC(y, m-1, d));
   }
-  function toInputValue(date) { // UTC Date -> "YYYY-MM-DD"
+  function toInputValue(date) {
     return `${date.getUTCFullYear()}-${pad(date.getUTCMonth()+1)}-${pad(date.getUTCDate())}`;
   }
   function addDaysUTC(date, days) {
@@ -584,26 +583,24 @@ margin-top: -1em;
     return date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
   }
 
-  // --- UI helpers ---
   function clearResultClasses() {
     matingInput.classList.remove('result');
     foalingInput.classList.remove('result');
   }
 
-  // --- core rendering ---
   function renderFromMating(matingUTC) {
     const due = addDaysUTC(matingUTC, AVG_DAYS);
-    const earliest = addDaysUTC(due, EARLY_OFFSET); // due - 7
-    const latest = addDaysUTC(due, LATE_OFFSET);    // due + 8
-
-    // programmatic fill + marker
+    const earliest = addDaysUTC(due, EARLY_OFFSET);
+    
+    const latest = addDaysUTC(due, LATE_OFFSET);
+    
     foalingInput.value = toInputValue(due);
     foalingInput.classList.add('result');
 
     const today = todayUTC();
-    const daysUntil = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY); // positive => future
+    const daysUntil = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
     const daysPregnantRaw = Math.floor((today.getTime() - matingUTC.getTime()) / MS_PER_DAY);
-    const dayOfGestation = Math.max(0, daysPregnantRaw); // day 0 if breeding is today or future
+    const dayOfGestation = Math.max(0, daysPregnantRaw);
 
     resultsDiv.innerHTML = `
       🐎 Your mare ${daysUntil >= 0
@@ -619,12 +616,11 @@ margin-top: -1em;
   }
 
   function renderFromFoaling(foalingUTC) {
-    // reverse to mating = foaling - AVG_DAYS
+    
     const matingUTC = addDaysUTC(foalingUTC, -AVG_DAYS);
     const earliest = addDaysUTC(foalingUTC, EARLY_OFFSET);
     const latest = addDaysUTC(foalingUTC, LATE_OFFSET);
 
-    // programmatic fill + marker
     matingInput.value = toInputValue(matingUTC);
     matingInput.classList.add('result');
 
@@ -665,9 +661,8 @@ margin-top: -1em;
     resultsDiv.innerHTML = '';
   }
 
-  // --- events ---
   matingInput.addEventListener('input', () => {
-    matingInput.classList.remove('result'); // user touched it
+    matingInput.classList.remove('result');
     lastChanged = 'mating';
     updateResults();
   });
@@ -678,7 +673,6 @@ margin-top: -1em;
     updateResults();
   });
 
-  // initialize if prefilled
   if (matingInput.value) { lastChanged = 'mating'; updateResults(); }
   else if (foalingInput.value) { lastChanged = 'foaling'; updateResults(); }
 

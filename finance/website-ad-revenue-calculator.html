@@ -591,9 +591,29 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  function calculateResults() {
+  
+  const visits = parseFloat(document.getElementById('visits').value.replace(/,/g, '')) || 0;
+  const pageViewsPerVisit = parseFloat(document.getElementById('pageViewsPerVisit').value.replace(/,/g, '')) || 0;
+  const adsPerPage = parseFloat(document.getElementById('adsPerPage').value.replace(/,/g, '')) || 0;
+  const pageRPM = parseFloat(document.getElementById('pageRPM').value.replace(/,/g, '')) || 0;
+  
+  const totalPageViews = visits * pageViewsPerVisit;
+  const totalAdImpressions = totalPageViews * adsPerPage;
+  const revenue = (totalAdImpressions / 1000) * pageRPM;
+  
+  document.querySelector('#estimatedRevenue').value = Number(revenue.toFixed(2)).toLocaleString();
+}
 
-<script src="/assets/js/website-ad-revenue-calculator.js" defer crossorigin="anonymous"></script>
 
+document.querySelectorAll('#visits, #pageViewsPerVisit, #adsPerPage, #pageRPM')
+  .forEach(input => input.addEventListener('input', calculateResults));
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

@@ -443,9 +443,45 @@ font-family: "zalando";
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  document.addEventListener("DOMContentLoaded", function() {
+  const diamondInput = document.getElementById("tiktokdiamonds");
+  const resultDiv = document.querySelector(".tiktokDiamondsResult");
+  
+  function calculateResults() {
+    const diamonds = parseFloat(diamondInput.value.replace(/,/g, "")) || 0;
+    
+    
+    if (isNaN(diamonds) || diamonds < 0) {
+      resultDiv.innerHTML = "";
+      return;
+    }
+    
+    const usd = diamonds * 0.005;
+    const coins = diamonds * 2;
+    
+    
+    resultDiv.innerHTML = `
+      <div class="output-group">
+        <label>Earnings in USD</label>
+        <span class="output-box">$${usd
+          .toFixed(2)
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</span>
+      </div>
+      <div id="goldwrap" class="output-group">
+        <label>Coins equivalent</label>
+        <span id="gold" class="output-box">${coins.toLocaleString()}</span>
+      </div>
+    `;
+  }
+  
+  diamondInput.addEventListener("input", calculateResults);
+});
 
-<script src="/assets/js/tiktok-diamonds-calculator.js" defer crossorigin="anonymous"></script>
-
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

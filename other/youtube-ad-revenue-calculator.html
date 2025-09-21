@@ -597,9 +597,33 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  
+function calculateResults() {
 
-<script src="/assets/js/youtube-ad-revenue-calculator.js" defer crossorigin="anonymous"></script>
+  const views = parseFloat(document.getElementById('youtubeViews').value.replace(/,/g, '')) || 0;
+  const cpm = parseFloat(document.getElementById('cpm').value.replace(/,/g, '')) || 0;
+  
+  
+  const dailyRevenue = (views / 1000) * cpm;
+  const monthlyRevenue = dailyRevenue * 30;
+  const yearlyRevenue = dailyRevenue * 365;
+  
+  
+  document.getElementById('dailyRevenue').value = Number(dailyRevenue.toFixed(2)).toLocaleString();
+  document.getElementById('monthlyRevenue').value = Number(monthlyRevenue.toFixed(2)).toLocaleString();
+  document.getElementById('yearlyRevenue').value = Number(yearlyRevenue.toFixed(2)).toLocaleString();
+}
 
+
+document.getElementById('youtubeViews').addEventListener('input', calculateResults);
+document.getElementById('cpm').addEventListener('input', calculateResults);
+
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 

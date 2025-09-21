@@ -399,9 +399,17 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  
+const flipCheckbox = document.getElementById("flip-coin");
+const resultDiv = document.getElementById("resultDiv");
 
-<script src="/assets/js/coin-flipper.js" defer crossorigin="anonymous"></script>
-
+flipCheckbox.addEventListener("change", () => {
+  const flip = Math.random() < 0.5 ? "Heads" : "Tails";
+  
+  resultDiv.innerHTML = `<h3>${flip}</h3>`;
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

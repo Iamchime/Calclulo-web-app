@@ -680,9 +680,97 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  function calculateResults() {
+  
+  const priceInput = parseFloat(document.getElementById("priceinput").value.replace(/[^0-9.]/g, ""));
+  const faceValue = parseFloat(document.getElementById("facevalue").value.replace(/[^0-9.]/g, ""));
+  const yieldInput = parseFloat(document.getElementById("yield-input").value.replace(/[^0-9.]/g, "")) / 100;
+  const maturity = parseFloat(document.getElementById("timeofmaturity").value.replace(/[^0-9.]/g, ""));
+  const annualCoupon = parseFloat(document.getElementById("annualcoupon").value.replace(/[^0-9.]/g, ""));
+  const couponFreq = document.getElementById("couponfrequencySelect").value;
+  const couponType = document.getElementById("annualcouponCurrencyorPercent").value;
+  const resultField = document.getElementById("bond-result");
+  
+  
+  if (
+    isNaN(priceInput) || isNaN(faceValue) || isNaN(yieldInput) ||
+    isNaN(maturity) || isNaN(annualCoupon)
+  ) {
+    resultField.value = "";
+    return;
+  }
+  
+  
+  let freq = 1;
+  switch (couponFreq) {
+    case "semiannually":
+      freq = 2;
+      break;
+    case "quarterly":
+      freq = 4;
+      break;
+    case "monthly":
+      freq = 12;
+      break;
+      
+  }
+  
+  
+  let couponPayment;
+  if (couponType === "percent") {
+    couponPayment = (faceValue * (annualCoupon / 100)) / freq;
+  } else {
+    couponPayment = annualCoupon / freq;
+  }
+  
+  const periods = maturity * freq;
+  const discountRate = yieldInput / freq;
+  
+  
+  let pvCoupons = 0;
+  for (let t = 1; t <= periods; t++) {
+    pvCoupons += couponPayment / Math.pow(1 + discountRate, t);
+  }
+  
+  
+  const pvFaceValue = faceValue / Math.pow(1 + discountRate, periods);
+  
+  
+  const bondPrice = pvCoupons + pvFaceValue;
+  
+  if (couponType === "currency") {
+    resultField.value = Number(bondPrice.toFixed(4)).toLocaleString();
+  } else {
+    resultField.value = Number(bondPrice.toFixed(2)).toLocaleString();
+  }
+}
 
-<script src="/assets/js/bond-calculator.js" defer crossorigin="anonymous"></script>
 
+document.addEventListener("DOMContentLoaded", () => {
+  const inputs = [
+    "priceinput",
+    "facevalue",
+    "yield-input",
+    "timeofmaturity",
+    "annualcoupon",
+    "couponfrequencySelect",
+    "annualcouponCurrencyorPercent"
+  ];
+  
+  inputs.forEach(id => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.addEventListener("input", calculateResults);
+      element.addEventListener("change", calculateResults);
+    }
+  });
+});
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

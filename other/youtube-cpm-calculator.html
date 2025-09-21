@@ -503,9 +503,38 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  document.addEventListener("DOMContentLoaded", () => {
+  const inputs = ["cost", "views"];
+  
+  
+  inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", calculateResults);
+      el.addEventListener("change", calculateResults);
+    }
+  });
+});
 
-<script src="/assets/js/youtube-cpm-calculator.js" defer crossorigin="anonymous"></script>
+function calculateResults() {
+  const cost = parseFloat(document.querySelector('#cost').value.replace(/,/g, "")) || 0;
+  const views = parseFloat(document.querySelector('#views').value.replace(/,/g, "")) || 0;
+  const cpmOutput = document.querySelector('#cpmOutput');
+  
+  if (cost <= 0 || views <= 0) {
+    cpmOutput.value = "";
+    return;
+  }
+  
+  const cpm = (cost / views) * 1000;
+  cpmOutput.value = cpm.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

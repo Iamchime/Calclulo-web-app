@@ -940,6 +940,7 @@ function resetCalculator() {
   
   const errorMessages = document.querySelectorAll(".error-message");
   errorMessages.forEach(msg => msg.remove());
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 

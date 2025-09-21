@@ -438,9 +438,76 @@ flex-direction: column;
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  const tiktokCoinsInput = document.getElementById("tiktokCoins");
+const quickAmounts = document.querySelectorAll(".quick-amounts-wrap span");
+const resultDiv = document.querySelector(".tiktokCoinsResult");
 
-<script src="/assets/js/tiktok-coin-calculator.js" defer crossorigin="anonymous"></script>
 
+const COIN_TO_USD = 0.01;
+
+
+function formatUSD(value) {
+  return value.toLocaleString("en-US", {
+    style: "currency",
+    currency: "USD",
+  });
+}
+
+function calculateResults() {
+  const rawValue = tiktokCoinsInput.value.replace(/,/g, "");
+  const coins = parseInt(rawValue, 10);
+  
+  if (isNaN(coins) || coins <= 0) {
+    resultDiv.innerHTML = '<p id="error-txt">Please enter a valid number of TikTok coins.</p>';
+    return;
+  }
+  
+  const totalUSD = coins * COIN_TO_USD;
+  const tiktokShare = totalUSD * 0.30;
+  const creatorShare = totalUSD * 0.70;
+  
+  resultDiv.innerHTML = `
+    <div class="result-block">
+      <label>Total Value (USD)</label>
+      <span class="result-amount total-usd">${formatUSD(totalUSD)}</span>
+    </div>
+
+    <div class="result-block">
+      <label>TikTok Share (30%)</label>
+      <span class="result-amount tiktok-share">${formatUSD(tiktokShare)}</span>
+    </div>
+
+    <div class="result-block">
+      <label>Creator Share (70%)</label>
+      <span class="result-amount creator-share">${formatUSD(creatorShare)}</span>
+    </div>
+  `;
+}
+
+
+tiktokCoinsInput.addEventListener("input", () => {
+  
+  const cleanedValue = tiktokCoinsInput.value.replace(/,/g, "");
+  if (!isNaN(cleanedValue) && cleanedValue !== "") {
+    tiktokCoinsInput.value = parseInt(cleanedValue, 10).toLocaleString();
+  }
+  
+  calculateResults();
+});
+
+
+quickAmounts.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    tiktokCoinsInput.value = parseInt(btn.textContent.replace(/,/g, ""), 10).toLocaleString();
+    calculateResults();
+  });
+});
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

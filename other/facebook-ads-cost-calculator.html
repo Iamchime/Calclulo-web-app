@@ -552,9 +552,74 @@ border-radius: 10px;
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  function calculateResults() {
+  const adSpendInput = document.querySelector('#adspend');
+  const avgCpcInput = document.querySelector('#averageCpc');
+  const leadConvRateInput = document.querySelector('#leadConversionRate');
+  const resultDiv = document.querySelector('#resultdiv');
+  
+  const adSpend = parseFloat(adSpendInput.value);
+  const avgCpc = parseFloat(avgCpcInput.value);
+  let leadConvRate = leadConvRateInput.value.replace('%', '').trim();
+  leadConvRate = parseFloat(leadConvRate);
+  
+  
+  if (
+    adSpendInput.value.trim() === '' ||
+    avgCpcInput.value.trim() === '' ||
+    leadConvRateInput.value.trim() === ''
+  ) {
+    resultDiv.innerHTML = '';
+    return;
+  }
+  
+  
+  if (
+    isNaN(adSpend) || adSpend <= 0 ||
+    isNaN(avgCpc) || avgCpc <= 0 ||
+    isNaN(leadConvRate) || leadConvRate <= 0 || leadConvRate > 100
+  ) {
+    resultDiv.innerHTML = `
+      <p id="error-txt">
+        Please enter valid positive numbers. Lead Conversion Rate must be between 0 and 100.
+      </p>`;
+    return;
+  }
+  
+  
+  const totalSessions = adSpend / avgCpc;
+  
+  
+  const conversions = totalSessions * (leadConvRate / 100);
+  
+  
+  const costPerInquiry = adSpend / conversions;
+  
+  
+  function formatNumber(num) {
+    return num.toLocaleString(undefined, { maximumFractionDigits: 0 });
+  }
+  
+  
+  resultDiv.innerHTML = `
+    <h3>Facebook Ads Lead Metrics</h3>
+    <p class="result-fb"><strong>Total Website Sessions from PPC</strong><br>${formatNumber(totalSessions)}</p>
+    <p class="result-fb"><strong>Conversions/Leads/Inquiries</strong><br>${formatNumber(conversions)}</p>
+    <p class="result-fb"><strong>Cost Per Raw Inquiry</strong><br><span><span class="currency-display-for-expanded-results" >$
+  </span>${costPerInquiry.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span></p>
+  `;
+  loadSavedCurrency();
+}
 
-<script src="/assets/js/facebook-ads-cost-calculator.js" defer crossorigin="anonymous"></script>
+document.querySelectorAll('#adspend, #averageCpc, #leadConversionRate').forEach(input => {
+  input.addEventListener('input', calculateResults);
+});
 
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

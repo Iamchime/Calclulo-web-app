@@ -376,9 +376,50 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  let countdownInterval;
 
-<script src="/assets/js/fathers-day-countdown.js" defer crossorigin="anonymous"></script>
+function startFathersDayCountdown() {
+  clearInterval(countdownInterval);
+  
+  countdownInterval = setInterval(() => {
+    const now = new Date();
+    
+    const currentYear = now.getFullYear();
+    
+    function getFathersDayDate(year) {
+      const juneFirst = new Date(year, 5, 1);
+      const firstSunday = (7 - juneFirst.getDay()) % 7;
+      const thirdSundayDate = 1 + firstSunday + 14;
+      return new Date(year, 5, thirdSundayDate, 0, 0, 0);
+    }
+    
+    let fathersDay = getFathersDayDate(currentYear);
+    
+    if (now > fathersDay) {
+      fathersDay = getFathersDayDate(currentYear + 1);
+    }
+    
+    const diff = fathersDay - now;
+    
+    if (diff <= 0) {
+      document.getElementById("countdownResult").textContent = "It's Father's Day! 👨‍👧‍👦❤️";
+      clearInterval(countdownInterval);
+      return;
+    }
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+    
+    document.getElementById("countdownResult").innerHTML =
+      `Only...<br><strong>${days} day(s)</strong>,<br>${hours} hour(s),<br>${minutes} minute(s), and<br>${seconds} second(s)<br><strong>...until Father's Day! 👨‍👧‍👦</strong>`;
+  }, 1000);
+}
 
+window.addEventListener("DOMContentLoaded", startFathersDayCountdown);
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

@@ -807,7 +807,112 @@ Everyday Life
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 
-<script src="/assets/js/ligation-calculator.js" defer crossorigin="anonymous"></script>
+<script defer crossorigin="anonymous">
+  document.addEventListener("DOMContentLoaded", () => {
+  const inputs = [
+    'vectorAmount', 'vectorLength', 'insertAmount', 'insertLength', 'molarRatio', 'reactionVolume'
+  ];
+  const selects = [
+    'vectorAmountUnit', 'vectorLengthUnit', 'insertAmountUnit', 'insertLengthUnit', 'reactionVolumeUnit'
+  ];
+
+  [...inputs, ...selects].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', calculateResults);
+  });
+});
+
+function calculateResults() {
+  const vectorAmount = parseFloat(document.getElementById('vectorAmount').value);
+  const vectorAmountUnit = document.getElementById('vectorAmountUnit').value;
+
+  const vectorLength = parseFloat(document.getElementById('vectorLength').value);
+  const vectorLengthUnit = document.getElementById('vectorLengthUnit').value;
+
+  const insertAmount = parseFloat(document.getElementById('insertAmount').value);
+  const insertAmountUnit = document.getElementById('insertAmountUnit').value;
+
+  const insertLength = parseFloat(document.getElementById('insertLength').value);
+  const insertLengthUnit = document.getElementById('insertLengthUnit').value;
+
+  const molarRatio = parseFloat(document.getElementById('molarRatio').value);
+
+  const reactionVolume = parseFloat(document.getElementById('reactionVolume').value);
+  const reactionVolumeUnit = document.getElementById('reactionVolumeUnit').value;
+
+  if (
+    isNaN(vectorAmount) || vectorAmount <= 0 ||
+    isNaN(vectorLength) || vectorLength <= 0 ||
+    isNaN(insertLength) || insertLength <= 0 ||
+    isNaN(molarRatio) || molarRatio <= 0 ||
+    isNaN(reactionVolume) || reactionVolume <= 0
+  ) {
+    document.getElementById('volumeOfInsertDNAToAdd').value = '';
+    return;
+  }
+
+  const vectorAmountNg = convertMassToNg(vectorAmount, vectorAmountUnit);
+
+  const vectorLengthBp = convertLengthToBp(vectorLength, vectorLengthUnit);
+  const insertLengthBp = convertLengthToBp(insertLength, insertLengthUnit);
+
+  const reactionVolumeUl = convertVolumeToUl(reactionVolume, reactionVolumeUnit);
+
+  const vectorMoles = (vectorAmountNg * 1e-9) / (vectorLengthBp * 650);
+
+  const insertMoles = vectorMoles * molarRatio;
+
+  const insertMassNg = insertMoles * insertLengthBp * 650 * 1e9;
+
+  const vectorConc = vectorAmountNg / reactionVolumeUl;
+
+  if (vectorConc === 0) {
+    document.getElementById('volumeOfInsertDNAToAdd').value = '';
+    return;
+  }
+
+  const insertVolumeUl = insertMassNg / vectorConc;
+
+  document.getElementById('volumeOfInsertDNAToAdd').value = insertVolumeUl.toLocaleString(undefined, {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+}
+
+function convertMassToNg(amount, unit) {
+  switch (unit) {
+    case 'fg': return amount * 1e-6;
+    case 'pg': return amount * 1e-3;
+    case 'ng': return amount;
+    case 'µg': return amount * 1e3;
+    case 'mg': return amount * 1e6;
+    case 'g': return amount * 1e9;
+    default: return amount;
+  }
+}
+
+function convertLengthToBp(length, unit) {
+  switch (unit) {
+    case 'bp': return length;
+    case 'kb': return length * 1000;
+    default: return length;
+  }
+}
+
+function convertVolumeToUl(volume, unit) {
+  switch (unit) {
+    case 'nL': return volume * 0.001;
+    case 'µL': return volume;
+    case 'mL': return volume * 1000;
+    case 'L': return volume * 1e6;
+    default: return volume;
+  }
+}
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>

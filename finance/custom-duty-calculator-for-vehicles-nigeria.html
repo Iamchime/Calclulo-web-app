@@ -828,9 +828,66 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  function calculateResults() {
+  const priceUSD = parseFloat(document.getElementById("carPriceUSD").value.replace(/,/g, ''));
+  const exchangeRate = parseFloat(document.getElementById("exchangeRate").value.replace(/,/g, ''));
+  
+  if (isNaN(priceUSD) || isNaN(exchangeRate) || priceUSD <= 0 || exchangeRate <= 0) {
+    clearResults();
+    return;
+  }
+  
+  
+  const vehicleValueNGN = priceUSD * exchangeRate;
+  
+  
+  const importDuty = vehicleValueNGN * 0.20;
+  const levy = vehicleValueNGN * 0.15;
+  const surcharge = importDuty * 0.07;
+  const etl = vehicleValueNGN * 0.005;
+  const vat = vehicleValueNGN * 0.075;
+  
+  
+  const totalCustomsCharges = importDuty + levy + surcharge + etl + vat;
+  const totalVehicleCost = vehicleValueNGN + totalCustomsCharges;
+  
+  
+  document.getElementById("vehicleValueNGN").value = vehicleValueNGN.toLocaleString();
+  document.getElementById("importDuty").value = importDuty.toLocaleString();
+  document.getElementById("levy").value = levy.toLocaleString();
+  document.getElementById("surcharge").value = surcharge.toLocaleString();
+  document.getElementById("etl").value = etl.toLocaleString();
+  document.getElementById("vat").value = vat.toLocaleString();
+  document.getElementById("totalCustomsCharges").value = totalCustomsCharges.toLocaleString();
+  document.getElementById("totalVehicleCost").value = totalVehicleCost.toLocaleString();
+}
 
-<script src="/assets/js/custom-duty-calculator-for-vehicles-nigeria.js" defer crossorigin="anonymous"></script>
 
+function clearResults() {
+  const fields = [
+    "vehicleValueNGN",
+    "importDuty",
+    "levy",
+    "surcharge",
+    "etl",
+    "vat",
+    "totalCustomsCharges",
+    "totalVehicleCost"
+  ];
+  fields.forEach(id => {
+    document.getElementById(id).value = "";
+  });
+}
+
+
+document.getElementById("carPriceUSD").addEventListener("input", calculateResults);
+document.getElementById("exchangeRate").addEventListener("input", calculateResults);
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

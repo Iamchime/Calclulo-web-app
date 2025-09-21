@@ -612,7 +612,82 @@ Everyday Life
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 
-<script src="/assets/js/hours-to-week-conversion.js" defer crossorigin="anonymous"></script>
+<script defer crossorigin="anonymous">
+  
+document.addEventListener("DOMContentLoaded", function () {
+  const hoursInput = document.getElementById("Hours");
+  const weeksInput = document.getElementById("weeks");
+  const hoursResult = document.getElementById("hoursResult");
+  const minutesResult = document.getElementById("minutesResult");
+  const secondsResult = document.getElementById("secondsResult");
+
+  function cleanNumber(value) {
+    return parseFloat(value.replace(/,/g, "")) || 0;
+  }
+
+  function formatNumber(value) {
+    return value.toLocaleString("en-US");
+  }
+
+  function convertFromHours() {
+    const hours = cleanNumber(hoursInput.value);
+    const weeks = hours / 168;
+    
+    weeksInput.value = formatNumber(weeks);
+
+    updateBreakdown(hours);
+    markAsResult([weeksInput, hoursResult, minutesResult, secondsResult]);
+  }
+
+  function convertFromWeeks() {
+    const weeks = cleanNumber(weeksInput.value);
+    const hours = weeks * 168;
+
+    hoursInput.value = formatNumber(hours);
+
+    updateBreakdown(hours);
+    markAsResult([hoursInput, hoursResult, minutesResult, secondsResult]);
+  }
+
+  function updateBreakdown(hours) {
+    const wholeHours = Math.floor(hours);
+    const minutes = Math.floor((hours - wholeHours) * 60);
+    const seconds = Math.round((((hours - wholeHours) * 60) - minutes) * 60);
+
+    hoursResult.value = formatNumber(wholeHours);
+    minutesResult.value = formatNumber(minutes);
+    secondsResult.value = formatNumber(seconds);
+  }
+
+  function markAsResult(elements) {
+    elements.forEach(el => {
+      el.classList.add("result");
+    });
+  }
+
+  hoursInput.addEventListener("input", function () {
+    if (this.value.trim() === "") {
+      weeksInput.value = "";
+      hoursResult.value = "";
+      minutesResult.value = "";
+      secondsResult.value = "";
+      return;
+    }
+    convertFromHours();
+  });
+
+  weeksInput.addEventListener("input", function () {
+    if (this.value.trim() === "") {
+      hoursInput.value = "";
+      hoursResult.value = "";
+      minutesResult.value = "";
+      secondsResult.value = "";
+      return;
+    }
+    convertFromWeeks();
+  });
+});
+</script>
 
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>

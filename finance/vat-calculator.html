@@ -620,9 +620,57 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  function calculateResults() {
+  const vatRate = parseFloat(document.getElementById('vatRate').value.replace(/,/g, '')) || 0;
+  const mode = document.querySelector('input[name="mode"]:checked')?.value;
+  const price = parseFloat(document.getElementById('price').value.replace(/,/g, '')) || 0;
+  
+  
+  if (isNaN(vatRate) || vatRate < 0) {
+    document.querySelector('vatAmount').value = '';
+    document.querySelector('#resultPrice').value = '';
+    return;
+  }
+  
+  if (isNaN(price) || price < 0) {
+    document.querySelector('#vatAmount').value = '';
+    document.querySelector('#resultPrice').value = '';
+    return;
+  }
+  
+  let vatAmount, resultPrice;
+  
+  if (mode === 'add') {
+    vatAmount = (price * vatRate) / 100;
+    resultPrice = price + vatAmount;
+  } else {
+    vatAmount = price - price / (1 + vatRate / 100);
+    resultPrice = price - vatAmount;
+  }
+  
+  document.querySelector('#vatAmount').value = vatAmount.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+  
+  document.querySelector('#resultPrice').value = resultPrice.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
 
 
-<script src="/assets/js/vat-calculator.js" defer crossorigin="anonymous"></script>
+document.getElementById('vatRate').addEventListener('input', calculateResults);
+document.getElementById('price').addEventListener('input', calculateResults);
+document.querySelectorAll('input[name="mode"]').forEach(el => {
+  el.addEventListener('change', calculateResults);
+});
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

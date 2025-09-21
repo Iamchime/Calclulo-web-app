@@ -700,7 +700,65 @@ Everyday Life
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 
-<script src="/assets/js/square-footage-calculator.js" defer crossorigin="anonymous"></script>
+<script defer crossorigin="anonymous">
+  function cleanNumber(value) {
+  return parseFloat(value.replace(/,/g, '')) || 0;
+}
+
+const lengthToMeters = {
+  'centimetres': 0.01,
+  'meters': 1,
+  'inches': 0.0254,
+  'yards': 0.9144
+};
+
+const areaFromMeters = {
+  'square-centimetres': 10000,
+  'square-meters': 1,
+  'square-inches': 1550.0031,
+  'square-feets': 10.7639,
+  'square-yards': 1.19599
+};
+
+const priceUnitToMeters = {
+  'square-metres': 1,
+  'square-foot': 0.092903,
+  'square-yard': 0.836127
+};
+
+function calculateAreaAndCost() {
+  let width = cleanNumber(document.getElementById('width').value);
+  let length = cleanNumber(document.getElementById('length').value);
+  let quantity = cleanNumber(document.getElementById('quantity').value) || 1;
+  let widthUnit = document.getElementById('widthUnit').value;
+  let lengthUnit = document.getElementById('lengthUnit').value;
+  let areaUnit = document.getElementById('AreaUnit').value;
+  let unitPrice = cleanNumber(document.getElementById('UnitPrice').value);
+  let unitPriceUnit = document.getElementById('unitPriceUnit').value;
+  
+  let widthMeters = width * (lengthToMeters[widthUnit] || 1);
+  let lengthMeters = length * (lengthToMeters[lengthUnit] || 1);
+  
+  let areaMeters = widthMeters * lengthMeters * quantity;
+  
+  let convertedArea = areaMeters * (areaFromMeters[areaUnit] || 1);
+  document.getElementById('Area').value = convertedArea.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  
+  if (unitPrice > 0) {
+    let pricePerM2 = unitPrice / priceUnitToMeters[unitPriceUnit];
+    let totalCost = areaMeters * pricePerM2;
+    document.getElementById('total-cost').value = totalCost.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  } else {
+    document.getElementById('total-cost').value = '';
+  }
+}
+
+document.querySelectorAll('#width, #length, #quantity, #widthUnit, #lengthUnit, #AreaUnit, #UnitPrice, #unitPriceUnit')
+  .forEach(el => el.addEventListener('input', calculateAreaAndCost));
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

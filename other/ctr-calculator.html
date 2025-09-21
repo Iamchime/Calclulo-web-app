@@ -501,9 +501,31 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  document.getElementById('clicks').addEventListener('input', calculateResults);
+document.getElementById('impressions').addEventListener('input', calculateResults);
 
-<script src="/assets/js/ctr-calculator.js" defer crossorigin="anonymous"></script>
+function calculateResults() {
+  const clicks = parseFloat(document.getElementById('clicks').value.replace(/,/g, "")) || 0;
+  const impressions = parseFloat(document.getElementById('impressions').value.replace(/,/g, "")) || 0;
+  const output = document.getElementById('ctrOutput');
+  
+  if (impressions === 0 || clicks < 0 || impressions < 0) {
+    output.value = "";
+    return;
+  }
+  
+  const ctr = (clicks / impressions) * 100;
+  output.value = ctr.toLocaleString(undefined, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
 
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

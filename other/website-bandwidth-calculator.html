@@ -567,9 +567,52 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  document.addEventListener("DOMContentLoaded", () => {
+  const inputs = [
+    "pageViews",
+    "pageSize",
+    "redundancy"
+  ];
+  
+  inputs.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener("input", calculateResults);
+      el.addEventListener("change", calculateResults);
+    }
+  });
+  
+  const sizeRadios = document.querySelectorAll('input[name="sizeUnit"]');
+  sizeRadios.forEach(radio => {
+    radio.addEventListener("change", calculateResults);
+  });
+});
 
-<script src="/assets/js/website-bandwidth-calculator.js" defer crossorigin="anonymous"></script>
+function calculateResults() {
+  const pageViews = parseFloat(document.getElementById("pageViews").value.replace(/,/g, ""));
+  const pageSize = parseFloat(document.getElementById("pageSize").value.replace(/,/g, ""));
+  const unitEl = document.querySelector('input[name="sizeUnit"]:checked');
+  const unit = unitEl ? unitEl.value : "MB";
+  const redundancy = parseFloat(document.getElementById("redundancy").value.replace(/,/g, "")) || 1;
+  
+  if (isNaN(pageViews) || isNaN(pageSize) || pageViews <= 0 || pageSize <= 0) {
+    document.getElementById("EstimatedMonthlyBandwidth").value = "";
+    return;
+  }
+  
+  const sizeMB = unit === "KB" ? pageSize / 1024 : pageSize;
+  const dailyUsageMB = pageViews * sizeMB * redundancy;
+  const monthlyUsageGB = (dailyUsageMB * 30) / 1024;
+  
+  
+  document.getElementById("EstimatedMonthlyBandwidth").value = monthlyUsageGB.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
 
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

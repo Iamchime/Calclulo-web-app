@@ -550,15 +550,14 @@ margin-top: -1em;
   const dueInput = document.getElementById('dueDate');
   const resultsDiv = document.querySelector('.resultsdiv');
 
-  // Guinea pig rules (matches example you gave)
-  const MIN_DAYS = 59;   // earliest possible
-  const AVG_DAYS = 65;   // average (used in your example)
-  const MAX_DAYS = 72;   // latest possible
+  
+  const MIN_DAYS = 59;
+  const AVG_DAYS = 65;
+  const MAX_DAYS = 72;
 
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
-  let lastChanged = null; // "breeding" | "due"
-
-  // --- UTC date helpers (date-only) ---
+  let lastChanged = null;
+  
   const pad = n => String(n).padStart(2, '0');
 
   function parseDateInput(v) {
@@ -567,11 +566,11 @@ margin-top: -1em;
     return new Date(Date.UTC(y, m - 1, d));
   }
 
-  function toInputValue(d) { // Date -> "YYYY-MM-DD" for inputs
+  function toInputValue(d) {
     return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
   }
 
-  function shortDate(d) { // "Nov 17, 2025"
+  function shortDate(d) {
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
   }
 
@@ -584,7 +583,6 @@ margin-top: -1em;
     return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
   }
 
-  // --- core calculations ---
   function calcFromBreeding(breedingUTC) {
     const avgDue = addDaysUTC(breedingUTC, AVG_DAYS);
     const earliest = addDaysUTC(breedingUTC, MIN_DAYS);
@@ -593,7 +591,7 @@ margin-top: -1em;
   }
 
   function calcFromDue(dueUTC) {
-    // reverse to breeding = due - AVG, then earliest/latest around that breeding
+    
     const breedingUTC = addDaysUTC(dueUTC, -AVG_DAYS);
     const earliest = addDaysUTC(breedingUTC, MIN_DAYS);
     const latest = addDaysUTC(breedingUTC, MAX_DAYS);
@@ -614,14 +612,13 @@ margin-top: -1em;
       const breedingUTC = parseDateInput(breedingInput.value);
       const { avgDue, earliest, latest } = calcFromBreeding(breedingUTC);
 
-      // programmatically update due input and mark it
       dueInput.value = toInputValue(avgDue);
       dueInput.classList.add('result');
 
       const daysLeft = Math.round((avgDue.getTime() - today.getTime()) / MS_PER_DAY);
       const daysPregnantRaw = Math.floor((today.getTime() - breedingUTC.getTime()) / MS_PER_DAY);
-      const dayOfGestation = Math.max(0, daysPregnantRaw); // day 0 if breeding is today or in future
-
+      const dayOfGestation = Math.max(0, daysPregnantRaw); 
+      
       resultsDiv.innerHTML = `
         🐹 Your guinea pig is going to give birth in about <strong>${Math.max(0, daysLeft)}</strong> day(s)!<br><br>
         Today is day <strong>${dayOfGestation}</strong> of the gestation.<br><br>
@@ -635,7 +632,6 @@ margin-top: -1em;
       const dueUTC = parseDateInput(dueInput.value);
       const { breedingUTC, earliest, latest } = calcFromDue(dueUTC);
 
-      // programmatically update breeding input and mark it
       breedingInput.value = toInputValue(breedingUTC);
       breedingInput.classList.add('result');
 
@@ -651,14 +647,11 @@ margin-top: -1em;
       `;
       return;
     }
-
-    // nothing to show
     resultsDiv.innerHTML = '';
   }
-
-  // --- event handlers ---
+  
   breedingInput.addEventListener('input', () => {
-    // user edited this field -> remove .result and mark lastChanged
+    
     breedingInput.classList.remove('result');
     lastChanged = 'breeding';
     updateResults();
@@ -670,7 +663,6 @@ margin-top: -1em;
     updateResults();
   });
 
-  // init if prefilled
   if (breedingInput.value) { lastChanged = 'breeding'; updateResults(); }
   else if (dueInput.value) { lastChanged = 'due'; updateResults(); }
 

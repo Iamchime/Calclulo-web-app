@@ -512,9 +512,83 @@ Everyday Life
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
+<script defer crossorigin="anonymous">
+  function calculateResults() {
+  calculatePercentageOf();
+  calculateWhatPercentOf();
+  calculateIncreaseOrDecrease();
+}
 
-<script src="/assets/js/percentage-calculator.js" defer crossorigin="anonymous"></script>
 
+function parseNumber(value) {
+  if (!value) return NaN;
+  return parseFloat(value.toString().replace(/,/g, ''));
+}
+
+
+function calculatePercentageOf() {
+  const percent = parseNumber(document.getElementById("percentof").value);
+  const num = parseNumber(document.getElementById("numb").value);
+  const resultField = document.getElementById("percentageSecOneResult");
+  
+  if (isNaN(percent) || isNaN(num)) {
+    resultField.value = '';
+    return;
+  }
+  
+  const result = (percent / 100) * num;
+  resultField.value = result.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  
+}
+
+
+function calculateWhatPercentOf() {
+  const part = parseNumber(document.getElementById("numberiswhatpercentof").value);
+  const whole = parseNumber(document.getElementById("numbtwo").value);
+  const resultField = document.getElementById("percentageSecTwoResult");
+  
+  if (isNaN(part) || isNaN(whole) || whole === 0) {
+    resultField.value = '';
+    return;
+  }
+  
+  const result = (part / whole) * 100;
+  resultField.value = result.toFixed(2) + '%';
+}
+
+
+function calculateIncreaseOrDecrease() {
+  const from = parseNumber(document.getElementById("increaseorDecreaseInputOne").value);
+  const to = parseNumber(document.getElementById("increaseorDecreaseInputTwo").value);
+  const resultField = document.getElementById("percentageSecThreeResult");
+  
+  if (isNaN(from) || isNaN(to) || from === 0) {
+    resultField.value = '';
+    return;
+  }
+  
+  const change = ((to - from) / Math.abs(from)) * 100;
+  const direction = change > 0 ? "increase" : change < 0 ? "decrease" : "no change";
+  resultField.value = `${Math.abs(change).toFixed(2)}% ${direction}`;
+}
+
+
+document.querySelectorAll("#percentof, #numb").forEach(input =>
+  input.addEventListener("input", calculatePercentageOf)
+);
+
+document.querySelectorAll("#numberiswhatpercentof, #numbtwo").forEach(input =>
+  input.addEventListener("input", calculateWhatPercentOf)
+);
+
+document.querySelectorAll("#increaseorDecreaseInputOne, #increaseorDecreaseInputTwo").forEach(input =>
+  input.addEventListener("input", calculateIncreaseOrDecrease)
+);
+
+window.addEventListener("load", () => {
+  calculateResults();
+});
+</script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>

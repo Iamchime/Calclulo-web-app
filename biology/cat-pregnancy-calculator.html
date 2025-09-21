@@ -508,28 +508,26 @@ margin-top: -1em;
   const dueInput = document.getElementById('dueDate');
   const resultsDiv = document.querySelector('#resultsdiv');
 
-  // Omni settings
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
-  const AVG_GESTATION = 63; // average days
-  const EARLY_GESTATION = 58; // earliest delivery after mating
-  const LATE_GESTATION = 71;  // latest delivery after mating
-
-  let lastChanged = null; // 'mating' or 'due'
-
-  // --- UTC date helpers (date-only) ---
+  const AVG_GESTATION = 63;
+  const EARLY_GESTATION = 58;
+  const LATE_GESTATION = 71;
+  
+  let lastChanged = null;
+  
   const pad = n => String(n).padStart(2, '0');
 
-  function parseDateInput(v){ // "YYYY-MM-DD" -> UTC Date
+  function parseDateInput(v){
     if (!v) return null;
     const [y, m, d] = v.split('-').map(Number);
     return new Date(Date.UTC(y, m - 1, d));
   }
 
-  function toInputValue(date){ // UTC Date -> "YYYY-MM-DD"
+  function toInputValue(date){
     return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
   }
 
-  function formatDDMMYYYY(date){ // UTC Date -> "DD/MM/YYYY"
+  function formatDDMMYYYY(date){
     return `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
   }
 
@@ -542,7 +540,6 @@ margin-top: -1em;
     return new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()));
   }
 
-  // --- Core calculations using Omni rules ---
   function calcFromMating(matingUTC){
     const due = addDaysUTC(matingUTC, AVG_GESTATION);
     const earliest = addDaysUTC(matingUTC, EARLY_GESTATION);
@@ -550,7 +547,6 @@ margin-top: -1em;
     return { due, earliest, latest };
   }
 
-  // When user supplies a due date: reverse to mating then compute earliest/latest from mating
   function calcFromDue(dueUTC){
     const mating = addDaysUTC(dueUTC, -AVG_GESTATION);
     const earliest = addDaysUTC(mating, EARLY_GESTATION);
@@ -573,7 +569,6 @@ margin-top: -1em;
       const matingUTC = parseDateInput(matingInput.value);
       const { due, earliest, latest } = calcFromMating(matingUTC);
 
-      // mark due input as programmatically updated
       dueInput.value = toInputValue(due);
       dueInput.classList.add('result');
 
@@ -597,7 +592,6 @@ margin-top: -1em;
       const dueUTC = parseDateInput(dueInput.value);
       const { mating, earliest, latest } = calcFromDue(dueUTC);
 
-      // mark mating input as programmatically updated
       matingInput.value = toInputValue(mating);
       matingInput.classList.add('result');
 
@@ -617,24 +611,21 @@ margin-top: -1em;
       return;
     }
 
-    // no input or nothing meaningful
     resultsDiv.innerHTML = '';
   }
 
-  // --- events ---
   matingInput.addEventListener('input', () => {
-    matingInput.classList.remove('result'); // user changed it manually
+    matingInput.classList.remove('result');
     lastChanged = 'mating';
     updateResults();
   });
 
   dueInput.addEventListener('input', () => {
-    dueInput.classList.remove('result'); // user changed it manually
+    dueInput.classList.remove('result');
     lastChanged = 'due';
     updateResults();
   });
 
-  // initialize if prefilled
   if (matingInput.value){ lastChanged = 'mating'; updateResults(); }
   else if (dueInput.value){ lastChanged = 'due'; updateResults(); }
 

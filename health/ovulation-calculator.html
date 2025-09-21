@@ -571,13 +571,68 @@ Everyday Life
   </style>
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
-
-
-<script src="/assets/js/ovulation-calculator.js" defer crossorigin="anonymous"></script>
-
-
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
+
+<script defer crossorigin="anonymous">
+  function setTodayAsDefaultDate() {
+  const today = new Date().toISOString().split("T")[0];
+  const lastPeriodInput = document.getElementById("lastPeriod");
+  lastPeriodInput.value = today;
+}
+
+
+function calculateResults() {
+  const cycleDuration = parseInt(document.getElementById("cycleDuration").value, 10);
+  const lastPeriodValue = document.getElementById("lastPeriod").value;
+  const lastPeriod = new Date(lastPeriodValue);
+  
+  
+  if (isNaN(cycleDuration) || isNaN(lastPeriod.getTime())) {
+    return;
+  }
+  
+  
+  function addDays(date, days) {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result.toISOString().split("T")[0];
+  }
+  
+  
+  for (let i = 0; i < 3; i++) {
+    const offset = i * cycleDuration;
+    const ovulationDay = addDays(lastPeriod, offset + (cycleDuration - 14));
+    const fertileStart = addDays(lastPeriod, offset + (cycleDuration - 14) - 5);
+    const fertileEnd = addDays(lastPeriod, offset + (cycleDuration - 14) + 1);
+    const dueDate = addDays(new Date(ovulationDay), 266);
+    
+    
+    document.getElementById(`ovulationDay${["One", "Two", "Three"][i]}`).value = ovulationDay;
+    document.getElementById(`firstDayofFertilityWindow${["One", "Two", "Three"][i]}`).value = fertileStart;
+    document.getElementById(`lastDayofFertilityWindow${["One", "Two", "Three"][i]}`).value = fertileEnd;
+    document.getElementById(`duedate${["One", "Two", "Three"][i]}`).value = dueDate;
+  }
+}
+
+
+document.addEventListener("DOMContentLoaded", function() {
+  setTodayAsDefaultDate();
+  
+  const cycleInput = document.getElementById("cycleDuration");
+  const lastPeriodInput = document.getElementById("lastPeriod");
+  
+  
+  cycleInput.addEventListener("input", calculateResults);
+  lastPeriodInput.addEventListener("input", calculateResults);
+  
+  window.addEventListener("load", () => {
+    calculateResults();
+  });
+});
+</script>
+
+
 
 </body>
 
