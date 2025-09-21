@@ -1961,6 +1961,7 @@ document.addEventListener("click", (e) => {
         // If still in DOM, finalize
         if (document.body.contains(container)) finalizeClose(container);
       }, 640);
+      document.body.style.overflow = 'none';
     }
 
     function finalizeClose(container) {
