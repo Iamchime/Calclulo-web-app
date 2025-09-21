@@ -942,100 +942,6 @@ function resetCalculator() {
   errorMessages.forEach(msg => msg.remove());
 }
 
-/********* flash results ******/
-(function() {
-  if (!window.__valueSetterPatched) {
-    window.__valueSetterPatched = true;
-    const patch = (Ctor) => {
-      if (!Ctor) return;
-      const d = Object.getOwnPropertyDescriptor(Ctor.prototype, 'value');
-      if (!d || !d.configurable) return;
-      Object.defineProperty(Ctor.prototype, 'value', {
-        get: d.get,
-        set: function(v) {
-          const old = d.get.call(this);
-          d.set.call(this, v);
-          if (old !== v) {
-            this.dispatchEvent(new CustomEvent('value-set', {
-              bubbles: true,
-              detail: { old, value: v }
-            }));
-          }
-        }
-      });
-    };
-    patch(HTMLInputElement);
-    patch(HTMLTextAreaElement);
-    patch(HTMLSelectElement);
-  }
-  
-  const timers = new WeakMap();
-  
-  function clearFlash(el) {
-    if (timers.has(el)) {
-      clearTimeout(timers.get(el));
-      timers.delete(el);
-    }
-    el.classList.remove('flashResult');
-  }
-  
-  function flash(el) {
-    // reset any pending timer
-    if (timers.has(el)) clearTimeout(timers.get(el));
-    // add flash class (short-lived visual)
-    el.classList.add('flashResult');
-    timers.set(el, setTimeout(() => {
-      el.classList.remove('flashResult');
-      timers.delete(el);
-    }, 400));
-  }
-  
-  function markResult(el) {
-    // mark as programmatic result and flash
-    el.classList.add('result');
-    flash(el);
-  }
-  
-  function wire(el) {
-    if (el.dataset.flashWired) return;
-    el.dataset.flashWired = '1';
-    
-    // If this is an input-like element
-    if (el.matches('input, textarea, select')) {
-      // User-driven events -> just flash
-      el.addEventListener('input', () => flash(el));
-      el.addEventListener('change', () => flash(el));
-      
-      // Programmatic changes -> mark result + flash
-      el.addEventListener('value-set', () => markResult(el));
-      
-      // When user focuses, remove programmatic mark and any flashing
-      el.addEventListener('focus', () => {
-        el.classList.remove('result');
-        clearFlash(el);
-      }, { passive: true });
-    } else {
-      // Non-form element: consider DOM mutations programmatic changes
-      const mo = new MutationObserver(() => {
-        markResult(el);
-      });
-      mo.observe(el, { childList: true, characterData: true, subtree: true });
-      // store the observer so it can be GC'd with element (no need to keep reference here)
-      // (If you need to disconnect later, you could store mo on el.__flashMo)
-    }
-  }
-  
-  // Initially wire existing inputs, textareas, selects, and other elements of interest.
-  // Change the selector below to include other non-form nodes you care about (e.g., '.result-source')
-  document.querySelectorAll('input, textarea, select, [data-flash-target]').forEach(wire);
-  
-  // Observe the document for new inputs/textarea/select elements or custom targets
-  const addObserver = new MutationObserver(() => {
-    document.querySelectorAll('input:not([data-flash-wired]), textarea:not([data-flash-wired]), select:not([data-flash-wired]), [data-flash-target]:not([data-flash-wired])')
-      .forEach(wire);
-  });
-  addObserver.observe(document.documentElement, { childList: true, subtree: true });
-})();
 
 
 /********** options box***********/
@@ -1135,6 +1041,133 @@ document.addEventListener('click', function(e) {
     removeBox();
   }
 });
+
+/********* flash results  ******/
+(function() {
+  const timers = new WeakMap();
+  const formattingInProgress = new WeakSet();
+  
+  function clearFlash(el) {
+    if (timers.has(el)) {
+      clearTimeout(timers.get(el));
+      timers.delete(el);
+    }
+    el.classList.remove('flashResult');
+  }
+  
+  function flash(el) {
+    if (timers.has(el)) clearTimeout(timers.get(el));
+    el.classList.add('flashResult');
+    timers.set(el, setTimeout(() => {
+      el.classList.remove('flashResult');
+      timers.delete(el);
+    }, 400));
+  }
+  
+  function markResult(el) {
+    el.classList.add('result');
+    flash(el);
+  }
+  
+  function formatWithCommas(v) {
+    if (v == null) return '';
+    const s = String(v).replace(/,/g, '').trim();
+    if (s === '') return '';
+
+    if (s === '.') return '.';
+    const parts = s.split('.');
+    const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (parts.length > 1) return intPart + '.' + parts.slice(1).join('.');
+    return intPart;
+  }
+  
+  function underlyingEqual(a, b) {
+    const sa = (a == null) ? '' : String(a).replace(/,/g, '').trim();
+    const sb = (b == null) ? '' : String(b).replace(/,/g, '').trim();
+    
+    const na = parseFloat(sa);
+    const nb = parseFloat(sb);
+    if (!isNaN(na) && !isNaN(nb)) return na === nb;
+    
+    return sa === sb;
+  }
+  
+  if (!window.__valueSetterPatched) {
+    window.__valueSetterPatched = true;
+    const patch = (Ctor) => {
+      if (!Ctor) return;
+      const d = Object.getOwnPropertyDescriptor(Ctor.prototype, 'value');
+      if (!d || !d.configurable) return;
+      Object.defineProperty(Ctor.prototype, 'value', {
+        get: d.get,
+        set: function(v) {
+          const old = d.get.call(this);
+          d.set.call(this, v);
+          if (old !== v) {
+            this.dispatchEvent(new CustomEvent('value-set', {
+              bubbles: true,
+              detail: { old, value: v }
+            }));
+          }
+        }
+      });
+    };
+    patch(HTMLInputElement);
+    patch(HTMLTextAreaElement);
+    patch(HTMLSelectElement);
+  }
+  
+  function wire(el) {
+    if (el.dataset.flashWired) return;
+    el.dataset.flashWired = '1';
+    
+    if (el.matches('input, textarea, select')) {
+
+      el.addEventListener('value-set', (ev) => {
+
+        if (formattingInProgress.has(el)) {
+          formattingInProgress.delete(el);
+          return;
+        }
+        
+        const oldRaw = ev && ev.detail && ('old' in ev.detail) ? ev.detail.old : el.value;
+        const newRaw = ev && ev.detail && ('value' in ev.detail) ? ev.detail.value : el.value;
+        
+        const underlyingChanged = !underlyingEqual(oldRaw, newRaw);
+        
+        const formatted = formatWithCommas(newRaw);
+        if (formatted !== newRaw) {
+          formattingInProgress.add(el);
+          el.value = formatted;
+        }
+        
+        if (underlyingChanged) {
+          markResult(el);
+        }
+      });
+      
+      el.addEventListener('focus', () => {
+        el.classList.remove('result');
+        clearFlash(el);
+      }, { passive: true });
+      
+    } else {
+
+      const mo = new MutationObserver(() => {
+        markResult(el);
+      });
+      mo.observe(el, { childList: true, characterData: true, subtree: true });
+    }
+  }
+  
+  document.querySelectorAll('input, textarea, select, [data-flash-target]').forEach(wire);
+  
+  const addObserver = new MutationObserver(() => {
+    document.querySelectorAll('input:not([data-flash-wired]), textarea:not([data-flash-wired]), select:not([data-flash-wired]), [data-flash-target]:not([data-flash-wired])')
+      .forEach(wire);
+  });
+  addObserver.observe(document.documentElement, { childList: true, subtree: true });
+})();
 
 /******** options features ********/
 
