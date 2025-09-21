@@ -902,7 +902,7 @@ function resetCalculator() {
   
   containers.forEach(container => {
     // Reset all input fields except read-only ones
-    const inputs = container.querySelectorAll("input:not([readonly])");
+    const inputs = container.querySelectorAll("input:not([readonly]):not([type='radio']):not([type='checkbox'])");
     inputs.forEach(input => {
       input.value = "";
     });
@@ -911,6 +911,24 @@ function resetCalculator() {
     const selects = container.querySelectorAll("select");
     selects.forEach(select => {
       select.selectedIndex = 0;
+    });
+    
+    // ✅ Reset checkboxes (uncheck them)
+    const checkboxes = container.querySelectorAll("input[type='checkbox']");
+    checkboxes.forEach(checkbox => {
+      checkbox.checked = false;
+    });
+    
+    // ✅ Reset radios (default to the first one or specific one like "No")
+    const radioGroups = {};
+    const radios = container.querySelectorAll("input[type='radio']");
+    radios.forEach(radio => {
+      if (!radioGroups[radio.name]) {
+        radioGroups[radio.name] = radio; // store first radio of each group
+      }
+    });
+    Object.values(radioGroups).forEach(defaultRadio => {
+      defaultRadio.checked = true;
     });
     
     // Reset output fields if any
@@ -924,9 +942,8 @@ function resetCalculator() {
     });
     
     // 🔥 Add overlay animation
-container.classList.add("flash-overlay", "flash");
-
-container.onanimationend = () => container.classList.remove("flash", "flash-overlay");
+    container.classList.add("flash-overlay", "flash");
+    container.onanimationend = () => container.classList.remove("flash", "flash-overlay");
   });
   
   // extra results divs...
@@ -964,7 +981,6 @@ container.onanimationend = () => container.classList.remove("flash", "flash-over
   // Remove error text if it exists
   const errorMessages = document.querySelectorAll(".error-message");
   errorMessages.forEach(msg => msg.remove());
-  
 }
 
 /********* flash results ******/
