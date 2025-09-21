@@ -1611,415 +1611,437 @@ document.addEventListener("click", (e) => {
 
 /************* pwa install drawer ******************/
 
-  (function () {
-    if (window.innerWidth > 768) return;
-    const STORAGE_KEY = 'pwa_install_dont_show_again_v1';
-    const DRAWER_BASE = 'calcluloPwaDrawer';
-    let deferredInstallPrompt = null;
-    let isDrawerOpen = false;
-    let lastBodyOverflow = '';
-    let activeContainer = null; // reference to current container when open
-    let dragState = null;
+(function () {
+  // Mobile only (early exit)
+  if (window.innerWidth > 768) return;
 
-    /* -------------------------
-       Utility: detect PWA mode
-       ------------------------- */
-    function isRunningAsPWA() {
-      if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
-      if (window.navigator.standalone === true) return true; // iOS
-      if (document.referrer && document.referrer.startsWith('android-app://')) return true;
-      return false;
+  const STORAGE_KEY = 'pwa_install_dont_show_again_v1';
+  const DRAWER_BASE = 'calcluloPwaDrawer';
+  let deferredInstallPrompt = null;
+  let isDrawerOpen = false;
+  let activeContainer = null;        // current DOM container (drawer+backdrop)
+  let dragState = null;              // pointer drag state
+  let savedScrollY = 0;              // stored scroll position when opening
+  // saved body inline styles so we can fully restore them
+  const savedBodyStyles = { position: '', top: '', left: '', right: '', width: '' };
+  const savedHtmlOverflow = '';
+
+  /* -------------------------
+     Utility: detect PWA mode
+  ------------------------- */
+  function isRunningAsPWA() {
+    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
+    if (window.navigator.standalone === true) return true; // iOS
+    if (document.referrer && document.referrer.startsWith('android-app://')) return true;
+    return false;
+  }
+
+  /* -------------------------
+     Capture beforeinstallprompt
+  ------------------------- */
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    maybeShowDrawer();
+  });
+
+  /* -------------------------
+     Global handlers (document-level)
+     - click outside -> close
+     - Escape -> close
+  ------------------------- */
+  document.addEventListener('click', (e) => {
+    if (!isDrawerOpen || !activeContainer) return;
+    const drawer = activeContainer.querySelector('.calclulo-pwa-drawer');
+    const backdrop = activeContainer.querySelector('.calclulo-pwa-backdrop');
+    const path = (e.composedPath && e.composedPath()) || (e.path || []);
+    if (path.indexOf(drawer) === -1 && path.indexOf(backdrop) === -1) {
+      // click outside drawer/backdrop
+      startCloseFlow();
     }
+  });
 
-    /* -------------------------
-       Capture install event
-       ------------------------- */
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredInstallPrompt = e;
-      // show drawer now if applicable
-      maybeShowDrawer();
-    });
+  document.addEventListener('keydown', (e) => {
+    if (!isDrawerOpen) return;
+    if (e.key === 'Escape' || e.key === 'Esc') startCloseFlow();
+  });
 
-    /* -------------------------
-       Global document handlers
-       - click outside -> close
-       - Escape -> close
-       ------------------------- */
-    document.addEventListener('click', (e) => {
-      if (!isDrawerOpen || !activeContainer) return;
-      const drawer = activeContainer.querySelector('.calclulo-pwa-drawer');
-      const backdrop = activeContainer.querySelector('.calclulo-pwa-backdrop');
-      const path = e.composedPath ? e.composedPath() : (e.path || []);
-      if (path.indexOf(drawer) === -1 && path.indexOf(backdrop) === -1) {
-        closeDrawer();
+  window.addEventListener('appinstalled', () => {
+    localStorage.setItem(STORAGE_KEY, 'true');
+    startCloseFlow();
+  });
+
+  /* -------------------------
+     Styles injector (one-time)
+  ------------------------- */
+  function injectStyles() {
+    if (document.getElementById(DRAWER_BASE + 'Styles')) return;
+    const css = `
+      .calclulo-pwa-container { display: none; }
+      .calclulo-pwa-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.45);
+        opacity: 0; transition: opacity 260ms ease; z-index: 9998; pointer-events: none;
+        -webkit-tap-highlight-color: transparent;
       }
-    });
+      .calclulo-pwa-backdrop.visible { opacity: 1; pointer-events: auto; }
+      .calclulo-pwa-drawer {
+        position: fixed; left: 0; right: 0; bottom: 0;
+        transform: translateY(110%);
+        transition: transform 360ms cubic-bezier(.2,.9,.2,1);
+        z-index: 9999; will-change: transform; max-width: 720px; margin: 0 auto;
+        border-top-left-radius: 12px; border-top-right-radius: 12px;
+        box-shadow: 0 -12px 30px rgba(2,6,23,0.35);
+        background: linear-gradient(180deg, #ffffff, #fbfbfb);
+        padding: 18px; box-sizing: border-box;
+        touch-action: none;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .calclulo-pwa-drawer.visible { transform: translateY(0); }
+      .calclulo-pwa-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.2); border-radius: 4px; margin: 0 auto 12px; }
+      .calclulo-pwa-content { display: flex; gap: 12px; align-items: center; }
+      .calclulo-pwa-info { flex: 1 1 auto; }
+      .calclulo-pwa-title { font-weight: 700; font-size: 1.05rem; margin: 0 0 6px; }
+      .calclulo-pwa-desc { margin: 0; font-size: 0.95rem; color: #444; }
+      .calclulo-pwa-actions { display: flex; gap: 10px; margin-top: 14px; justify-content: flex-end; }
+      .calclulo-btn { min-width: 120px; padding: 10px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-size: 0.95rem; }
+      .calclulo-btn.primary { background: linear-gradient(180deg,#1d7bed,#1556d6); color: white; box-shadow: 0 6px 18px rgba(29,123,237,0.24); }
+      .calclulo-btn.ghost { background: transparent; color: #333; }
+      @media (min-width: 640px) {
+        .calclulo-pwa-drawer { left: auto; right: auto; bottom: 20px; width: calc(100% - 40px); max-width: 640px; }
+      }
+    `;
+    const s = document.createElement('style');
+    s.id = DRAWER_BASE + 'Styles';
+    s.appendChild(document.createTextNode(css));
+    document.head.appendChild(s);
+  }
 
-    document.addEventListener('keydown', (e) => {
-      if (!isDrawerOpen) return;
-      if (e.key === 'Escape' || e.key === 'Esc') closeDrawer();
-    });
+  /* -------------------------
+     Build drawer container (fresh each open)
+  ------------------------- */
+  function buildDrawer() {
+    const container = document.createElement('div');
+    container.id = DRAWER_BASE + '-container';
+    container.className = 'calclulo-pwa-container';
 
-    window.addEventListener('appinstalled', () => {
-      // user installed the app -> don't show again + remove drawer if open
+    const backdrop = document.createElement('div');
+    backdrop.className = 'calclulo-pwa-backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
+
+    const drawer = document.createElement('div');
+    drawer.id = DRAWER_BASE;
+    drawer.className = 'calclulo-pwa-drawer';
+    drawer.setAttribute('role', 'dialog');
+    drawer.setAttribute('aria-modal', 'true');
+    drawer.setAttribute('aria-label', 'Install app');
+
+    // content
+    const handle = document.createElement('div'); handle.className = 'calclulo-pwa-handle';
+    const content = document.createElement('div'); content.className = 'calclulo-pwa-content';
+    const info = document.createElement('div'); info.className = 'calclulo-pwa-info';
+    const title = document.createElement('h3'); title.className = 'calclulo-pwa-title'; title.textContent = 'Install this app';
+    const desc = document.createElement('p'); desc.className = 'calclulo-pwa-desc'; desc.textContent = 'Add this app to your home screen for a native experience';
+    info.appendChild(title); info.appendChild(desc); content.appendChild(info);
+
+    // actions
+    const actions = document.createElement('div'); actions.className = 'calclulo-pwa-actions';
+    const dontShowBtn = document.createElement('button'); dontShowBtn.className = 'calclulo-btn ghost';
+    dontShowBtn.type = 'button'; dontShowBtn.textContent = "Don't show this again";
+    dontShowBtn.addEventListener('click', () => {
       localStorage.setItem(STORAGE_KEY, 'true');
-      closeDrawer();
+      startCloseFlow();
     });
 
-    /* -------------------------
-       Should we show drawer?
-       ------------------------- */
-    function shouldShowDrawer() {
-      if (isRunningAsPWA()) return false;
-      if (localStorage.getItem(STORAGE_KEY) === 'true') return false;
-      return true;
-    }
-
-    /* -------------------------
-       Inject styles (only once)
-       ------------------------- */
-    function injectStyles() {
-      if (document.getElementById(DRAWER_BASE + 'Styles')) return;
-      const css = `
-        /* container hidden until active */
-        .calclulo-pwa-container { display: none; }
-
-        .calclulo-pwa-backdrop {
-          position: fixed; inset: 0;
-          background: rgba(0,0,0,0.45);
-          opacity: 0; transition: opacity 260ms ease; z-index: 9998; pointer-events: none;
-        }
-        .calclulo-pwa-backdrop.visible { opacity: 1; pointer-events: auto; }
-
-        .calclulo-pwa-drawer {
-          position: fixed; left: 0; right: 0; bottom: 0;
-          transform: translateY(110%);
-          transition: transform 360ms cubic-bezier(.2,.9,.2,1);
-          z-index: 9999; will-change: transform; max-width: 720px; margin: 0 auto;
-          border-top-left-radius: 12px; border-top-right-radius: 12px;
-          box-shadow: 0 -12px 30px rgba(2,6,23,0.35);
-          background: linear-gradient(180deg, #ffffff, #fbfbfb);
-          padding: 18px; box-sizing: border-box;
-          touch-action: none;
-        }
-        .calclulo-pwa-drawer.visible { transform: translateY(0); }
-
-        .calclulo-pwa-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.2); border-radius: 4px; margin: 0 auto 12px; }
-
-        .calclulo-pwa-content { display: flex; gap: 12px; align-items: center; }
-        .calclulo-pwa-info { flex: 1 1 auto; }
-        .calclulo-pwa-title { font-weight: 700; font-size: 1.05rem; margin: 0 0 6px; }
-        .calclulo-pwa-desc { margin: 0; font-size: 0.95rem; color: #444; }
-
-        .calclulo-pwa-actions { display: flex; gap: 10px; margin-top: 14px; justify-content: flex-end; }
-        .calclulo-btn { min-width: 120px; padding: 10px 14px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-size: 0.95rem; }
-        .calclulo-btn.primary { background: linear-gradient(180deg,#1d7bed,#1556d6); color: white; box-shadow: 0 6px 18px rgba(29,123,237,0.24); }
-        .calclulo-btn.ghost { background: transparent; color: #333; }
-
-        @media (min-width: 640px) {
-          .calclulo-pwa-drawer {
-            left: auto; right: auto; bottom: 20px; width: calc(100% - 40px); max-width: 640px;
-          }
-        }
-      `;
-      const style = document.createElement('style');
-      style.id = DRAWER_BASE + 'Styles';
-      style.appendChild(document.createTextNode(css));
-      document.head.appendChild(style);
-    }
-
-    /* -------------------------
-       Build drawer container (fresh every time)
-       ------------------------- */
-    function buildDrawer() {
-      // create elements
-      const container = document.createElement('div');
-      container.id = DRAWER_BASE + '-container';
-      container.className = 'calclulo-pwa-container';
-
-      const backdrop = document.createElement('div');
-      backdrop.className = 'calclulo-pwa-backdrop';
-      backdrop.setAttribute('aria-hidden', 'true');
-
-      const drawer = document.createElement('div');
-      drawer.id = DRAWER_BASE;
-      drawer.className = 'calclulo-pwa-drawer';
-      drawer.setAttribute('role', 'dialog');
-      drawer.setAttribute('aria-modal', 'true');
-      drawer.setAttribute('aria-label', 'Install app');
-
-      const handle = document.createElement('div');
-      handle.className = 'calclulo-pwa-handle';
-      drawer.appendChild(handle);
-
-      const content = document.createElement('div');
-      content.className = 'calclulo-pwa-content';
-
-      const info = document.createElement('div');
-      info.className = 'calclulo-pwa-info';
-
-      const title = document.createElement('h3');
-      title.className = 'calclulo-pwa-title';
-      title.textContent = 'Install this app';
-
-      const desc = document.createElement('p');
-      desc.className = 'calclulo-pwa-desc';
-      desc.textContent = 'Add this app to your home screen for a native experience';
-
-      info.appendChild(title);
-      info.appendChild(desc);
-      content.appendChild(info);
-      drawer.appendChild(content);
-
-      const actions = document.createElement('div');
-      actions.className = 'calclulo-pwa-actions';
-
-      const dontShowBtn = document.createElement('button');
-      dontShowBtn.className = 'calclulo-btn ghost';
-      dontShowBtn.type = 'button';
-      dontShowBtn.textContent = "Don't show this again";
-      dontShowBtn.addEventListener('click', () => {
-        localStorage.setItem(STORAGE_KEY, 'true');
-        closeDrawer();
-      });
-
-      const installBtn = document.createElement('button');
-      installBtn.className = 'calclulo-btn primary';
-      installBtn.type = 'button';
-      installBtn.textContent = 'Install';
-      installBtn.addEventListener('click', async () => {
-        if (deferredInstallPrompt) {
-          try {
-            deferredInstallPrompt.prompt();
-            await deferredInstallPrompt.userChoice;
-            closeDrawer();
-            deferredInstallPrompt = null;
-          } catch (err) {
-            closeDrawer();
-            console.warn('Install prompt failed', err);
-          }
+    const installBtn = document.createElement('button'); installBtn.className = 'calclulo-btn primary';
+    installBtn.type = 'button'; installBtn.textContent = 'Install';
+    installBtn.addEventListener('click', async () => {
+      if (deferredInstallPrompt) {
+        try {
+          deferredInstallPrompt.prompt();
+          await deferredInstallPrompt.userChoice;
+          startCloseFlow();
+          deferredInstallPrompt = null;
           return;
+        } catch (err) {
+          console.warn('install prompt failed', err);
         }
-        closeDrawer();
-        showIosInstallHelp();
-      });
-
-      actions.appendChild(dontShowBtn);
-      actions.appendChild(installBtn);
-      drawer.appendChild(actions);
-
-      container.appendChild(backdrop);
-      container.appendChild(drawer);
-
-      /* ---------- Drag-to-dismiss (pointer events) ---------- */
-      let drawerHeight = null;
-      function ensureDrawerHeight() { drawerHeight = drawer.getBoundingClientRect().height; }
-
-      function onPointerDown(e) {
-        if (e.button && e.button !== 0) return;
-        ensureDrawerHeight();
-        dragState = {
-          startY: e.clientY,
-          currentY: e.clientY,
-          startedAt: performance.now(),
-          pointerId: e.pointerId,
-          lastY: e.clientY
-        };
-        drawer.style.transition = 'none';
-        try { drawer.setPointerCapture && drawer.setPointerCapture(e.pointerId); } catch (_) {}
-        // keep scroll locked
-        lastBodyOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
       }
-
-      function onPointerMove(e) {
-        if (!dragState || e.pointerId !== dragState.pointerId) return;
-        dragState.currentY = e.clientY;
-        const dy = Math.max(0, dragState.currentY - dragState.startY);
-        drawer.style.transform = `translateY(${dy}px)`;
-        const p = Math.min(1, dy / (drawerHeight || 300));
-        backdrop.style.opacity = String(1 - p * 0.95);
-        dragState.lastY = e.clientY;
-      }
-
-      function onPointerUp(e) {
-        if (!dragState || e.pointerId !== dragState.pointerId) return;
-        const dy = Math.max(0, dragState.currentY - dragState.startY);
-        const dt = Math.max(1, performance.now() - dragState.startedAt);
-        const velocity = (dragState.currentY - dragState.startY) / dt; // px/ms
-        const shouldClose = (dy > (drawerHeight * 0.35 || 120)) || (velocity > 0.5);
-        // restore transition to let CSS animate
-        drawer.style.transition = '';
-        backdrop.style.transition = '';
-
-        if (shouldClose) {
-          // animate out visually
-          drawer.style.transform = `translateY(110%)`;
-          backdrop.style.opacity = '0';
-          // when transform transition ends we remove container in closeDrawer
-          // call closeDrawer() which will remove classes (if present) and remove from DOM on transitionend
-          // but we want to ensure DOM removal happens only once — call closeDrawer with flag
-          // Wait a tick so CSS can pick up the transform change then invoke closeDrawer which listens for transitionend
-          setTimeout(() => closeDrawer(), 20);
-        } else {
-          // snap back
-          drawer.style.transform = '';
-          backdrop.style.opacity = '';
-          setTimeout(() => {
-            document.body.style.overflow = lastBodyOverflow || '';
-          }, 360);
-        }
-        try { drawer.releasePointerCapture && drawer.releasePointerCapture(e.pointerId); } catch (_) {}
-        dragState = null;
-      }
-
-      drawer.addEventListener('pointerdown', onPointerDown);
-      drawer.addEventListener('pointermove', onPointerMove);
-      drawer.addEventListener('pointerup', onPointerUp);
-      drawer.addEventListener('pointercancel', onPointerUp);
-      drawer.addEventListener('lostpointercapture', () => { dragState = null; document.body.style.overflow = lastBodyOverflow || ''; });
-
-      /* Clicking backdrop should close (backdrop has its own listener too) */
-      backdrop.addEventListener('click', () => closeDrawer());
-
-      // return the freshly built container
-      return container;
-    }
-
-    /* -------------------------
-       Open drawer (smooth entry)
-       - create container each time so we can remove it on close
-       ------------------------- */
-    function openDrawer() {
-      if (isDrawerOpen) return;
-      // create fresh container
-      activeContainer = buildDrawer();
-      document.body.appendChild(activeContainer);
-
-      // grab elements
-      const container = activeContainer;
-      const backdrop = container.querySelector('.calclulo-pwa-backdrop');
-      const drawer = container.querySelector('.calclulo-pwa-drawer');
-
-      // make container visible (display:block)
-      container.style.display = 'block';
-      // ensure initial states for smooth transition: drawer off-screen, backdrop transparent
-      drawer.style.transform = 'translateY(110%)';
-      drawer.classList.remove('visible');
-      backdrop.style.opacity = '0';
-      backdrop.classList.remove('visible');
-
-      // lock scroll
-      lastBodyOverflow = document.body.style.overflow;
-      document.body.style.overflow = 'hidden';
-
-      // Force a reflow so the browser accepts the initial styles (important)
-      // eslint-disable-next-line no-unused-expressions
-      container.offsetHeight;
-
-      // then on next frame add visible class to trigger transition
-      requestAnimationFrame(() => {
-        backdrop.classList.add('visible');
-        drawer.classList.add('visible');
-        // clear inline styles so CSS class controls the final transform after animation
-        setTimeout(() => {
-          drawer.style.transform = '';
-          backdrop.style.opacity = '';
-        }, 10);
-      });
-
-      // mark open
-      isDrawerOpen = true;
-    }
-
-    /* -------------------------
-       Close drawer and remove from DOM after transitionend
-       ------------------------- */
-    function closeDrawer() {
-      if (!activeContainer) return;
-      const container = activeContainer;
-      const backdrop = container.querySelector('.calclulo-pwa-backdrop');
-      const drawer = container.querySelector('.calclulo-pwa-drawer');
-
-      // start hide: remove visible classes so CSS transitions run
-      backdrop.classList.remove('visible');
-      drawer.classList.remove('visible');
-
-      // if the drawer is currently transformed by inline style (drag), keep that, otherwise let CSS animate from current to translateY(110%)
-      // ensure we listen for transitionend on drawer's transform
-      const onEnd = (ev) => {
-        if (ev.target !== drawer || (ev.propertyName !== 'transform' && ev.propertyName !== 'transform')) return;
-        drawer.removeEventListener('transitionend', onEnd);
-        finalizeClose(container);
-      };
-
-      drawer.addEventListener('transitionend', onEnd);
-
-      // fallback: if transitionend doesn't fire, force removal after timeout
-      setTimeout(() => {
-        // If still in DOM, finalize
-        if (document.body.contains(container)) finalizeClose(container);
-      }, 640);
-      document.body.style.overflow = 'none';
-    }
-
-    function finalizeClose(container) {
-      try {
-        // restore scrolling
-        document.body.style.overflow = lastBodyOverflow || '';
-        // remove container from DOM completely
-        if (container && container.parentNode) container.parentNode.removeChild(container);
-      } catch (err) {
-        console.warn('Error finalizing drawer close', err);
-      } finally {
-        // cleanup state
-        activeContainer = null;
-        isDrawerOpen = false;
-      }
-    }
-
-    /* -------------------------
-       iOS fallback instructions
-       ------------------------- */
-    function showIosInstallHelp() {
-      if (/iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase())) {
-        setTimeout(() => {
-          alert('To install this app on iOS: tap the Share button then choose Add to Home Screen.');
-        }, 200);
-      } else {
-        setTimeout(() => {
-          alert('Your browser does not support the automated install prompt. If you want to install, look for "Add to home screen" in your browser menu.');
-        }, 200);
-      }
-    }
-
-    /* -------------------------
-       maybe show drawer on load
-       ------------------------- */
-    function maybeShowDrawer() {
-      if (!shouldShowDrawer()) return;
-      injectStyles();
-      // show after a small delay for less jank
-      setTimeout(openDrawer, 520);
-    }
-
-    /* -------------------------
-       Public API (optional)
-       ------------------------- */
-    window.CalcluloPwaDrawer = {
-      open: () => { if (shouldShowDrawer()) maybeShowDrawer(); },
-      close: () => { closeDrawer(); },
-      resetDontShow: () => { localStorage.removeItem(STORAGE_KEY); }
-    };
-
-    /* -------------------------
-       Auto-run on DOM ready
-       ------------------------- */
-    document.addEventListener('DOMContentLoaded', () => {
-      if (isRunningAsPWA()) return;
-      if (localStorage.getItem(STORAGE_KEY) === 'true') return;
-      injectStyles();
-      maybeShowDrawer();
+      startCloseFlow();
+      showIosInstallHelp();
     });
-  })();
+
+    actions.appendChild(dontShowBtn);
+    actions.appendChild(installBtn);
+
+    // assemble
+    drawer.appendChild(handle);
+    drawer.appendChild(content);
+    drawer.appendChild(actions);
+    container.appendChild(backdrop);
+    container.appendChild(drawer);
+
+    /* ---------- Drag-to-dismiss (pointer events) ---------- */
+    let drawerHeight = 0;
+    function ensureDrawerHeight() { drawerHeight = drawer.getBoundingClientRect().height; }
+
+    function onPointerDown(e) {
+      // only primary pointer
+      if (e.button && e.button !== 0) return;
+      ensureDrawerHeight();
+      dragState = {
+        startY: e.clientY,
+        currentY: e.clientY,
+        startedAt: performance.now(),
+        pointerId: e.pointerId || null
+      };
+      drawer.style.transition = 'none';
+      try { drawer.setPointerCapture && drawer.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+
+    function onPointerMove(e) {
+      if (!dragState) return;
+      // if pointerId exists ensure match (safety)
+      if (dragState.pointerId != null && e.pointerId !== dragState.pointerId) return;
+      dragState.currentY = e.clientY;
+      const dy = Math.max(0, dragState.currentY - dragState.startY);
+      drawer.style.transform = `translateY(${dy}px)`;
+      // fade backdrop proportionally
+      const p = Math.min(1, dy / (drawerHeight || 300));
+      backdrop.style.opacity = String(1 - p * 0.95);
+    }
+
+    function onPointerUp(e) {
+      if (!dragState) return;
+      if (dragState.pointerId != null && e.pointerId !== dragState.pointerId) {
+        dragState = null; return;
+      }
+      const dy = Math.max(0, dragState.currentY - dragState.startY);
+      const dt = Math.max(1, performance.now() - dragState.startedAt);
+      const velocity = (dragState.currentY - dragState.startY) / dt; // px/ms
+      const shouldClose = (dy > (drawerHeight * 0.35 || 120)) || (velocity > 0.5);
+
+      // restore transition so CSS animates
+      drawer.style.transition = '';
+      backdrop.style.transition = '';
+
+      if (shouldClose) {
+        // close: animate out then finalize
+        drawer.style.transform = `translateY(110%)`;
+        backdrop.style.opacity = '0';
+        // as soon as close starts, restore page scroll (user requested immediate usability)
+        restorePageScrollImmediately();
+        // call close after a short tick so transitionend will catch it
+        setTimeout(() => startCloseFlow(), 20);
+      } else {
+        // snap back and keep page locked (since still open)
+        drawer.style.transform = '';
+        backdrop.style.opacity = '';
+      }
+
+      try { drawer.releasePointerCapture && drawer.releasePointerCapture(e.pointerId); } catch (_) {}
+      dragState = null;
+    }
+
+    // pointer listeners on drawer
+    drawer.addEventListener('pointerdown', onPointerDown);
+    drawer.addEventListener('pointermove', onPointerMove);
+    drawer.addEventListener('pointerup', onPointerUp);
+    drawer.addEventListener('pointercancel', onPointerUp);
+    drawer.addEventListener('lostpointercapture', () => { dragState = null; });
+
+    // backdrop click closes (triggers same flow)
+    backdrop.addEventListener('click', () => startCloseFlow());
+
+    return container;
+  }
+
+  /* -------------------------
+     Open drawer (smooth entry)
+     - create fresh container and lock page using fixed-position technique
+  ------------------------- */
+  function openDrawer() {
+    if (isDrawerOpen) return;
+    // build and append fresh container
+    injectStyles();
+    activeContainer = buildDrawer();
+    document.body.appendChild(activeContainer);
+
+    const container = activeContainer;
+    const backdrop = container.querySelector('.calclulo-pwa-backdrop');
+    const drawer = container.querySelector('.calclulo-pwa-drawer');
+
+    // make container visible (display:block)
+    container.style.display = 'block';
+
+    // Save current scroll and page styles, then lock page reliably
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    savedBodyStyles.position = document.body.style.position || '';
+    savedBodyStyles.top = document.body.style.top || '';
+    savedBodyStyles.left = document.body.style.left || '';
+    savedBodyStyles.right = document.body.style.right || '';
+    savedBodyStyles.width = document.body.style.width || '';
+    const prevHtmlOverflow = document.documentElement.style.overflow || '';
+    // lock page by fixing body (robust across iOS)
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.documentElement.style.overflow = 'hidden';
+
+    // prepare initial animation state
+    drawer.style.transform = 'translateY(110%)';
+    drawer.classList.remove('visible');
+    backdrop.style.opacity = '0';
+    backdrop.classList.remove('visible');
+
+    // Force reflow so the transition runs smoothly
+    // eslint-disable-next-line no-unused-expressions
+    container.offsetHeight;
+
+    // kick off animation
+    requestAnimationFrame(() => {
+      backdrop.classList.add('visible');
+      drawer.classList.add('visible');
+      // clear any inline styles so CSS class controls final transform
+      setTimeout(() => {
+        drawer.style.transform = '';
+        backdrop.style.opacity = '';
+      }, 10);
+    });
+
+    isDrawerOpen = true;
+  }
+
+  /* -------------------------
+     Start Close Flow
+     - run immediately when user initiates any close action
+     - restore page scroll immediately (so page is usable while drawer animates away)
+     - then finalize and remove DOM after transitionend or fallback timeout
+  ------------------------- */
+  function startCloseFlow() {
+    if (!activeContainer) return;
+    if (!isDrawerOpen) {
+      // If not marked as open (edge case) still ensure removal and restoration
+      restorePageScrollImmediately();
+      removeContainerIfExists();
+      return;
+    }
+    const container = activeContainer;
+    const backdrop = container.querySelector('.calclulo-pwa-backdrop');
+    const drawer = container.querySelector('.calclulo-pwa-drawer');
+
+    // Begin visual hide: remove visible classes so CSS transition runs
+    backdrop.classList.remove('visible');
+    drawer.classList.remove('visible');
+
+    // Immediately restore page scroll so user can interact with page while drawer animates away
+    restorePageScrollImmediately();
+
+    // Listen for drawer transitionend to remove container
+    const onEnd = (ev) => {
+      // Accept any transition end from the drawer (transform)
+      if (ev && ev.target !== drawer) return;
+      drawer.removeEventListener('transitionend', onEnd);
+      removeContainerIfExists();
+    };
+    drawer.addEventListener('transitionend', onEnd);
+
+    // Fallback removal if transitionend doesn't fire
+    setTimeout(() => {
+      if (document.body.contains(container)) removeContainerIfExists();
+    }, 700);
+  }
+
+  /* Restore page scroll immediately using savedScrollY and stored body styles.
+     This uses the fixed-position technique removal and window.scrollTo to restore exact position.
+  */
+  function restorePageScrollImmediately() {
+    try {
+      // read the stored top value (we set to -savedScrollY on open)
+      // Remove fixed positioning from body
+      document.body.style.position = savedBodyStyles.position || '';
+      document.body.style.top = savedBodyStyles.top || '';
+      document.body.style.left = savedBodyStyles.left || '';
+      document.body.style.right = savedBodyStyles.right || '';
+      document.body.style.width = savedBodyStyles.width || '';
+      // allow html scroll again
+      document.documentElement.style.overflow = '';
+      // restore scroll position precisely
+      window.scrollTo(0, savedScrollY || 0);
+    } catch (err) {
+      // best-effort restore
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.documentElement.style.overflow = '';
+    }
+  }
+
+  /* Remove container from DOM and cleanup references */
+  function removeContainerIfExists() {
+    if (!activeContainer) return;
+    try {
+      if (activeContainer.parentNode) activeContainer.parentNode.removeChild(activeContainer);
+    } catch (err) {
+      console.warn('Error removing drawer container', err);
+    } finally {
+      activeContainer = null;
+      isDrawerOpen = false;
+      dragState = null;
+    }
+  }
+
+  /* -------------------------
+     iOS fallback instructions
+  ------------------------- */
+  function showIosInstallHelp() {
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase())) {
+      setTimeout(() => {
+        alert('To install this app on iOS: tap the Share button then choose Add to Home Screen.');
+      }, 200);
+    } else {
+      setTimeout(() => {
+        alert('Your browser does not support the automated install prompt. If you want to install, look for "Add to home screen" in your browser menu.');
+      }, 200);
+    }
+  }
+
+  /* -------------------------
+     Should we show?
+  ------------------------- */
+  function shouldShowDrawer() {
+    if (isRunningAsPWA()) return false;
+    if (localStorage.getItem(STORAGE_KEY) === 'true') return false;
+    return true;
+  }
+
+  /* -------------------------
+     maybe show drawer on load
+  ------------------------- */
+  function maybeShowDrawer() {
+    if (!shouldShowDrawer()) return;
+    injectStyles();
+    setTimeout(openDrawer, 520);
+  }
+
+  /* Public API */
+  window.CalcluloPwaDrawer = {
+    open: () => { if (shouldShowDrawer()) maybeShowDrawer(); },
+    close: () => { startCloseFlow(); },
+    resetDontShow: () => { localStorage.removeItem(STORAGE_KEY); }
+  };
+
+  /* Auto-run */
+  document.addEventListener('DOMContentLoaded', () => {
+    if (isRunningAsPWA()) return;
+    if (localStorage.getItem(STORAGE_KEY) === 'true') return;
+    injectStyles();
+    maybeShowDrawer();
+  });
+})();
+
