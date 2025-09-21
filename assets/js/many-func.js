@@ -1,3 +1,82 @@
+/*********** header functions **************/
+const hamburger = document.querySelector("#hamburger-menu");
+const nav = document.querySelector(".side-nav");
+const closeBtn = document.querySelector(".close-nav-btn");
+const searchBtn = document.querySelector("#search-btn");
+const searchGlobalInput = document.querySelector("#search-global-input");
+
+let overlay = null;
+let isNavOpen = false;
+let isAnimating = false;
+
+function openNav() {
+  if (isNavOpen || isAnimating) return; // Prevent if already open or animating
+
+  isAnimating = true;
+  nav.classList.add("active");
+  document.body.classList.add("no-scroll");
+
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+    document.body.appendChild(overlay);
+
+    // Click outside closes nav
+    overlay.addEventListener("click", closeNav);
+  }
+
+  // Use requestAnimationFrame for fade-in
+  requestAnimationFrame(() => {
+    overlay.classList.add("visible");
+  });
+
+  isNavOpen = true;
+
+  // Wait for fade-in transition to complete before allowing another toggle
+  overlay.addEventListener(
+    "transitionend",
+    () => {
+      isAnimating = false;
+    },
+    { once: true }
+  );
+}
+
+function closeNav() {
+  if (!isNavOpen || isAnimating) return; // Prevent if already closed or animating
+
+  isAnimating = true;
+  nav.classList.remove("active");
+  document.body.classList.remove("no-scroll");
+
+  if (overlay) {
+    overlay.classList.remove("visible");
+
+    // Remove overlay after fade-out transition
+    overlay.addEventListener(
+      "transitionend",
+      () => {
+        overlay?.remove();
+        overlay = null;
+        isAnimating = false;
+      },
+      { once: true }
+    );
+  } else {
+    isAnimating = false;
+  }
+  
+  isNavOpen = false;
+  searchGlobalInput.value = "";
+}
+
+searchBtn.addEventListener("click", () => {
+  openNav();
+  searchGlobalInput.focus();
+});
+hamburger.addEventListener("click", openNav);
+closeBtn.addEventListener("click", closeNav);
+/*******************************/
 /********** list the total number of calculators in a category *********/
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -819,7 +898,7 @@ document.addEventListener("DOMContentLoaded", () => {
  Reset all inputs across containers
 ***********************************/
 function resetCalculator() {
-  const containers = document.querySelectorAll(".container"); // all containers
+  const containers = document.querySelectorAll(".container");
   
   containers.forEach(container => {
     // Reset all input fields except read-only ones
@@ -889,10 +968,7 @@ container.onanimationend = () => container.classList.remove("flash", "flash-over
 }
 
 /********* flash results ******/
-
-// === Flash .result on any change (user or programmatic) ===
 (function () {
-  // 1) Patch value setter so programmatic updates emit an event
   if (!window.__valueSetterPatched) {
     window.__valueSetterPatched = true;
     const patch = (Ctor) => {
@@ -955,7 +1031,7 @@ container.onanimationend = () => container.classList.remove("flash", "flash-over
 })();
 
 
-/**********options box***********/
+/********** options box***********/
 let activeBox = null;
 let activeIcon = null;
 let isRemoving = false;
@@ -1368,14 +1444,6 @@ function copyTooltipValue(tooltip) {
 /*******************************
  * error handling 
 ***************************/
-
-/*function showError(message) {
-  
-}
-
-function clearError(input) {
-  
-}*/
 
 (function() {
   const activeMessages = [];

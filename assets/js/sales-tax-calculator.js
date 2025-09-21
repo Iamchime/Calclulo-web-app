@@ -22,7 +22,7 @@ function calculateResults() {
   document.querySelector("#taxAmount").value = formatNumber(taxAmount);
   document.querySelector("#totalPrice").value = formatNumber(total);
   
-  saveInputsIfNeeded();
+ // saveInputsIfNeeded();
 }
 
 function formatNumber(num) {
