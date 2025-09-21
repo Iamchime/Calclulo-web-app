@@ -1609,8 +1609,7 @@ document.addEventListener("click", (e) => {
    });
 }else return })();
 
-/************* pwa install drawer ******************/
-
+/************* pwa install drawer (JS only) ******************/
 (function () {
   // Mobile only (early exit)
   if (window.innerWidth > 768) return;
@@ -1862,6 +1861,7 @@ document.addEventListener("click", (e) => {
      - create fresh container and lock page using fixed-position technique
   ------------------------- */
   function openDrawer() {
+    setTimeout(() => {
     if (isDrawerOpen) return;
     // build and append fresh container
     injectStyles();
@@ -1913,6 +1913,7 @@ document.addEventListener("click", (e) => {
     });
 
     isDrawerOpen = true;
+    },15000);
   }
 
   /* -------------------------
@@ -2044,4 +2045,3 @@ document.addEventListener("click", (e) => {
     maybeShowDrawer();
   });
 })();
-
