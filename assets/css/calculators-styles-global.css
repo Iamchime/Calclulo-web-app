@@ -1480,14 +1480,18 @@ justify-content: flex-start;
 gap: 1em;
 margin-top: 1em;
 max-width: 400px;
-border-radius: 10px;
-padding: 10px;
+border-radius: 16px;
+padding: 15px;
 font-family: "young";
+background: #fff;
+box-shadow: 0 2px 60px #464BFF03, 0 1px 15px #464BFF03;
   }
   .description-txt h3,.description-txt h2{
     font-family: lexend;
     font-weight: 400;
     font-size: 1.1em;
+    margin-top: -15px;
+    margin-bottom: -15px;
   }
   .description-txt strong{
     font-family: lexend;
@@ -1503,7 +1507,7 @@ font-weight: 400;
   }
   .description-txt p{
     color: #515353;
-font-size: .9em;
+font-size: 1.01em;
 line-height: 1.72;
   }
    .description-txt ul {

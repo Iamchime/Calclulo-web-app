@@ -440,13 +440,7 @@ Clear all changes
       </div>
     </div>
 <div class="description-txt">
-  <h2 id="toc">Table of contents</h2>
-  <ul>
-    <li><a href="#units">What are the standard time units and where do they come from?</a></li>
-    <li><a href="#convert">How to convert between hours, minutes, and seconds?</a></li>
-    <li><a href="#use">How to use the minutes to hours converter?</a></li>
-    <li><a href="#faq">FAQs</a></li>
-  </ul> 
+  
   <p>
     The Minutes to Hours Converter is a small, practical tool designed to <strong>turn minutes into hours</strong>, and vice versa, with precision and a human-friendly display. It accepts numbers typed with or without thousands separators (commas), correctly parses decimals, and returns results in two useful forms: a decimal hour value (for example <strong>2.50 hours</strong>) and a clean <strong>hh:mm:ss breakdown</strong> (for example <strong>2 hours 30 minutes 0 seconds</strong>). The converter handles fractional minutes and seconds, applies controlled rounding rules, and provides consistent formatting so results are both predictable and easy to read.
   </p>  <p>
@@ -501,41 +495,10 @@ seconds = totalSeconds % 60
     User flow — what to type and what happens:
     <ol>
       <li>Type a number into the <em>Minutes</em> input. You may include commas for thousands (e.g., “1,250”) and a decimal point for fractions (e.g., “125.5”). The converter strips commas automatically and parses the numeric value.</li>
-      <li>As you type, the converter updates three things: the Hours input with a decimal display (for example “2.09” or “2.09” depending on fraction settings), the hh:mm:ss result fields showing hours/minutes/seconds, and it adds the <code>.result</code> class to inputs changed programmatically so the UI can visually highlight them.</li>
-      <li>If you prefer to enter Hours or Seconds directly, the converter also accepts those and performs reverse calculations to refill Minutes and the hh:mm:ss outputs.</li>
+      
     </ol>
-  </p>  <p>
-    Display rules and options:
-    <ul>
-      <li><strong>Thousands separators</strong>: Programmatically updated fields show locale-formatted numbers (commas in many locales) for readability. That helps when values grow large.</li>
-      <li><strong>Minimum fraction digits</strong>: The converter supports a controlled minimum fraction display (for example, always show two decimals for hours). This keeps results consistent and easier to compare.</li>
-      <li><strong>Rounding and carry</strong>: Seconds are rounded to the nearest integer and carry is handled so you never see “60 seconds” without the minutes being adjusted.</li>
-    </ul>
-  </p>  <p>
-    Practical tips:
-    <ul>
-      <li>For billing: agree on rounding rules (nearest minute, round up, or bill by increments) and configure the converter to follow them.</li>
-      <li>For schedules: convert minutes to hh:mm:ss and verify rounding so a meeting that’s “1.5 minutes” doesn’t show awkward seconds that confuse participants.</li>
-      <li>For displays in different countries: either normalise input to a single convention (dot for decimal, commas as thousands separators) or implement locale-aware parsing so users can type naturally.</li>
-    </ul>
-  </p>  <p>
-    Developer integration notes:
-    <ol>
-      <li>Sanitise input by removing commas and whitespace before parsing with parseFloat.</li>
-      <li>Convert to seconds for core arithmetic (totalSeconds = Math.round(minutes × 60)).</li>
-      <li>Compute hh/mm/ss using integer math and handle rounding carry at the end.</li>
-      <li>Format numbers with Intl.NumberFormat and set minimum/maximum fraction digits for the decimal-hour field.</li>
-      <li>Add the <code>.result</code> class to any field you change programmatically so the UI and automated tests can detect updates.</li>
-      <li>Use <code>aria-live="polite"</code> regions to announce result changes to screen readers for accessibility.</li>
-    </ol>
-  </p>  <p>
-    Examples:
-    <ul>
-      <li>Enter <strong>150</strong> minutes → Hours: <strong>2.50</strong> (if two decimals), hh:mm:ss: <strong>2:30:00</strong>.</li>
-      <li>Enter <strong>125.5</strong> minutes → convert to seconds (7,530), then hh:mm:ss: <strong>2:05:30</strong>.</li>
-      <li>Enter <strong>3600</strong> seconds → Minutes: <strong>60.00</strong>, Hours: <strong>1.00</strong>, hh:mm:ss: <strong>1:00:00</strong>.</li>
-    </ul>
-  </p>  <h2 id="faq">FAQs</h2>
+  </p>
+   <h2 id="faq">FAQs</h2>
   <p>
     Why does the converter show fixed decimals like “2.00” instead of “2”?
     <br>
@@ -560,8 +523,6 @@ seconds = totalSeconds % 60
     Is the hh:mm:ss result suitable for display in logs and timestamps?
     <br>
     A: Yes — hh:mm:ss is a compact human-readable representation of a duration. For storing or comparing durations, prefer total seconds or ISO 8601 duration strings (e.g., PT2H30M). For UI display, hh:mm:ss is often the clearest format for end users.
-  </p>  <p>
-    If you’d like, I can now generate the exact JavaScript snippet that matches these rules — with configurable minimum fraction digits, comma formatting on programmatic updates, and robust parsing for locale-style input. Want the code next?
   </p>
 </div>
   </section>
