@@ -1708,6 +1708,7 @@ document.addEventListener("click", (e) => {
       .calclulo-btn.primary:active {
         
       }
+      
       .calclulo-btn.ghost { background: transparent; color: #333; }
       .calclulo-btn.ghost:active { background: #42445A26 }
       @media (min-width: 640px) {

@@ -278,62 +278,7 @@ Clear all changes
       </div>
     </div>
 <div class="description-txt">
-  <!-- Description (≈300 words) -->
-  <p>
-    The <strong>Cat Pregnancy Calculator</strong> is a practical, science-based tool that helps cat owners estimate when a queen (female cat) will give birth. By entering a known or suspected <strong>mating date</strong> (the day the cat was bred) the calculator estimates the most likely due date based on the average feline gestation length and shows a realistic earliest–latest delivery window. Conversely, if you only know a suspected <strong>due date</strong>, the calculator will reverse the math to estimate when mating most likely occurred.  
-  </p>  <p>
-    Why this matters: feline pregnancies are short and variable — most cats carry for roughly <strong>about 63 days</strong> from mating, but individual variation means births can occur earlier or later. The calculator captures that uncertainty by reporting the typical average, plus a conservative earliest and latest date range so you know when to monitor the queen closely. It also provides a countdown (days until expected foaling) and clarifies whether a date is in the past (useful if you’re checking how many days since birth).  
-  </p> <h2 id="how-to-calculate">How to calculate your cat's due date by hand?</h2>
-  <p>
-    Calculating a cat’s due date manually is straightforward once you understand the basic biology and the conventions breeders use. The typical feline gestation period ranges around <strong>63 days</strong> from the day of mating, though veterinarians commonly accept a practical window of roughly 58–72 days to account for natural variation. The hand-calculation process boils down to three steps: identify the mating date, add the average gestation length to get a best estimate, then compute a reasonable earliest and latest window to reflect biological variability.
-  </p>  <p>
-    Step 1 — Establish the mating date. The most accurate starting point is the day of mating (the day the queen was bred). If you have multiple matings across several days, many breeders use the <em>first observed copulation</em> or the date the queen was most likely fertile (the day of peak heat). If the mating was observed over a period (for example three separate matings), choose the most likely or the midpoint — then treat the result as an estimate and expand the window accordingly.
-  </p>  <p>
-    Step 2 — Add the average gestation. From your chosen mating date, add 63 days to produce the conventional "due date." For example, if mating occurred on March 1, adding 63 days puts the expected delivery around May 3. That single number is your headline estimate: it’s where you should be prepared to watch the queen closely.
-  </p>  <p>
-    Step 3 — Build a delivery window. Because gestation varies, compute an earliest and latest expected date. A conservative, widely used approach is to set the earliest at mating + 58 days and the latest at mating + 72 days. Using the March 1 example, the earliest would be April 28 and the latest May 12. Another common (slightly tighter) window is ±5 days around the 63-day average; choose a window based on how cautious you want to be and whether the queen had multiple matings.
-  </p>  <p>
-    Important details and caveats: do date math in "date only" terms (ignore the local clock/time component) to avoid timezone off-by-one errors — that’s why tools use UTC date arithmetic. If you’re reversing from a known due date, subtract the average gestation (63 days) to estimate the likely mating. Always factor in uncertainty: the hand calculation gives you a planning window but does not predict exact delivery time or litter size. If anything about the queen’s health changes (loss of appetite, discharge, or signs of distress) contact your veterinarian early — the calculator is a planning aid, not a substitute for clinical care.
-  </p>  <p>
-    Quick example (hand calculation): Mating observed on <strong>September 1</strong>. Add 63 days → estimated due date: <strong>October 4</strong>. Earliest (−5 or −7 days) → around September 29; latest (+5 or +9 days) → around October 9–13. Use the range to prepare the nest box and book a pre-whelping vet check if necessary.
-  </p>  <!-- Section 2 -->  <h2 id="how-to-use">How to use the calculator</h2>
-  <p>
-    The calculator is built for simplicity and accuracy. Its purpose is to remove manual calculation errors and present an evidence-based delivery window that you can act on. Here’s a complete walkthrough of how to use it, what each field means, how the reverse calculation works, and why the tool marks programmatic results with a special indicator.
-  </p>  <p>
-    Step-by-step usage. To use the calculator, you typically see two date fields: <strong>Mating Date</strong> and <strong>Due Date</strong>. You only need to fill in one. If you know when the queen was mated, enter that date in the Mating Date field. The calculator will automatically compute the expected due date (mating + average gestation) and fill the Due Date field for you. The results area then shows: a human-readable countdown (days until expected birth or days since birth if the date is past), the weekday of the expected due date, and a conservative earliest–latest delivery window.
-  </p>  <p>
-    Reverse calculation explained. If you instead know an approximate due date — for example, a rescue provides an estimated due date — enter that into the Due Date field. The calculator will run the math in reverse (Due Date − average gestation) and estimate a likely mating date. It will also compute the earliest and latest expected delivery dates based on the same logic the forward calculation uses, so all fields remain consistent and transparent.
-  </p>  <p>
-    Why the tool flags programmatic values. You may notice the calculator adds a small visual marker (for example, a CSS class such as <code>.result</code>) to the input field it filled automatically. That distinction matters because it lets you quickly tell which value you entered and which the tool computed. Manual edits remove that marker immediately: if you change a field the calc previously filled, the tool recognizes a human change and respects your input rather than overwriting it. This behaviour helps prevent confusion when working across timezones or when editing dates on mobile devices (where inputs can auto-complete).
-  </p>  <p>
-    Handling multiple matings and uncertainty. If the queen was mated more than once, use the earliest observed mating or the one most likely to have resulted in conception as your input. The calculator’s range will widen the window to reflect multiple matings. If you want a tighter estimate you can enter the most probable mating day (often the day of observed ovulation behavior) and then use the earliest/latest values to plan.
-  </p>  <p>
-    Accuracy, vet checks, and timing. The calculator uses commonly accepted average gestation lengths (around 63 days) and a sensible safety window. It’s designed for planning—not diagnosis. Use the calculator to schedule a vet pre-check and prepare a warm, quiet nesting area roughly 1–2 weeks before the earliest expected delivery. If the queen shows signs of labor, distress, or abnormal discharge at any time, contact your veterinarian or emergency clinic immediately. Also note that the tool performs date-only arithmetic to avoid timezone shifts (the result will not move a day when users are in different timezones).
-  </p>  <p>
-    Practical example of the interface flow: you enter <em>mating date = Sept 19, 2025</em>. The calculator computes and fills <em>due date = Nov 21, 2025</em> (mating + 63). It also shows: “Your cat is going to give birth in 63 days”, plus earliest = Nov 16 and latest = Nov 28 (depending on the window you choose). If you enter due date instead, it will fill mating date and produce the same earliest/latest window around the computed due date. This keeps everything consistent and easy to act on.
-  </p>  <!-- Section 3: FAQ -->  <h2 id="faq">FAQ</h2>
-  <p>
-     <strong>How accurate are the calculator’s estimates?</strong><br>
-    The calculator uses the widely accepted average gestation length for domestic cats (around 63 days) and provides a delivery window to reflect biological variation. For individual queens, many factors influence timing — whether conception occurred on the first mating, the cat’s age, health, breed, and stress level. The estimate is a planning tool; it is not a substitute for veterinary monitoring. Accuracy is generally good for timing the general period, but actual labor can occur several days earlier or later than the average. That’s why the tool includes an earliest and latest date rather than a single “must-deliver” day.
-  </p>  <p>
-     <strong>What signs should I watch for as my cat approaches the due window?</strong><br>
-    In the final 1–2 weeks before expected birth, watch for behavioral and physical changes: increased nesting behavior (searching for quiet, enclosed spaces), reduced appetite, restlessness, and more frequent grooming. A day or so before labor you may notice milk production (small drops at the teats) or a change in body temperature (some queens show a small pre-labor temperature drop). As labor starts, expect contractions, vocalization, and the mother may isolate herself. If labor stalls (persistent, strong contractions without progression) or the queen appears distressed, contact your vet immediately.
-  </p>  <p>
-     <strong>Can I predict litter size or kitten health with the calculator?</strong><br>
-    No—this calculator estimates timing only. Litter size and neonatal health depend on genetics, the queen’s nutrition and prenatal care, and whether prenatal problems occur. Ultrasound performed by a veterinarian can provide better estimates of litter size and viability, and can also detect early pregnancy. Use the calculator to plan care and vet visits, but schedule veterinary ultrasounds or checkups for clinical assessments of litter health and numbers.
-  </p>  <p>
-     <strong>When should I call a vet?</strong><br>
-    Contact your veterinarian right away if the queen shows signs of severe distress, heavy or bloody discharge outside of immediate labor, prolonged contractions without delivering kittens (more than 2–3 hours between kittens), or if newborns are not breathing or appear weak. Also call for advice if the queen refuses all food, has a high fever, or appears very lethargic at any time during pregnancy.
-  </p>  <p>
-     <strong>How should I prepare the nest area and supplies?</strong><br>
-    About two weeks before the earliest expected delivery, prepare a quiet, warm nesting box with soft, washable bedding. Keep tools handy: clean towels, a bulb syringe, a digital thermometer, and your veterinarian’s contact details. Ensure easy access for the queen to enter the box and remove other pets or children from the area during labor. Good prenatal nutrition and a clean nesting environment significantly improve outcomes.
-  </p>  <p>
-     <strong>Does breed or age change gestation length?</strong><br>
-    Breed and age can cause small shifts; large breeds or first-time mothers sometimes carry a few days longer, while some small-breed queens may vary slightly. However, the variation is small compared to the overall gestation length, so the calculator’s ± window covers typical breed and age differences. For breed-specific guidance, consult your veterinarian or an experienced breeder who works with the same breed.
-  </p>  <p>
-     <strong>Is there anything else I should know?</strong><br>
-    Yes—use estimates cautiously. The calculator helps you plan and know when to intensify monitoring, but good prenatal care (vaccination history, deworming plans, proper nutrition) and timely veterinary checks are the best safeguards. If you’re working with rescues or feral queens where exact dates are unknown, enter your best estimate and use the wide delivery window; increase observation frequency as the earliest date approaches.
-  </p>
+
 </div>
   </section>
   

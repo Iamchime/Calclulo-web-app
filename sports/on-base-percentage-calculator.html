@@ -496,73 +496,7 @@ Clear all changes
       </div>
     </div>
 <div class="description-txt">
-  <h2>What is OBP - on-base percentage?</h2> <p>On-base percentage (commonly written OBP) is a simple but powerful baseball statistic that measures how often a batter reaches base safely during plate appearances. Rather than focusing only on hits, OBP counts the three clean ways a batter gets on base: hits, bases on balls (walks), and times hit by a pitch. Because it captures walks and HBPs as well as hits, OBP gives a fuller picture of a hitter’s ability to avoid making outs and to create opportunities for his team to score.</p>
-  
-  <p>OBP is expressed as a decimal (for example, .325) and is calculated using a fixed formula (explained in the next section). That decimal is what teams, analysts, and fans look at when they want to know how reliably a player reaches base — not just how often he singles or doubles. Historically, OBP rose to prominence among front offices and sabermetricians because it rewards hitters for plate discipline (taking walks) and for getting hit by pitches, two actions that batting average ignores. The statistic has been recognized officially and cited in modern baseball analysis for decades.</p>
-  
-  <p>It’s important to understand what OBP does not count: reaching on an error, a fielder’s choice, or oncatcher’s interference are not considered “times on base” for OBP. Likewise, sacrifice bunts are removed from the denominator because they are generally a strategic manager choice rather than the hitter’s outcome; sacrifice flies, however, are included in the denominator and so can lower a player’s OBP even though the play produced a run. These subtleties matter when you compare OBP to simpler stats like batting average: OBP is designed to measure the true contribution to avoiding outs and creating scoring chances.</p>
-  
-<p>  If you read extended articles (for example, longform explainers or the way calculator pages frame the topic), you’ll notice the emphasis on context: OBP is useful not only by itself but in comparison with league averages, park effects, and a player’s other stats. A player with a high OBP helps his team by sustaining innings, creating more run-scoring opportunities, and complementing power hitters that follow him in the lineup. That practical value — turning plate appearances into baserunners — is why OBP features prominently in modern lineup construction and player evaluation.</p>
-  
-  <h2>How to calculate on-base percentage?</h2> <p>At its core the OBP formula is short and exact:
-  
-  \text{OBP} = \frac{H + BB + HBP}{AB + BB + HBP + SF}
-  
-  where H = hits, BB = walks, HBP = hit by pitch, AB = at bats, and SF = sacrifice flies. That fraction gives you the proportion of plate appearances (adjusted for sacrifice bunts) in which the batter reached base via hit, walk, or HBP. This is the official, widely used formula in baseball record keeping and by statistical references.</p>
-  
- <h2>Step by step you do this:</h2>
-  
-<p> 1. Gather the raw counts from the player’s box score or season log: hits, at bats, walks, hit by pitch, and sacrifice flies.
-  
-  
-  2. Compute the numerator (times on base): add hits + walks + hit by pitch.
-  
-  
-  3. Compute the denominator (opportunities counted by the formula): add at bats + walks + hit by pitch + sacrifice flies.
-  
-  
-  4. Divide numerator by denominator. The result is the OBP decimal; it is typically rounded to three decimal places for reporting (for example, .377).
-  
-  
-  
-  Concrete example: suppose a player has 150 hits, 60 walks, 5 hit by pitches, 500 at bats, and 5 sacrifice flies. The numerator is 150 + 60 + 5 = 215. The denominator is 500 + 60 + 5 + 5 = 570. Dividing gives 215 ÷ 570 ≈ 0.37719298, which is normally reported as .377. That single number tells you that this player reached base in about 37.7% of the counted opportunities per the official formula.
-  
-  A few practical notes and common pitfalls:
-  
-  Don’t confuse at bats (AB) with plate appearances (PA). Plate appearances include additional events (like catcher’s interference and sacrifice bunts) that are not all part of the OBP denominator; the official OBP formula specifically uses AB + BB + HBP + SF rather than raw PAs. That difference can produce very small divergences if you try to compute OBP from an unfiltered PA total.
-  
-  Errors, fielder’s choice, and reaching on an uncaught third strike do not raise your OBP. Those outcomes may help a particular inning but they are explicitly excluded by the definition.
-  
-  When reporting OBP, three decimal places is standard in box scores and leaderboards (for example, .325). For deeper analysis, many analysts keep more digits internally, but presenting with three decimals is the common convention.
-  
-  
-  If you’re building or using an OBP calculator, verify that it treats sacrifice bunts, errors, and fielder’s choice correctly, and make sure inputs that include commas or nonstandard formatting are parsed properly so calculations stay accurate. The goal is a faithful implementation of the formula above so your results match official leaderboards and historical records.</p>
-  
-  <h2>What is OPS - on-base plus slugging?</h2> <p>OPS stands for On-base Plus Slugging and it is exactly what the name implies: OBP added to slugging percentage (SLG). The idea behind OPS is to combine two complementary skills into one quick metric — getting on base (OBP) and hitting for extra bases (SLG). Where OBP measures the frequency a player reaches base, SLG measures the quality of the hits by counting total bases per at bat (singles count as one, doubles as two, triples three, and home runs four). Adding them gives a fast, easy-to-understand summary of a hitter’s overall offensive contribution.</p>
-  
-  <h2>The slugging percentage formula is:</h2>
-  
-  <p>\text{SLG} = \frac{\text{Total bases}}{AB}</p>
-  
-  <p>Total bases = (1×singles) + (2×doubles) + (3×triples) + (4×home runs). Then OPS = OBP + SLG. Because OPS mixes a rate stat (OBP) with a per-at-bat power measure (SLG), it has become a staple in both mainstream box scores and advanced scouting reports as a single-number snapshot of hitting performance.</p>
-  
-  <p>Why do analysts use OPS? It’s compact and correlated with run production — players who combine getting on base with extra-base hitting produce more runs. That makes OPS a practical first pass for sorting hitters: two players with similar OPS values are often producing similar offensive value, even if their internal profiles (high OBP/low SLG vs low OBP/high SLG) are different. For example, a player who walks a lot and singles frequently may have a high OBP but modest SLG; another slugger may hit many homers (high SLG) but walk less. OPS brings those contributions together in one place.</p>
-  
-  <p>However, OPS has known limitations. Because it simply adds the two components, it implicitly gives equal weight to OBP and SLG even though, by many run-creation models, on-base events can be slightly more valuable than raw slugging. Moreover, OPS is not adjusted for park factors, league run environment, or era — so a .900 OPS in a high-offense season is not the same as a .900 OPS in a pitcher-dominant era. For that reason, advanced metrics like OPS+ (which normalizes for league and park) or more sophisticated run estimators are used when you need apples-to-apples historical or cross-park comparisons.</p>
-  
-  <p>In practice, OPS is a great quick-check: league-average OPS varies by season, but an OPS around .750–.800 is often considered competent, .800–.900 very good, and .900+ excellent; truly elite hitters routinely post OPS numbers well above .900 and sometimes over 1.000 in a season. As with any aggregate statistic, interpret OPS alongside its components (OBP and SLG) and context (league averages, ballpark).</p>
-  
-  <h2>FAQs</h2><strong>Does reaching base on an error count toward OBP?</strong>
- <p> No — reaching base because of a defensive error is not counted as a time on base in the OBP numerator. The OBP formula intentionally counts only hits, walks, and hit-by-pitch events as “times on base” because those are outcomes the batter directly achieved without a defensive misplay. Errors and fielder’s choice plays are excluded from the numerator, though they remain part of the game’s narrative. This has practical consequences: a batter can appear to have helped his team in a given inning by reaching on an error, but that event will not improve his OBP. The exclusion of errors is part of OBP’s design to measure the batter’s controlled contributions rather than results that depend on a defensive mistake.</p>
-  
-  <strong>Can a player have an OBP higher than 1.000?</strong>
-  <p>No — by the formula OBP = (H + BB + HBP) / (AB + BB + HBP + SF), the numerator cannot logically exceed the denominator, so OBP cannot exceed 1.000. In extreme theoretical cases where a player had only walks and no plate appearances that would be excluded from the denominator, the OBP would be 1.000 (100%); but you cannot have an OBP greater than 1.000 because every counted time on base (hit, walk, HBP) is also represented within the denominator’s counted opportunities. That theoretical ceiling makes OBP an intuitively bounded metric: 0.000 means the batter never reached base by the counted methods, 1.000 means the batter reached base every counted time.</p>
-  
-  <strong>Why is OBP often preferred to batting average by modern analysts?</strong>
-  <p>OBP is preferred because it values all the ways a batter contributes to avoiding outs and creating scoring chances, not just hits. Batting average (hits ÷ at bats) ignores walks and HBPs entirely. Because teams only have 27 outs per game, avoiding outs — whether through a walk, a single, or being hit by a pitch — is a major driver of runs scored. Modern analytics has shown that getting on base correlates strongly with run production; therefore OBP gives a more complete and practically useful measure of offensive value than batting average alone. That’s why managers, front offices, and sabermetric writers place heavy emphasis on OBP when building lineups or evaluating hitters.</p>
-  
-  <strong>How should I interpret OBP numbers across eras and parks?</strong>
-<p>  Raw OBP numbers are useful, but context matters. League-wide OBP fluctuates with the eras (dead-ball, live-ball, steroid era, modern analytics era) and with ballpark characteristics (some parks favor hitters, others pitchers). For comparisons across seasons or parks, use normalized metrics (for example OBP+ or OPS+) that adjust for league average and park factors. Also compare a player’s OBP to the league average in that specific season to understand whether a .340 OBP was exceptional or merely typical that year. Contextualization prevents misleading conclusions when comparing players separated by time or environment.</p>
+
   
 </div>
   </section>

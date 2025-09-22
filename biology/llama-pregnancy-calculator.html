@@ -278,78 +278,7 @@ Clear all changes
       </div>
     </div>
 <div class="description-txt">
-  <!-- Description (≈200 words) -->
-  <p>
-    The <strong>Llama Pregnancy Calculator</strong> is a practical, easy-to-use tool for breeders, farmers and caretakers who need a fast estimate of when a <strong>llama</strong> will give birth. Enter either a confirmed <strong>mating/covering date</strong> or a suspected <strong>due date</strong> and the calculator performs calendar-safe arithmetic (date-only, timezone-neutral) to return an estimated due day, a friendly countdown (days until or days since), and a realistic earliest–latest delivery window. The tool also visually marks any field it filled automatically so you always know which value you entered and which the calculator computed.  
-  </p>  <p>
-    Use the result to schedule veterinary checks, prepare a clean, sheltered birthing space for the cria, and organize staffing during the high-risk monitoring window. The calculator is built for planning — not diagnosis — and pairs best with veterinary confirmation (ultrasound or clinical exam) when precise timing or clinical decisions are needed. It helps you turn breeding records into action so you can reduce surprises at foaling time.
-  </p>
-  <h2 id="how-to-use">How to use the Llama Calculator?</h2>
-  <p>
-    The Llama Calculator is designed to make a common on-farm task—estimating when a pregnant dam will give birth—fast, transparent, and reliable. The calculator does two things: forward calculation (you give the mating date and it computes the expected due date) and reverse calculation (you give a suspected due date and it computes the most likely mating date). It also provides an earliest–latest delivery window so you can plan monitoring and staffing. The underlying biology for camelids places average gestation roughly around 11½ months, with commonly quoted averages in a band near 342–350 days and an accepted normal range roughly between 332 and 352 days; different reputable sources and regional datasets vary slightly, which is why the calculator presents a sensible range rather than a single “must-deliver” day. 0
-  </p>  <p>
-    Step-by-step walk-through (forward calculation — mating → due):
-    <ol>
-      <li><strong>Enter the mating date.</strong> This should be the day of confirmed natural cover or the date of artificial insemination. If mating occurred across several days, choose the date you think most likely to have resulted in conception (often the AI date or the day of confirmed tie); uncertainty widens the monitoring window.</li>
-      <li><strong>Calculator adds the configured gestation days.</strong> The tool uses a default average (commonly ~342–345 days in many calculators) and performs UTC date-only math to avoid timezone and daylight-saving off-by-one errors. The computed due date is then shown and the complementary input field (Due Date) is programmatically filled and marked visually (e.g., a CSS class like <code>.result</code>), so you know which field was calculated and which you entered.</li>
-      <li><strong>Review earliest–latest window.</strong> The calculator presents an earliest and latest date (for example due −10 days to due +10 days, or a biologically derived window of mating +332 to mating +352). You can configure which convention you prefer: calculate the window from the mating date (min/max around mating) or center it around the computed due date (offsets around due). Both approaches are used on farms—choose the one that matches your operational preference.</li>
-      <li><strong>Act on it.</strong> Use the window to schedule a pre-foaling vet check 1–2 weeks before the earliest date, prepare the birthing stall, check colostrum supplies, and arrange overnight monitoring during the peak window. The calculator’s countdown (days remaining) helps you know when to switch from weekly to daily checks of temperature and behavior.</li>
-    </ol>
-  </p>  <p>
-    Reverse calculation (due → mating) is useful when records are incomplete—for example, a rescue tells you a female is due on a date but no breeding records exist. Enter the expected due date and the calculator subtracts the configured average gestation to estimate the mating date, then computes the same earliest–latest window so you can cross-check records or vaccination history. That reverse flow is particularly valuable when you need to match vaccination windows, determine whether the dam received prepartum care in time, or check if an earlier exposure might have been the true mating.
-  </p>  <p>
-    Practical UI features and why they matter:
-    <ul>
-      <li><strong>.result marker:</strong> When the calculator fills an input programmatically it adds a CSS class like <code>.result</code>. This makes it obvious which date you typed and which was computed. Editing a programmatically filled field removes the marker and the tool treats your input as authoritative—this prevents accidental overwrites and clarifies record provenance for farm logs.</li>
-      <li><strong>Timezone-safe math:</strong> The calculator treats dates as calendar dates (UTC midnight) not instants in time. That avoids a common bug where entering dates on phones in different timezones shifts the computed date by a day.</li>
-      <li><strong>Window configuration:</strong> Many farms prefer an “around-due” window (e.g., due −10 to due +10) for staffing convenience; others prefer a biologically grounded window tied to mating (e.g., mating +332 to +352). The calculator can support either logic and you should pick the one matching your SOPs.</li>
-    </ul>
-  </p>  <p>
-    Example (realistic farm scenario):
-    <ol>
-      <li>Mating recorded: <strong>2025-09-20</strong>.</li>
-      <li>Calculator uses average 342 days (example default) → computed due date <strong>2026-08-??</strong> (exact date depends on average used). The earliest/latest window is shown as, for instance, <strong>due −10 days</strong> to <strong>due +10 days</strong> or mating +332 → +352 depending on the chosen convention.</li>
-      <li>Two weeks before the earliest window you schedule a pre-foaling vet check and prepare the stall; one week before earliest you begin daily temperature checks and more frequent visual inspections. Staff rosters are adjusted to ensure someone is on call overnight during the expected window.</li>
-    </ol>
-    (Note: pick the actual average and offsets to match your herd history; studies and manuals report averages across 332–352 days with seasonal variation in some herds). 1
-  </p>  <p>
-    When to combine the calculator with veterinary diagnostics:
-    <ul>
-      <li><strong>Early confirmation:</strong> transrectal or transabdominal ultrasound can confirm pregnancy as early as ~21 days in camelids—useful if you need to confirm conception early or estimate fetal age for precise planning.</li>
-      <li><strong>Mid-gestation checks:</strong> if you suspect twins (rare in llamas) or need to assess fetal health, schedule ultrasound or a vet exam in mid-gestation.</li>
-      <li><strong>Late-gestation risk assessment:</strong> for maiden dams, older dams, or those with nutritional or health concerns, get a veterinary exam in the final month to identify risk factors for dystocia or neonatal problems.</li>
-    </ul>
-    Credible veterinary sources and extension guides provide ranges and timelines for diagnosis and monitoring—follow their guidance for clinical decisions. 2
-  </p>  <p>
-    Final practical notes:
-    <ul>
-      <li>Record the input date and the calculator output in your herd log so you have traceable data for each pregnancy.</li>
-      <li>Use the earliest date in the window as the trigger for intensified monitoring—this reduces the risk of missing an early birth.</li>
-      <li>Adjust defaults (average gestation and offsets) using your herd’s historic data if you operate a large or breed-specific herd—seasonal patterns can make spring births slightly longer or shorter in some herds. 3</li>
-    </ul>
-  </p>  <!-- Section: FAQ -->  <h2 id="faq">FAQ</h2>
-  <p>
-    <strong>How long is llama gestation, really?</strong><br>
-    Llama gestation typically centers around roughly 11½ months. Veterinary references commonly list a practical range of about <strong>332–352 days</strong> for llamas and alpacas, with calculators and farm records often using averages between ~342 and ~350 days depending on regional data and herd history. That range reflects biological reality: some individual pregnancies are shorter and some longer. Because of that variation, the calculator prints an earliest–latest window in addition to the headline estimate so you can plan for either early or late delivery. For precise planning (for example scheduling veterinary procedures or anticipating high-risk births), combine calculator output with herd-specific historical data and veterinary diagnostics. 4
-  </p>  <p>
-    <strong>Why are there seasonal differences in gestation length?</strong><br>
-    Some breeders and extension guides observe seasonal trends—spring births can run a week or two longer than fall births in certain herds. The reasons are multifactorial: seasonal changes in nutrition (pasture quality), ambient temperature, and photoperiod can subtly influence fetal growth rates and timing of parturition. Because these effects vary by region and herd management, large operations often analyze their own records and adjust the calculator’s average accordingly (for example add 7–14 days for spring births if consistent in your herd). Using herd-specific adjustments reduces false alarms and creates tighter operational windows. 5
-  </p>  <p>
-    <strong>Can the calculator predict complications or twin births?</strong><br>
-    No. Date-based calculators estimate timing only. Twins in llamas are rare but possible; they and other complications (malpresentation, placental problems) cannot be predicted from the mating date alone. Ultrasound and veterinary examination are the appropriate ways to assess fetal number, position, and viability. If mid-gestation ultrasound shows multiples or other concerns, your veterinarian will advise on monitoring strategies and whether additional preparations are needed.
-  </p>  <p>
-    <strong>When should I call the veterinarian?</strong><br>
-    Contact your veterinarian promptly if you see any of the following: prolonged, strong contractions with no progress; heavy or foul-smelling vaginal discharge; signs of systemically ill dam (fever, severe depression, collapse); or a birth that stalls for more than a short interval after the water breaks. Also call if the cria is born limp, not breathing, or fails to stand and suck within the expected time. Because llamas typically give birth during daylight hours, a daytime neonatal emergency is easier to handle, but always have a plan for out-of-hours vet contact if labor begins at night. Veterinary manuals and farm guides provide specific thresholds for intervention—follow local vet guidance. 6
-  </p>  <p>
-    <strong>How accurate is the calculator?</strong><br>
-    Accuracy depends on two things: the accuracy of the input date and the representativeness of the gestation constants you use (average and offsets). If the mating date is confirmed (AI or observed single-day natural cover) and you use a herd-appropriate average, the calculator’s headline estimate and window are very useful for operational planning. Biological variability remains—some births will occur outside the predicted window—so always plan conservatively by preparing at least 1–2 weeks before the earliest expected date. For clinical decisions such as planned C-sections or anticipated dystocia, use ultrasound and veterinary assessment as the authoritative source.
-  </p>  <p>
-    <strong>When can pregnancy be diagnosed in llamas?</strong><br>
-    Pregnancy detection methods include behavioral observation (female rejects male after ~15 days), ultrasound, and sometimes transrectal palpation. Ultrasound is reliable and commonly used: transrectal or transabdominal ultrasonography can detect pregnancy early (from about 15–21 days depending on technique) and is the preferred method for accurate early confirmation and fetal viability checks. For precise fetal counts or more detailed assessment, schedule ultrasound with a qualified veterinarian. 7
-  </p>  <p>
-    <strong>How should I prepare for a cria?</strong><br>
-    Prepare a quiet, clean, draft-free stall in advance of the earliest window. Have clean towels, a bulb syringe, warm water, sterile scissors/hemostats, iodine for navel care, colostrum collection containers, and a scale to weigh the cria. Ensure adequate colostrum or frozen colostrum supplies (if your herd stores colostrum) and have emergency contact information for your veterinarian and experienced technicians. Begin daily observation and temperature monitoring in the last 10–14 days before the earliest date shown by the calculator; mares of experience suggest daily rectal temperatures or behavioral checks can give early signals when labor is approaching. 8
-  </p>
+
 </div>
   </section>
   

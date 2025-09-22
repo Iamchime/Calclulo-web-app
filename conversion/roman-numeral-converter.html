@@ -270,55 +270,7 @@ Clear all changes
       </div>
     </div>
 <div class="description-txt">
-  <h2>What are Roman numerals</h2>
-  <p>
-    Roman numerals are a non-positional numeral system that uses letters of the Latin alphabet to represent numbers. At its core the system relies on seven primary symbols — I, V, X, L, C, D and M — which stand for 1, 5, 10, 50, 100, 500 and 1,000 respectively. Rather than using place value (as Arabic numerals do), Roman numerals combine these symbols according to simple additive and subtractive rules: symbols placed after larger-or-equal symbols are added, and a smaller symbol placed before a larger one indicates subtraction. For example, VI means 5 + 1 = 6, while IV means 5 − 1 = 4.  
-  </p>  <p>
-    Because Roman numerals are not positional, they do not have a digit for “zero,” and they were never intended for arithmetic the way modern numerals are. Their strengths are readability and durability — they were easy to carve into stone, metal and wood, and their fixed-letter forms made them useful for inscriptions, page headers, monarch names, and events (think “World War II” or “Super Bowl LV”). The system also allows a few regional and historical variations; medieval and renaissance scribes sometimes used longer or abbreviated forms that differ from the modern “classical” style commonly taught today. 
-  </p>  <p>
-    For practical use on the web and in tools you’ll typically see two important constraints: Roman numerals are used to represent positive whole numbers only (no zero, no fractions, no negative numbers), and the “standard” modern form commonly taught stops at 3,999 (MMMCMXCIX). That said, historical and typographic extensions exist — chiefly the vinculum or overline — which multiply values by 1,000 and allow representation of larger numbers when necessary. Tools that support those extensions will explicitly explain how they render overlined numerals (for example, an overlined V represents 5,000). Those practical points matter when building or using a converter: they define what inputs are valid and how results should be displayed. 1
-  </p>  <h2>History of Roman numeral</h2>
-  <p>
-    The Roman numeral system developed in the early centuries of the Roman state and evolved over time from earlier Italic and Etruscan counting marks. Because surviving inscriptions and documents are fragmentary, the precise steps of that evolution are debated among historians; however, scholars trace the direct ancestors of Roman numerals to marks used in Etruscan and early Italic scripts. As Roman administrative and military power grew, so did the need for a reliable numeric notation for counting soldiers, goods, dates and transactions — and the letter-based system fitted those needs well.
-  </p>  <p>
-    During the Republic and Empire the numerals were used primarily for record-keeping, monuments, and public works. Notation was relatively flexible in the ancient period: different localities and eras had slightly different conventions, and the subtractive principle (writing IV for 4, for example) only became dominant later. After the fall of the Western Roman Empire, the use of letter numerals continued through the Middle Ages in administrative and ecclesiastical contexts, though in parallel the Hindu–Arabic positional system (which includes the concept of zero) gradually spread through Europe and eventually took over for calculation because of its superiority for arithmetic and bookkeeping.
-  </p>  <p>
-    The medieval period also introduced variants and typographic shorthands. For instance, scribes used a vinculum (a horizontal bar above numerals) to indicate multiplication by 1,000, enabling notation of very large values without inventing new letters. Other rare historical methods — such as the apostrophus — served similar purposes in specialized contexts. With the printing press, standardization increased, and the “classical” set of rules we now recognize became the common form taught in schools and used in signage and formal numbering. Even today Roman numerals survive in ceremonial, decorative and specific technical uses — clock faces, book chapter headings, movie credits and the numbering of monarchs and popes — because they convey a sense of tradition and formality. 2
-  </p>  <p>
-    To sum up the historical arc: the system began as simple marks for counting, matured into a stable letter-based notation used across the Roman world, adapted through medieval conventions (including the vinculum), and then ceded everyday arithmetic to Arabic numerals while remaining useful for display and convention. That layered history is why modern converters sometimes support both the compact “classical” range (up to 3,999) and the extended, typographic range (using overlines) for thousands and millions.
-  </p>  <h2>How does the calculator work</h2>
-  <p>
-    A good Roman numeral converter follows a clear, predictable set of rules that mirror the way people read and write Roman numerals. The calculator you’re supporting or using should implement three main capabilities: (1) detect the input type (Arabic number vs Roman string), (2) validate the input according to accepted rules, and (3) perform the conversion in a way that’s transparent to the user with a step-by-step breakdown. Below is a practical, human-centered explanation of how those capabilities are typically implemented, and why each part matters.
-  </p>  <p>
-    <strong>1) Detecting input type</strong><br>
-    The first step is automatic input detection. If the input consists only of digits (0–9) it’s treated as an Arabic number; if it contains Roman letters (I, V, X, L, C, D, M or versions with overlines), it’s treated as a Roman numeral. The tool should trim whitespace and ignore letter case. Detection is simple but important because it determines the conversion path and the validation rules that follow.
-  </p>  <p>
-    <strong>2) Validation rules</strong><br>
-    Validation ensures the calculator returns meaningful results and gives useful, gentle feedback when something is off. Validation checks include:
-    <ul>
-      <li>Number range: most converters accept integers from 1 up to a defined upper bound. Classical converters cap at 3,999 and converters that support the vinculum often extend that to 3,999,999 because an overline multiplies by 1,000. Reject zero, negatives and non-integers. 3</li>
-      <li>Roman syntax: verify that subtractive notation is used only where allowed (e.g., I before V or X, X before L or C, C before D or M), and prevent impossible sequences (like IC for 99, which is nonstandard).</li>
-      <li>Overline handling: if the calculator supports overline/vinculum notation, it needs a consistent parser for those marks (or for an alternate textual representation such as a prefix/suffix) and clear documentation for users on how to type them.</li>
-    </ul>
-    <p>
-    <strong>3) The conversion algorithm</strong><br>
-    For number → Roman, converters generally use a greedy mapping: starting with the largest available Roman value (including overlined values where supported), the algorithm subtracts the largest applicable numeral repeatedly, appending the corresponding symbol to the result until the whole number is converted. This yields the shortest, conventional Roman form. For Roman → number the inverse process scans the input from left to right, matching the largest valid numeral at each position and summing their values. A robust converter also validates by converting back (round-trip) — i.e., convert the parsed total back to Roman and ensure it matches the user’s input — and uses that test to detect invalid or nonstandard forms.
-  </p>  <p>
-    <strong>4) User feedback and step breakdowns</strong><br>
-    Following the example of established educational calculators, the interface should present both the final result and a concise step-by-step breakdown so users learn why the result is correct. For instance, converting 1984 to Roman could display:
-    <pre>1000 = M
-900 = CM
-80 = LXXX
-4 = IV
-Total = MCMLXXXIV</pre>
-     <h2>FAQs</h2>
-  <p>
-    <strong>Can Roman numerals represent zero?</strong><br>
-    No. The Roman numeral system has no symbol for zero. The system was designed for counting and labeling rather than positional arithmetic, so zero — a concept that is central to place-value systems like Arabic numerals — does not exist in traditional Roman notation. For computations, people historically used other methods or adopted alternative numerical systems. 6
-  </p>  <p>
-    <strong>Why do some clock faces use IIII instead of IV?</strong><br>
-    This is largely a typographic and aesthetic tradition. On many clock dials the use of IIII instead of IV balances the dial visually (it keeps a symmetry of characters around the face) and has become an accepted stylistic choice for some clockmakers. It’s not a mathematical rule; it’s a convention used for appearance. 7
-  </p>  
+
 </div>
   </section>
   

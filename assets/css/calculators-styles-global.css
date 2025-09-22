@@ -1372,6 +1372,7 @@ color: #4F5163;
    border: 1px solid #42445A1C;
    margin-top: 1.5em;
    font-family: "Young";
+   box-shadow: 0 2px 60px #464BFF03, 0 1px 15px #464BFF03;
  }
  .similar-calculators-wrap h2{
    font-size: 1em;
