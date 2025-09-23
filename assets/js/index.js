@@ -111,3 +111,44 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     })
     .catch(err => console.error("❌ Error loading JSON:", err));
+
+/***************************** cookie management 
+ **************************/
+document.addEventListener("DOMContentLoaded", () => {
+  if (!document.cookie.includes("accepted_cookies=yes")) {
+    const cookieBox = document.createElement("div");
+    cookieBox.className = "cookie-wrapper";
+    cookieBox.innerHTML = `
+    <img src="/assets/icons/cookie.svg"/>
+      <h2>Cookies Consent</h2> 
+      <div class="cookie-data">    
+        <p>We use cookies to improve your experience on our website. By using our website, you’re agreeing to the collection of data as described in our <a class="from-cookie-to-tos" href="/privacy">Privacy Policy</a></p>    
+      </div>    
+      <button id="accept-cookieBtn">I understand</button>
+      <button id="decline-cookieBtn">Decline</button>
+      
+    `;
+    document.body.appendChild(cookieBox);
+    
+    setTimeout(() => {
+      requestAnimationFrame(() => {
+        cookieBox.classList.add("show");
+      });
+    }, 3000);
+    
+    const acceptBtn = cookieBox.querySelector("#accept-cookieBtn");
+    acceptBtn.addEventListener("click", () => {
+      document.cookie = "accepted_cookies=yes; path=/";
+      cookieBox.classList.remove("show");
+      cookieBox.addEventListener("transitionend", () => {
+        cookieBox.remove();
+      }, { once: true });
+    });
+    const declineBtn = cookieBox.querySelector("#decline-cookieBtn");
+    declineBtn.onclick = () => {
+      cookieBox.classList.remove("show");
+    }
+  }
+});
+
+/***************************************************************/
