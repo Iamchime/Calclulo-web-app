@@ -1613,8 +1613,6 @@ document.addEventListener("click", (e) => {
 
 (function () {
 
-  if (window.innerWidth > 768) return;
-
   const STORAGE_KEY = 'pwa_install_dont_show_again_v1';
   const DRAWER_BASE = 'calcluloPwaDrawer';
   let deferredInstallPrompt = null;
@@ -1850,6 +1848,9 @@ document.addEventListener("click", (e) => {
 
   function openDrawer() {
     setTimeout(() => {
+    if (window.innerWidth >= 768 || document.querySelector(".cookie-wrapper")?.classList.contains("show") || document.querySelector(".calclulo-trustpilot-drawer")?.classList.contains("visible")) return;
+    
+    setTimeout(() => {
     if (isDrawerOpen) return;
     injectStyles();
     activeContainer = buildDrawer();
@@ -1895,6 +1896,7 @@ document.addEventListener("click", (e) => {
 
     isDrawerOpen = true;
     },15000);
+  },5000);
   }
 
   function startCloseFlow() {
@@ -1993,6 +1995,384 @@ document.addEventListener("click", (e) => {
 
   document.addEventListener('DOMContentLoaded', () => {
     if (isRunningAsPWA()) return;
+    if (localStorage.getItem(STORAGE_KEY) === 'true') return;
+    injectStyles();
+    maybeShowDrawer();
+  });
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**************** trust pilot review widget ****************/
+
+
+(function () {
+
+  const STORAGE_KEY = 'trustpilot_install_dont_show_again_v1';
+  const DRAWER_BASE = 'calcluloTrustpilotDrawer';
+  let deferredInstallPrompt = null;
+  let isDrawerOpen = false;
+  let activeContainer = null; 
+  let dragState = null; 
+  let savedScrollY = 0; 
+
+  const savedBodyStyles = { position: '', top: '', left: '', right: '', width: '' };
+  const savedHtmlOverflow = '';
+
+  document.addEventListener('click', (e) => {
+    if (!isDrawerOpen || !activeContainer) return;
+    const drawer = activeContainer.querySelector('.calclulo-trustpilot-drawer');
+    const backdrop = activeContainer.querySelector('.calclulo-trustpilot-backdrop');
+    const path = (e.composedPath && e.composedPath()) || (e.path || []);
+    if (path.indexOf(drawer) === -1 && path.indexOf(backdrop) === -1) {
+      startCloseFlow();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (!isDrawerOpen) return;
+    if (e.key === 'Escape' || e.key === 'Esc') startCloseFlow();
+  });
+
+  window.addEventListener('appinstalled', () => {
+    localStorage.setItem(STORAGE_KEY, 'true');
+    startCloseFlow();
+  });
+
+  function injectStyles() {
+    if (document.getElementById(DRAWER_BASE + 'Styles')) return;
+    const css = `
+      .calclulo-trustpilot-container {
+      user-select: none;
+      display: none; }
+      .calclulo-trustpilot-backdrop {
+        position: fixed; inset: 0;
+        background: rgba(0,0,0,0.45);
+        opacity: 0; transition: opacity 260ms ease; z-index: 9998; pointer-events: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .calclulo-trustpilot-backdrop.visible { opacity: 1; pointer-events: auto; }
+      .calclulo-trustpilot-drawer {
+        position: fixed; left: 0; right: 0; bottom: 0;
+        transform: translateY(110%);
+        transition: transform 360ms cubic-bezier(.2,.9,.2,1);
+        z-index: 9999; will-change: transform; max-width: 720px; margin: 0 auto;
+        border-top-left-radius: 12px; border-top-right-radius: 12px;
+        box-shadow: 0 -12px 30px rgba(2,6,23,0.35);
+        background: linear-gradient(180deg, #ffffff, #fbfbfb);
+        padding: 18px; box-sizing: border-box;
+        touch-action: none;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .calclulo-trustpilot-drawer.visible { transform: translateY(0); }
+      .calclulo-trustpilot-handle { width: 36px; height: 4px; background: rgba(0,0,0,0.2); border-radius: 4px; margin: 0 auto 12px; }
+      .calclulo-trustpilot-content { display: flex; gap: 12px; align-items: center; }
+      .calclulo-trustpilot-info { flex: 1 1 auto; }
+      .calclulo-trustpilot-title { font-weight: 700; font-size: 1.05rem; margin: 0 0 6px;
+      font-family: lexend;}
+      .calclulo-trustpilot-desc { margin: 0; font-size: 0.95rem; color: #42445AED;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      line-height: 1.7;
+      }
+      .calclulo-trustpilot-actions { display: flex; gap: 10px; margin-top: 14px; justify-content: flex-end; }
+      .calclulo-btn { min-width: 120px; padding: 10px 14px; border-radius: 10px; font-weight: 400; border: none; font-size: 0.95rem;
+      font-family: young;
+        transition: .2s;
+      }
+      .calclulo-btn.primary { background: #464BFF; color: white; box-shadow: 0 6px 18px rgba(29,123,237,0.24); }
+      .calclulo-btn.primary:hover{
+        background: #2F32B5;
+      }
+      .calclulo-btn.primary:active {
+        
+      }
+      
+      .calclulo-btn.ghost { background: transparent; color: #333; }
+      .calclulo-btn.ghost:active { background: #42445A26 }
+      @media (min-width: 640px) {
+        .calclulo-trustpilot-drawer { left: auto; right: auto; bottom: 20px; width: calc(100% - 40px); max-width: 640px; }
+      }
+      @media(min-width: 900px) {
+  .calclulo-trustpilot-drawer { left: 20px;bottom: 20px;border-radius: 20px;}
+}
+    `;
+    const s = document.createElement('style');
+    s.id = DRAWER_BASE + 'Styles';
+    s.appendChild(document.createTextNode(css));
+    document.head.appendChild(s);
+  }
+
+  function buildDrawer() {
+    const container = document.createElement('div');
+    container.id = DRAWER_BASE + '-container';
+    container.className = 'calclulo-trustpilot-container';
+
+    const backdrop = document.createElement('div');
+    backdrop.className = 'calclulo-trustpilot-backdrop';
+    backdrop.setAttribute('aria-hidden', 'true');
+
+    const drawer = document.createElement('div');
+    drawer.id = DRAWER_BASE;
+    drawer.className = 'calclulo-trustpilot-drawer';
+    drawer.setAttribute('role', 'dialog');
+    drawer.setAttribute('aria-modal', 'true');
+    drawer.setAttribute('aria-label', 'Install app');
+
+    const handle = document.createElement('div'); handle.className = 'calclulo-trustpilot-handle';
+    const content = document.createElement('div'); content.className = 'calclulo-trustpilot-content';
+    const info = document.createElement('div'); info.className = 'calclulo-trustpilot-info';
+    const title = document.createElement('h3'); title.className = 'calclulo-trustpilot-title'; title.textContent = 'Leave a review';
+    const desc = document.createElement('p'); desc.className = 'calclulo-trustpilot-desc'; desc.textContent = 'We hope you’re enjoying Calclulo! 😊 Could you take a moment to leave us a review? It means a lot and helps others discover us too.';
+    info.appendChild(title); info.appendChild(desc); content.appendChild(info);
+
+    const actions = document.createElement('div'); actions.className = 'calclulo-trustpilot-actions';
+    const dontShowBtn = document.createElement('button'); dontShowBtn.className = 'calclulo-btn ghost';
+    dontShowBtn.type = 'button'; dontShowBtn.textContent = "Don't show this again";
+    dontShowBtn.addEventListener('click', () => {
+      localStorage.setItem(STORAGE_KEY, 'true');
+      startCloseFlow();
+    });
+
+    const opentrustprofileBtn = document.createElement('button'); opentrustprofileBtn.className = 'calclulo-btn primary';
+    opentrustprofileBtn.id ="trustpilotInstallButton";
+    opentrustprofileBtn.type = 'button'; opentrustprofileBtn.textContent = 'Write a review';
+    opentrustprofileBtn.addEventListener('click', async () => {
+      try {
+        
+        window.open('https://www.trustpilot.com/review/calclulo.com', '_blank', 'noopener');
+        localStorage.setItem(STORAGE_KEY,true);
+      } catch (err) {
+        console.warn('Failed to open Trustpilot link', err);
+      }
+      startCloseFlow();
+    });
+
+    actions.appendChild(dontShowBtn);
+    actions.appendChild(opentrustprofileBtn);
+
+    drawer.appendChild(handle);
+    drawer.appendChild(content);
+    drawer.appendChild(actions);
+    container.appendChild(backdrop);
+    container.appendChild(drawer);
+
+    let drawerHeight = 0;
+    function ensureDrawerHeight() { drawerHeight = drawer.getBoundingClientRect().height; }
+
+    function onPointerDown(e) {
+      if (e.button && e.button !== 0) return;
+      ensureDrawerHeight();
+      dragState = {
+        startY: e.clientY,
+        currentY: e.clientY,
+        startedAt: performance.now(),
+        pointerId: e.pointerId || null
+      };
+      drawer.style.transition = 'none';
+      try { drawer.setPointerCapture && drawer.setPointerCapture(e.pointerId); } catch (_) {}
+    }
+
+    function onPointerMove(e) {
+      if (!dragState) return;
+      if (dragState.pointerId != null && e.pointerId !== dragState.pointerId) return;
+      dragState.currentY = e.clientY;
+      const dy = Math.max(0, dragState.currentY - dragState.startY);
+      drawer.style.transform = `translateY(${dy}px)`;
+      const p = Math.min(1, dy / (drawerHeight || 300));
+      backdrop.style.opacity = String(1 - p * 0.95);
+    }
+
+    function onPointerUp(e) {
+      if (!dragState) return;
+      if (dragState.pointerId != null && e.pointerId !== dragState.pointerId) {
+        dragState = null; return;
+      }
+      const dy = Math.max(0, dragState.currentY - dragState.startY);
+      const dt = Math.max(1, performance.now() - dragState.startedAt);
+      const velocity = (dragState.currentY - dragState.startY) / dt;
+      const shouldClose = (dy > (drawerHeight * 0.35 || 120)) || (velocity > 0.5);
+
+      drawer.style.transition = '';
+      backdrop.style.transition = '';
+
+      if (shouldClose) {
+
+        drawer.style.transform = `translateY(110%)`;
+        backdrop.style.opacity = '0';
+
+        restorePageScrollImmediately();
+
+        setTimeout(() => startCloseFlow(), 20);
+      } else {
+
+        drawer.style.transform = '';
+        backdrop.style.opacity = '';
+      }
+
+      try { drawer.releasePointerCapture && drawer.releasePointerCapture(e.pointerId); } catch (_) {}
+      dragState = null;
+    }
+
+    drawer.addEventListener('pointerdown', onPointerDown);
+    drawer.addEventListener('pointermove', onPointerMove);
+    drawer.addEventListener('pointerup', onPointerUp);
+    drawer.addEventListener('pointercancel', onPointerUp);
+    drawer.addEventListener('lostpointercapture', () => { dragState = null; });
+
+    backdrop.addEventListener('click', () => startCloseFlow());
+
+    return container;
+  }
+
+  function openDrawer() {
+    setTimeout(() => {
+    if (document.querySelector(".cookie-wrapper")?.classList.contains("show")) return;
+    
+    setTimeout(() => {
+    if (isDrawerOpen) return;
+    injectStyles();
+    activeContainer = buildDrawer();
+    document.body.appendChild(activeContainer);
+
+    const container = activeContainer;
+    const backdrop = container.querySelector('.calclulo-trustpilot-backdrop');
+    const drawer = container.querySelector('.calclulo-trustpilot-drawer');
+
+    container.style.display = 'block';
+
+    savedScrollY = window.scrollY || window.pageYOffset || 0;
+    savedBodyStyles.position = document.body.style.position || '';
+    savedBodyStyles.top = document.body.style.top || '';
+    savedBodyStyles.left = document.body.style.left || '';
+    savedBodyStyles.right = document.body.style.right || '';
+    savedBodyStyles.width = document.body.style.width || '';
+    const prevHtmlOverflow = document.documentElement.style.overflow || '';
+
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.documentElement.style.overflow = 'hidden';
+
+    drawer.style.transform = 'translateY(110%)';
+    drawer.classList.remove('visible');
+    backdrop.style.opacity = '0';
+    backdrop.classList.remove('visible');
+
+    container.offsetHeight;
+    
+    requestAnimationFrame(() => {
+      backdrop.classList.add('visible');
+      drawer.classList.add('visible');
+
+      setTimeout(() => {
+        drawer.style.transform = '';
+        backdrop.style.opacity = '';
+      }, 10);
+    });
+
+    isDrawerOpen = true;
+    },50000);
+  },4000);
+  }
+
+  function startCloseFlow() {
+    if (!activeContainer) return;
+    if (!isDrawerOpen) {
+
+      restorePageScrollImmediately();
+      removeContainerIfExists();
+      return;
+    }
+    const container = activeContainer;
+    const backdrop = container.querySelector('.calclulo-trustpilot-backdrop');
+    const drawer = container.querySelector('.calclulo-trustpilot-drawer');
+
+    backdrop.classList.remove('visible');
+    drawer.classList.remove('visible');
+
+    restorePageScrollImmediately();
+
+    const onEnd = (ev) => {
+      if (ev && ev.target !== drawer) return;
+      drawer.removeEventListener('transitionend', onEnd);
+      removeContainerIfExists();
+    };
+    drawer.addEventListener('transitionend', onEnd);
+    setTimeout(() => {
+      if (document.body.contains(container)) removeContainerIfExists();
+    }, 700);
+  }
+
+  function restorePageScrollImmediately() {
+    try {
+      document.body.style.position = savedBodyStyles.position || '';
+      document.body.style.top = savedBodyStyles.top || '';
+      document.body.style.left = savedBodyStyles.left || '';
+      document.body.style.right = savedBodyStyles.right || '';
+      document.body.style.width = savedBodyStyles.width || '';
+      
+      document.documentElement.style.overflow = '';
+
+      window.scrollTo(0, savedScrollY || 0);
+    } catch (err) {
+      
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
+      document.documentElement.style.overflow = '';
+    }
+  }
+
+  function removeContainerIfExists() {
+    if (!activeContainer) return;
+    try {
+      if (activeContainer.parentNode) activeContainer.parentNode.removeChild(activeContainer);
+    } catch (err) {
+      console.warn('Error removing drawer container', err);
+    } finally {
+      activeContainer = null;
+      isDrawerOpen = false;
+      dragState = null;
+    }
+  }
+  
+  function shouldShowDrawer() {
+    if (localStorage.getItem(STORAGE_KEY) === 'true') return false;
+    return true;
+  }
+
+  function maybeShowDrawer() {
+    if (!shouldShowDrawer()) return;
+    injectStyles();
+    setTimeout(openDrawer, 520);
+  }
+
+  window.CalcluloTrustpilotDrawer = {
+    open: () => { if (shouldShowDrawer()) maybeShowDrawer(); },
+    close: () => { startCloseFlow(); },
+    resetDontShow: () => { localStorage.removeItem(STORAGE_KEY); }
+  };
+
+  document.addEventListener('DOMContentLoaded', () => {
     if (localStorage.getItem(STORAGE_KEY) === 'true') return;
     injectStyles();
     maybeShowDrawer();
