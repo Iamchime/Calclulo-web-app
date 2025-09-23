@@ -1753,6 +1753,7 @@ document.addEventListener("click", (e) => {
     });
 
     const installBtn = document.createElement('button'); installBtn.className = 'calclulo-btn primary';
+    installBtn.id ="pwaInstallButton";
     installBtn.type = 'button'; installBtn.textContent = 'Install';
     installBtn.addEventListener('click', async () => {
       if (deferredInstallPrompt) {
