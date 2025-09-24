@@ -1159,90 +1159,44 @@ function copyTooltipValue(tooltip) {
 }
 
 /****************************
- * error handling 
+ * message handling 
 ***************************/
 
-(function() {
-  const activeMessages = [];
-
-  const messageTypes = {
-    error: { bg: 'linear-gradient(135deg, #ff4d4f, #ff7a6d)', icon: '✖' },
-    success: { bg: 'linear-gradient(135deg, #4CAF50, #81C784)', icon: '✔' },
-    info: { bg: 'linear-gradient(135deg, #2196F3, #64B5F6)', icon: 'ℹ' },
-    warning: { bg: 'linear-gradient(135deg, #FFC107, #FFD54F)', icon: '⚠' }
-  };
-
-  function showMessage(message, type = 'error', duration = 3000) {
-    if(activeMessages.length == 4) return;
-    const msg = document.createElement('div');
-    msg.innerHTML = `${messageTypes[type].icon} ${message}`;
-
-    Object.assign(msg.style, {
-      position: 'fixed',
-      left: '50%',
-      top: '10px',
-      transform: 'translateX(-50%) translateY(-20px) scale(0.95) rotate(0deg)',
-      background: messageTypes[type].bg,
-      color: '#fff',
-      padding: '15px 25px',
-      borderRadius: '12px',
-      boxShadow: '0 8px 25px rgba(0,0,0,0.3)',
-      opacity: '0',
-      transition: 'all 0.4s ease',
-      fontFamily: 'Arial, sans-serif',
-      fontWeight: 'bold',
-      minWidth: '250px',
-      textAlign: 'center',
-      cursor: 'pointer',
-      zIndex: 9999
-    });
-
-    document.body.appendChild(msg);
-    activeMessages.push(msg);
-    updateStack();
-
-    requestAnimationFrame(() => {
-      msg.style.opacity = '1';
-      msg.style.transform = 'translateX(-50%) translateY(0) scale(1) rotate(0deg)';
-    });
-
-    let timer = setTimeout(() => removeMessage(msg), duration);
-
-    msg.addEventListener('mouseenter', () => clearTimeout(timer));
-    msg.addEventListener('mouseleave', () => {
-      timer = setTimeout(() => removeMessage(msg), duration);
-    });
-
-    msg.addEventListener('click', () => removeMessage(msg));
-  }
-
-  function removeMessage(msg) {
-    msg.style.opacity = '0';
-    msg.style.transform = 'translateX(-50%) translateY(-20px) scale(0.95) rotate(0deg)';
-    msg.addEventListener('transitionend', () => {
-      msg.remove();
-      const index = activeMessages.indexOf(msg);
-      if (index > -1) activeMessages.splice(index, 1);
-      updateStack();
-    });
-  }
-
-  function updateStack() {
-    const baseOffset = 20;
-    activeMessages.forEach((msg, i) => {
-      const scale = 1 - i * 0.05;
-      const translateY = baseOffset + i * 10;
-      const rotate = (i % 2 === 0 ? -2 : 2) * i;
-      msg.style.top = translateY + 'px';
-      msg.style.transform = `translateX(-50%) translateY(0) scale(${scale}) rotate(${rotate}deg)`;
-    });
-  }
-
-  window.showMessage = showMessage;
-})();
-
-function clearError(input) {
+function showMessage(message, state = "error") {
+  // Remove existing message if any
+  const existing = document.querySelector('.message-toast');
+  if (existing) existing.remove();
   
+  // Create message container
+  const toast = document.createElement('div');
+  toast.classList.add('message-toast', state);
+  
+  // Message text
+  const text = document.createElement('span');
+  text.textContent = message;
+  
+  // Close button (SVG)
+  const closeBtn = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  closeBtn.setAttribute("viewBox", "0 0 24 24");
+  closeBtn.innerHTML = '<path d="M18 6 L6 18 M6 6 L18 18" stroke="white" stroke-width="2" stroke-linecap="round"/>';
+  closeBtn.addEventListener('click', () => fadeOut(toast));
+  
+  toast.appendChild(text);
+  toast.appendChild(closeBtn);
+  document.body.appendChild(toast);
+  
+  // Fade in
+  requestAnimationFrame(() => {
+    toast.classList.add('show');
+  });
+  
+  // Auto fade out after 4 seconds
+  setTimeout(() => fadeOut(toast), 4000);
+  
+  function fadeOut(element) {
+    element.classList.remove('show');
+    element.addEventListener('transitionend', () => element.remove(), { once: true });
+  }
 }
 
 /****** closing side bar when links are clicked *************/
@@ -2655,7 +2609,8 @@ async function selectCurrencyWithAtomicConversion(currency) {
 
     if (!convResult.success) {
       console.warn("Conversion aborted:", convResult);
-      alert("Currency conversion failed");
+      showMessage("Currency conversion failed")
+      //alert("Currency conversion failed");
       return;
     }
 
