@@ -565,301 +565,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
-/*********************************** currency handling ****************************/
-
-const currencies = [
-  // --- North America ---
-  { code: "USD", name: "United States Dollar", symbol: "$", sign: "US$" },
-  { code: "CAD", name: "Canadian Dollar", symbol: "$", sign: "C$" },
-  { code: "MXN", name: "Mexican Peso", symbol: "$", sign: "Mex$" },
-  { code: "BBD", name: "Barbados Dollar", symbol: "$", sign: "Bds$" },
-  { code: "BSD", name: "Bahamian Dollar", symbol: "$", sign: "B$" },
-  { code: "BZD", name: "Belize Dollar", symbol: "$", sign: "BZ$" },
-  { code: "BMD", name: "Bermudian Dollar", symbol: "$", sign: "BD$" },
-  { code: "GTQ", name: "Guatemalan Quetzal", symbol: "Q", sign: "Q" },
-  { code: "HNL", name: "Honduran Lempira", symbol: "L", sign: "L" },
-  { code: "NIO", name: "Nicaraguan Córdoba", symbol: "C$", sign: "C$" },
-  { code: "CRC", name: "Costa Rican Colón", symbol: "₡", sign: "₡" },
-  { code: "PAB", name: "Panamanian Balboa", symbol: "B/.", sign: "B/." },
-  { code: "JMD", name: "Jamaican Dollar", symbol: "$", sign: "J$" },
-  { code: "TTD", name: "Trinidad and Tobago Dollar", symbol: "$", sign: "TT$" },
-  { code: "DOP", name: "Dominican Peso", symbol: "$", sign: "RD$" },
-  { code: "CUP", name: "Cuban Peso", symbol: "$", sign: "CUP$" },
-  { code: "HTG", name: "Haitian Gourde", symbol: "G", sign: "G" },
-  { code: "KYD", name: "Cayman Islands Dollar", symbol: "$", sign: "CI$" },
-  
-  // --- South America ---
-  { code: "BRL", name: "Brazilian Real", symbol: "R$", sign: "R$" },
-  { code: "ARS", name: "Argentine Peso", symbol: "$", sign: "AR$" },
-  { code: "CLP", name: "Chilean Peso", symbol: "$", sign: "CL$" },
-  { code: "COP", name: "Colombian Peso", symbol: "$", sign: "COL$" },
-  { code: "PEN", name: "Peruvian Sol", symbol: "S/", sign: "S/." },
-  { code: "UYU", name: "Uruguayan Peso", symbol: "$", sign: "UYU$" },
-  { code: "PYG", name: "Paraguayan Guaraní", symbol: "₲", sign: "₲" },
-  { code: "BOB", name: "Boliviano", symbol: "Bs.", sign: "Bs." },
-  { code: "VES", name: "Venezuelan Bolívar", symbol: "Bs.", sign: "Bs." },
-  { code: "GYD", name: "Guyanese Dollar", symbol: "$", sign: "G$" },
-  { code: "SRD", name: "Surinamese Dollar", symbol: "$", sign: "SRD$" },
-  
-  // --- Europe ---
-  { code: "EUR", name: "Euro", symbol: "€", sign: "€" },
-  { code: "GBP", name: "Pound Sterling", symbol: "£", sign: "£" },
-  { code: "CHF", name: "Swiss Franc", symbol: "Fr", sign: "CHF" },
-  { code: "NOK", name: "Norwegian Krone", symbol: "kr", sign: "NOK" },
-  { code: "SEK", name: "Swedish Krona", symbol: "kr", sign: "SEK" },
-  { code: "DKK", name: "Danish Krone", symbol: "kr", sign: "DKK" },
-  { code: "ISK", name: "Icelandic Króna", symbol: "kr", sign: "ISK" },
-  { code: "CZK", name: "Czech Koruna", symbol: "Kč", sign: "Kč" },
-  { code: "PLN", name: "Polish Złoty", symbol: "zł", sign: "zł" },
-  { code: "HUF", name: "Hungarian Forint", symbol: "Ft", sign: "Ft" },
-  { code: "RON", name: "Romanian Leu", symbol: "lei", sign: "lei" },
-  { code: "BGN", name: "Bulgarian Lev", symbol: "лв", sign: "лв" },
-  { code: "RSD", name: "Serbian Dinar", symbol: "дин.", sign: "RSD" },
-  { code: "MKD", name: "Macedonian Denar", symbol: "ден", sign: "ден" },
-  { code: "ALL", name: "Albanian Lek", symbol: "L", sign: "L" },
-  { code: "BAM", name: "Bosnia and Herzegovina Convertible Mark", symbol: "KM", sign: "KM" },
-  { code: "MDL", name: "Moldovan Leu", symbol: "L", sign: "MDL" },
-  { code: "UAH", name: "Ukrainian Hryvnia", symbol: "₴", sign: "₴" },
-  { code: "BYN", name: "Belarusian Ruble", symbol: "Br", sign: "Br" },
-  { code: "RUB", name: "Russian Ruble", symbol: "₽", sign: "₽" },
-  { code: "GIP", name: "Gibraltar Pound", symbol: "£", sign: "£" },
-  
-  // --- Middle East & Asia ---
-  { code: "TRY", name: "Turkish Lira", symbol: "₺", sign: "₺" },
-  { code: "IRR", name: "Iranian Rial", symbol: "﷼", sign: "IRR" },
-  { code: "IQD", name: "Iraqi Dinar", symbol: "ع.د", sign: "IQD" },
-  { code: "SYP", name: "Syrian Pound", symbol: "£S", sign: "£S" },
-  { code: "JOD", name: "Jordanian Dinar", symbol: "د.ا", sign: "JOD" },
-  { code: "LBP", name: "Lebanese Pound", symbol: "ل.ل", sign: "LBP" },
-  { code: "ILS", name: "Israeli New Shekel", symbol: "₪", sign: "₪" },
-  { code: "SAR", name: "Saudi Riyal", symbol: "﷼", sign: "SAR" },
-  { code: "QAR", name: "Qatari Riyal", symbol: "﷼", sign: "QAR" },
-  { code: "AED", name: "UAE Dirham", symbol: "د.إ", sign: "AED" },
-  { code: "KWD", name: "Kuwaiti Dinar", symbol: "د.ك", sign: "KWD" },
-  { code: "BHD", name: "Bahraini Dinar", symbol: "ب.د", sign: "BHD" },
-  { code: "OMR", name: "Omani Rial", symbol: "ر.ع.", sign: "OMR" },
-  
-  // --- Asia & Pacific ---
-  { code: "INR", name: "Indian Rupee", symbol: "₹", sign: "₹" },
-  { code: "PKR", name: "Pakistani Rupee", symbol: "₨", sign: "₨" },
-  { code: "BDT", name: "Bangladeshi Taka", symbol: "৳", sign: "৳" },
-  { code: "LKR", name: "Sri Lankan Rupee", symbol: "Rs", sign: "Rs" },
-  { code: "CNY", name: "Chinese Yuan", symbol: "¥", sign: "CN¥" },
-  { code: "JPY", name: "Japanese Yen", symbol: "¥", sign: "¥" },
-  { code: "KRW", name: "South Korean Won", symbol: "₩", sign: "₩" },
-  { code: "THB", name: "Thai Baht", symbol: "฿", sign: "฿" },
-  { code: "MYR", name: "Malaysian Ringgit", symbol: "RM", sign: "RM" },
-  { code: "SGD", name: "Singapore Dollar", symbol: "$", sign: "S$" },
-  { code: "IDR", name: "Indonesian Rupiah", symbol: "Rp", sign: "Rp" },
-  { code: "PHP", name: "Philippine Peso", symbol: "₱", sign: "₱" },
-  { code: "VND", name: "Vietnamese Đồng", symbol: "₫", sign: "₫" },
-  { code: "AUD", name: "Australian Dollar", symbol: "$", sign: "A$" },
-  { code: "NZD", name: "New Zealand Dollar", symbol: "$", sign: "NZ$" },
-  { code: "FJD", name: "Fijian Dollar", symbol: "$", sign: "FJ$" },
-  
-  // --- Africa ---
-  { code: "NGN", name: "Nigerian Naira", symbol: "₦", sign: "₦" },
-  { code: "GHS", name: "Ghanaian Cedi", symbol: "₵", sign: "GH₵" },
-  { code: "ZAR", name: "South African Rand", symbol: "R", sign: "R" },
-  { code: "KES", name: "Kenyan Shilling", symbol: "Sh", sign: "KSh" },
-  { code: "TZS", name: "Tanzanian Shilling", symbol: "Sh", sign: "TSh" },
-  { code: "UGX", name: "Ugandan Shilling", symbol: "Sh", sign: "USh" },
-  { code: "MUR", name: "Mauritian Rupee", symbol: "₨", sign: "Rs" },
-  { code: "MAD", name: "Moroccan Dirham", symbol: "د.م.", sign: "MAD" },
-  { code: "EGP", name: "Egyptian Pound", symbol: "£", sign: "E£" },
-  
-  // --- Cryptocurrencies ---
-{ code: "BTC", name: "Bitcoin", symbol: "₿", sign: "₿" },
-{ code: "ETH", name: "Ethereum", symbol: "Ξ", sign: "ETH" },
-{ code: "BNB", name: "BNB", symbol: "BNB", sign: "BNB" },
-{ code: "SOL", name: "Solana", symbol: "SOL", sign: "SOL" },
-{ code: "XRP", name: "XRP", symbol: "XRP", sign: "XRP" },
-{ code: "ADA", name: "Cardano", symbol: "₳", sign: "ADA" },
-{ code: "DOGE", name: "Dogecoin", symbol: "Ð", sign: "DOGE" },
-{ code: "SHIB", name: "Shiba Inu", symbol: "🐕", sign: "SHIB" },
-{ code: "DOT", name: "Polkadot", symbol: "DOT", sign: "DOT" },
-{ code: "MATIC", name: "Polygon", symbol: "MATIC", sign: "MATIC" },
-
-// --- Stablecoins ---
-{ code: "USDT", name: "Tether", symbol: "₮", sign: "USDT" },
-{ code: "USDC", name: "USD Coin", symbol: "$", sign: "USDC" },
-{ code: "DAI", name: "Dai", symbol: "DAI", sign: "DAI" },
-{ code: "BUSD", name: "Binance USD", symbol: "BUSD", sign: "BUSD" },
-{ code: "TUSD", name: "TrueUSD", symbol: "TUSD", sign: "TUSD" },
-{ code: "FRAX", name: "Frax", symbol: "FRAX", sign: "FRAX" },
-{ code: "USTC", name: "TerraClassicUSD", symbol: "USTC", sign: "USTC" },
-
-// --- Exchange Tokens ---
-{ code: "OKB", name: "OKB", symbol: "OKB", sign: "OKB" },
-{ code: "HT", name: "Huobi Token", symbol: "HT", sign: "HT" },
-{ code: "CRO", name: "Cronos", symbol: "CRO", sign: "CRO" },
-{ code: "FTT", name: "FTX Token", symbol: "FTT", sign: "FTT" },
-{ code: "GT", name: "GateToken", symbol: "GT", sign: "GT" },
-{ code: "LEO", name: "UNUS SED LEO", symbol: "LEO", sign: "LEO" },
-
-// --- DeFi Tokens ---
-{ code: "UNI", name: "Uniswap", symbol: "UNI", sign: "UNI" },
-{ code: "AAVE", name: "Aave", symbol: "AAVE", sign: "AAVE" },
-{ code: "COMP", name: "Compound", symbol: "COMP", sign: "COMP" },
-{ code: "MKR", name: "Maker", symbol: "MKR", sign: "MKR" },
-{ code: "SNX", name: "Synthetix", symbol: "SNX", sign: "SNX" },
-{ code: "YFI", name: "yearn.finance", symbol: "YFI", sign: "YFI" },
-{ code: "CRV", name: "Curve DAO Token", symbol: "CRV", sign: "CRV" },
-
-// --- Other Popular Tokens ---
-{ code: "LTC", name: "Litecoin", symbol: "Ł", sign: "Ł" },
-{ code: "BCH", name: "Bitcoin Cash", symbol: "Ƀ", sign: "BCH" },
-{ code: "XLM", name: "Stellar", symbol: "★", sign: "XLM" },
-{ code: "ATOM", name: "Cosmos", symbol: "ATOM", sign: "ATOM" },
-{ code: "ALGO", name: "Algorand", symbol: "ALGO", sign: "ALGO" },
-{ code: "AVAX", name: "Avalanche", symbol: "AVAX", sign: "AVAX" },
-{ code: "TRX", name: "TRON", symbol: "TRX", sign: "TRX" },
-{ code: "NEAR", name: "NEAR Protocol", symbol: "NEAR", sign: "NEAR" },
-{ code: "EGLD", name: "MultiversX (Elrond)", symbol: "EGLD", sign: "EGLD" },
-{ code: "APT", name: "Aptos", symbol: "APT", sign: "APT" },
-{ code: "SUI", name: "Sui", symbol: "SUI", sign: "SUI" },
-
-// --- Meme / Community Coins ---
-{ code: "PEPE", name: "Pepe", symbol: "PEPE", sign: "PEPE" },
-{ code: "FLOKI", name: "Floki Inu", symbol: "$FLOKI", sign: "FLOKI" },
-{ code: "BONK", name: "Bonk", symbol: "BONK", sign: "BONK" },
-{ code: "BTTC", name: "BitTorrent", symbol: "BTTC", sign: "BTTC" }
-];
-
-function createCurrencyPopup() {
-  if (document.getElementById("currencyPopup")) return;
-  
-  const popup = document.createElement("div");
-  popup.id = "currencyPopup";
-  popup.innerHTML = `
-    <div class="currency-popup-overlay"></div>
-    <div class="currency-popup">
-      <div class="currency-popup-header">
-        <input type="text" id="currencySearch" placeholder="Search currency...">
-        <button id="currencyCloseBtn"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
-        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
-      </svg></button>
-      </div>
-      <ul id="currencyList"></ul>
-    </div>
-  `;
-  document.body.appendChild(popup);
-  
-  const list = document.getElementById("currencyList");
-  currencies.forEach(c => {
-    const li = document.createElement("li");
-    li.innerHTML = `<span class="symbol">${c.symbol}</span> <span class="name">${c.name}</span>`;
-    li.addEventListener("click", () => selectCurrency(c));
-    list.appendChild(li);
-  });
-  
-  document.getElementById("currencyCloseBtn").addEventListener("click", closeCurrencyPopup);
-  document.querySelector(".currency-popup-overlay").addEventListener("click", closeCurrencyPopup);
-  
-  document.getElementById("currencySearch").addEventListener("input", function() {
-    const term = this.value.toLowerCase();
-    Array.from(list.children).forEach(li => {
-      li.style.display = li.textContent.toLowerCase().includes(term) ? "flex" : "none";
-    });
-  });
-}
-
-
-function openCurrencyPopup() {
-  createCurrencyPopup();
-  const popup = document.getElementById("currencyPopup");
-  
-  void popup.offsetWidth;
-  
-  popup.classList.add("active");
-  
-  document.body.style.overflow = "hidden";
-}
-
-function closeCurrencyPopup() {
-  const popup = document.getElementById("currencyPopup");
-  if (popup) {
-    popup.classList.remove("active");
-    
-    popup.ontransitionend = () => {
-      popup.remove();
-document.body.style.overflow = "";
-    }
-  }
-}
-
-function selectCurrency(currency) {
-
-document.querySelectorAll(".naira-to-selected-currency-car-custom-duty").forEach(span => {
-  span.textContent = currency.symbol;
-});
-
-document.querySelectorAll(".currency-display-for-expanded-results").forEach(span => {
-  span.textContent = currency.symbol;
-});
-
-document.querySelectorAll(".currency-display-for-tooltip").forEach(span => {
-  span.textContent = currency.name;
-});
-
-  document.querySelectorAll(".currency-or-unit-display").forEach(span => {
-    span.textContent = currency.symbol;
-  });
-  localStorage.setItem("selectedCurrency", JSON.stringify(currency));
-  closeCurrencyPopup();
-}
-
-function loadSavedCurrency() {
-  const saved = localStorage.getItem("selectedCurrency");
-  if (saved) {
-    const currency = JSON.parse(saved);
-    document.querySelectorAll(".currency-or-unit-display").forEach(span => {
-      span.textContent = currency.symbol;
-    });
-    
-    document.querySelectorAll(".naira-to-selected-currency-car-custom-duty").forEach(span => {
-  span.textContent = currency.symbol;
-});
-    
-    document.querySelectorAll(".currency-display-for-tooltip").forEach(span => {
-  span.textContent = currency.name;
-});
-    
-    document.querySelectorAll(".currency-display-for-expanded-results").forEach(span => {
-  span.textContent = currency.symbol;
-});
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadSavedCurrency();
-  document.querySelectorAll(".currency-select-svg").forEach(svg => {
-    svg.addEventListener("click", openCurrencyPopup);
-  });
-});
-
-document.addEventListener("DOMContentLoaded", () => {
-  const svgElements = document.querySelectorAll(".currency-select-svg");
-  
-  svgElements.forEach(svg => {
-    const tooltip = document.createElement("div");
-    tooltip.className = "currency-tooltip";
-    tooltip.textContent = "Choose your preferred Currency";
-    document.body.appendChild(tooltip);
-    
-    const rect = svg.getBoundingClientRect();
-    tooltip.style.top = rect.top - 30 + "px";
-    tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + "px";
-    
-    setTimeout(() => {
-      
-      tooltip.classList.add("visible");
-      setTimeout(() => tooltip.classList.remove("visible"), 5000);
-    }, 2000);
-  });
-});
-
 /***********************************
  Reset all inputs across containers
 ***********************************/
@@ -2378,3 +2083,652 @@ document.addEventListener("click", (e) => {
     maybeShowDrawer();
   });
 })();
+
+
+/*********************************************
+ currency handling 
+****************************/
+
+
+const currencies = [
+  // --- North America ---
+  { code: "USD", name: "United States Dollar", symbol: "$", sign: "US$" },
+  { code: "CAD", name: "Canadian Dollar", symbol: "$", sign: "C$" },
+  { code: "MXN", name: "Mexican Peso", symbol: "$", sign: "Mex$" },
+  { code: "BBD", name: "Barbados Dollar", symbol: "$", sign: "Bds$" },
+  { code: "BSD", name: "Bahamian Dollar", symbol: "$", sign: "B$" },
+  { code: "BZD", name: "Belize Dollar", symbol: "$", sign: "BZ$" },
+  { code: "BMD", name: "Bermudian Dollar", symbol: "$", sign: "BD$" },
+  { code: "GTQ", name: "Guatemalan Quetzal", symbol: "Q", sign: "Q" },
+  { code: "HNL", name: "Honduran Lempira", symbol: "L", sign: "L" },
+  { code: "NIO", name: "Nicaraguan Córdoba", symbol: "C$", sign: "C$" },
+  { code: "CRC", name: "Costa Rican Colón", symbol: "₡", sign: "₡" },
+  { code: "PAB", name: "Panamanian Balboa", symbol: "B/.", sign: "B/." },
+  { code: "JMD", name: "Jamaican Dollar", symbol: "$", sign: "J$" },
+  { code: "TTD", name: "Trinidad and Tobago Dollar", symbol: "$", sign: "TT$" },
+  { code: "DOP", name: "Dominican Peso", symbol: "$", sign: "RD$" },
+  { code: "CUP", name: "Cuban Peso", symbol: "$", sign: "CUP$" },
+  { code: "HTG", name: "Haitian Gourde", symbol: "G", sign: "G" },
+  { code: "KYD", name: "Cayman Islands Dollar", symbol: "$", sign: "CI$" },
+  
+  // --- South America ---
+  { code: "BRL", name: "Brazilian Real", symbol: "R$", sign: "R$" },
+  { code: "ARS", name: "Argentine Peso", symbol: "$", sign: "AR$" },
+  { code: "CLP", name: "Chilean Peso", symbol: "$", sign: "CL$" },
+  { code: "COP", name: "Colombian Peso", symbol: "$", sign: "COL$" },
+  { code: "PEN", name: "Peruvian Sol", symbol: "S/", sign: "S/." },
+  { code: "UYU", name: "Uruguayan Peso", symbol: "$", sign: "UYU$" },
+  { code: "PYG", name: "Paraguayan Guaraní", symbol: "₲", sign: "₲" },
+  { code: "BOB", name: "Boliviano", symbol: "Bs.", sign: "Bs." },
+  { code: "GYD", name: "Guyanese Dollar", symbol: "$", sign: "G$" },
+  { code: "SRD", name: "Surinamese Dollar", symbol: "$", sign: "SRD$" },
+  
+  // --- Europe ---
+  { code: "EUR", name: "Euro", symbol: "€", sign: "€" },
+  { code: "GBP", name: "Pound Sterling", symbol: "£", sign: "£" },
+  { code: "CHF", name: "Swiss Franc", symbol: "Fr", sign: "CHF" },
+  { code: "NOK", name: "Norwegian Krone", symbol: "kr", sign: "NOK" },
+  { code: "SEK", name: "Swedish Krona", symbol: "kr", sign: "SEK" },
+  { code: "DKK", name: "Danish Krone", symbol: "kr", sign: "DKK" },
+  { code: "ISK", name: "Icelandic Króna", symbol: "kr", sign: "ISK" },
+  { code: "CZK", name: "Czech Koruna", symbol: "Kč", sign: "Kč" },
+  { code: "PLN", name: "Polish Złoty", symbol: "zł", sign: "zł" },
+  { code: "HUF", name: "Hungarian Forint", symbol: "Ft", sign: "Ft" },
+  { code: "RON", name: "Romanian Leu", symbol: "lei", sign: "lei" },
+  { code: "BGN", name: "Bulgarian Lev", symbol: "лв", sign: "лв" },
+  { code: "RSD", name: "Serbian Dinar", symbol: "дин.", sign: "RSD" },
+  { code: "MKD", name: "Macedonian Denar", symbol: "ден", sign: "ден" },
+  { code: "ALL", name: "Albanian Lek", symbol: "L", sign: "L" },
+  { code: "BAM", name: "Bosnia and Herzegovina Convertible Mark", symbol: "KM", sign: "KM" },
+  { code: "MDL", name: "Moldovan Leu", symbol: "L", sign: "MDL" },
+  { code: "UAH", name: "Ukrainian Hryvnia", symbol: "₴", sign: "₴" },
+  { code: "BYN", name: "Belarusian Ruble", symbol: "Br", sign: "Br" },
+  { code: "RUB", name: "Russian Ruble", symbol: "₽", sign: "₽" },
+  { code: "GIP", name: "Gibraltar Pound", symbol: "£", sign: "£" },
+  
+  // --- Middle East & Asia ---
+  { code: "TRY", name: "Turkish Lira", symbol: "₺", sign: "₺" },
+  { code: "IRR", name: "Iranian Rial", symbol: "﷼", sign: "IRR" },
+  { code: "IQD", name: "Iraqi Dinar", symbol: "ع.د", sign: "IQD" },
+  { code: "SYP", name: "Syrian Pound", symbol: "£S", sign: "£S" },
+  { code: "JOD", name: "Jordanian Dinar", symbol: "د.ا", sign: "JOD" },
+  { code: "LBP", name: "Lebanese Pound", symbol: "ل.ل", sign: "LBP" },
+  { code: "ILS", name: "Israeli New Shekel", symbol: "₪", sign: "ILS" },
+  { code: "SAR", name: "Saudi Riyal", symbol: "﷼", sign: "SAR" },
+  { code: "QAR", name: "Qatari Riyal", symbol: "﷼", sign: "QAR" },
+  { code: "AED", name: "UAE Dirham", symbol: "د.إ", sign: "AED" },
+  { code: "KWD", name: "Kuwaiti Dinar", symbol: "د.ك", sign: "KWD" },
+  { code: "BHD", name: "Bahraini Dinar", symbol: "ب.د", sign: "BHD" },
+  { code: "OMR", name: "Omani Rial", symbol: "ر.ع.", sign: "OMR" },
+  
+  // --- Asia & Pacific ---
+  { code: "INR", name: "Indian Rupee", symbol: "₹", sign: "₹" },
+  { code: "PKR", name: "Pakistani Rupee", symbol: "₨", sign: "₨" },
+  { code: "BDT", name: "Bangladeshi Taka", symbol: "৳", sign: "৳" },
+  { code: "LKR", name: "Sri Lankan Rupee", symbol: "Rs", sign: "Rs" },
+  { code: "CNY", name: "Chinese Yuan", symbol: "¥", sign: "CN¥" },
+  { code: "JPY", name: "Japanese Yen", symbol: "¥", sign: "¥" },
+  { code: "KRW", name: "South Korean Won", symbol: "₩", sign: "₩" },
+  { code: "THB", name: "Thai Baht", symbol: "฿", sign: "฿" },
+  { code: "MYR", name: "Malaysian Ringgit", symbol: "RM", sign: "RM" },
+  { code: "SGD", name: "Singapore Dollar", symbol: "$", sign: "S$" },
+  { code: "IDR", name: "Indonesian Rupiah", symbol: "Rp", sign: "Rp" },
+  { code: "PHP", name: "Philippine Peso", symbol: "₱", sign: "₱" },
+  { code: "VND", name: "Vietnamese Đồng", symbol: "₫", sign: "₫" },
+  { code: "AUD", name: "Australian Dollar", symbol: "$", sign: "A$" },
+  { code: "NZD", name: "New Zealand Dollar", symbol: "$", sign: "NZ$" },
+  { code: "FJD", name: "Fijian Dollar", symbol: "$", sign: "FJ$" },
+  
+  // --- Africa ---
+  { code: "NGN", name: "Nigerian Naira", symbol: "₦", sign: "₦" },
+  { code: "GHS", name: "Ghanaian Cedi", symbol: "₵", sign: "GH₵" },
+  { code: "ZAR", name: "South African Rand", symbol: "R", sign: "R" },
+  { code: "KES", name: "Kenyan Shilling", symbol: "Sh", sign: "KSh" },
+  { code: "TZS", name: "Tanzanian Shilling", symbol: "Sh", sign: "TSh" },
+  { code: "UGX", name: "Ugandan Shilling", symbol: "Sh", sign: "USh" },
+  { code: "MUR", name: "Mauritian Rupee", symbol: "₨", sign: "Rs" },
+  { code: "MAD", name: "Moroccan Dirham", symbol: "د.م.", sign: "MAD" },
+  { code: "EGP", name: "Egyptian Pound", symbol: "£", sign: "E£" },
+  
+/****** crypto currencies *******/
+{ code: "BTC", name: "Bitcoin", symbol: "₿", sign: "₿" },
+  { code: "ETH", name: "Ethereum", symbol: "Ξ", sign: "ETH" },
+  { code: "USDT", name: "Tether", symbol: "₮", sign: "USDT" },
+  { code: "XRP", name: "XRP", symbol: "XRP", sign: "XRP" },
+  { code: "BNB", name: "BNB", symbol: "BNB", sign: "BNB" },
+  { code: "SOL", name: "Solana", symbol: "SOL", sign: "SOL" },
+  { code: "USDC", name: "USD Coin", symbol: "$", sign: "USDC" },
+  { code: "DOGE", name: "Dogecoin", symbol: "Ð", sign: "DOGE" },
+  { code: "ADA", name: "Cardano", symbol: "₳", sign: "ADA" },
+  { code: "TRX", name: "TRON", symbol: "TRX", sign: "TRX" },
+  { code: "DOT", name: "Polkadot", symbol: "DOT", sign: "DOT" },
+  { code: "LTC", name: "Litecoin", symbol: "Ł", sign: "Ł" },
+  { code: "BCH", name: "Bitcoin Cash", symbol: "Ƀ", sign: "BCH" },
+  { code: "XLM", name: "Stellar", symbol: "★", sign: "XLM" },
+  { code: "UNI", name: "Uniswap", symbol: "UNI", sign: "UNI" },
+  { code: "LINK", name: "Chainlink", symbol: "LINK", sign: "LINK" },
+  { code: "MNT", name: "Mantle", symbol: "MNT", sign: "MNT" },
+];
+
+/* ---------- Popup and UI creation (kept your original structure) ---------- */
+
+function createCurrencyPopup() {
+  if (document.getElementById("currencyPopup")) return;
+  
+  const popup = document.createElement("div");
+  popup.id = "currencyPopup";
+  popup.innerHTML = `
+    <div class="currency-popup-overlay"></div>
+    <div class="currency-popup">
+      <div class="currency-popup-header">
+        <input type="text" id="currencySearch" placeholder="Search currency...">
+        <button id="currencyCloseBtn"><svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" class="bi bi-x" viewBox="0 0 16 16">
+        <path d="M4.646 4.646a.5.5 0 0 1 .708 0L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 0 1 0-.708"/>
+      </svg></button>
+      </div>
+      <ul id="currencyList"></ul>
+    </div>
+  `;
+  document.body.appendChild(popup);
+  
+  const list = document.getElementById("currencyList");
+  currencies.forEach(c => {
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="symbol">${c.symbol}</span> <span class="name">${c.name}</span>`;
+    // <- patched click handler: triggers atomic conversion + apply
+    li.addEventListener("click", async () => {
+      try {
+        await selectCurrencyWithAtomicConversion(c);
+      } catch (err) {
+        console.error("[Currency select/convert error]:", err);
+      }
+    });
+    list.appendChild(li);
+  });
+  
+  document.getElementById("currencyCloseBtn").addEventListener("click", closeCurrencyPopup);
+  document.querySelector(".currency-popup-overlay").addEventListener("click", closeCurrencyPopup);
+  
+  document.getElementById("currencySearch").addEventListener("input", function() {
+    const term = this.value.toLowerCase();
+    Array.from(list.children).forEach(li => {
+      li.style.display = li.textContent.toLowerCase().includes(term) ? "flex" : "none";
+    });
+  });
+}
+
+function openCurrencyPopup() {
+  createCurrencyPopup();
+  const popup = document.getElementById("currencyPopup");
+  
+  void popup.offsetWidth;
+  
+  popup.classList.add("active");
+  
+  document.body.style.overflow = "hidden";
+}
+
+function closeCurrencyPopup() {
+  const popup = document.getElementById("currencyPopup");
+  if (popup) {
+    popup.classList.remove("active");
+    
+    popup.ontransitionend = () => {
+      popup.remove();
+      document.body.style.overflow = "";
+    }
+  }
+}
+
+/* ---------- Helper: apply currency to UI (updates text + data attributes) ---------- */
+function applyCurrencyToUI(currency) {
+  if (!currency || !currency.code) return;
+
+  const symbol = currency.symbol || currency.sign || currency.code;
+
+  document.querySelectorAll(".currency-or-unit-display").forEach(span => {
+    span.textContent = symbol;
+    span.dataset.currencyCode = currency.code;
+  });
+
+  document.querySelectorAll(".naira-to-selected-currency-car-custom-duty").forEach(span => {
+    span.textContent = symbol;
+    span.dataset.currencyCode = currency.code;
+  });
+
+  document.querySelectorAll(".currency-display-for-expanded-results").forEach(span => {
+    span.textContent = symbol;
+    span.dataset.currencyCode = currency.code;
+  });
+
+  document.querySelectorAll(".currency-display-for-tooltip").forEach(span => {
+    span.textContent = currency.name || currency.code;
+    span.dataset.currencyCode = currency.code;
+  });
+}
+
+/* ---------- CurrencyBeacon + conversion implementation ---------- */
+
+const CURRENCYBEACON_API_KEY = "9RguthE8FO8RDbBbnOYbH19Icd0U3z6Y";
+const CB_BASE = "https://api.currencybeacon.com/v1";
+const DEBUG_CB = true; // set to false to silence logs
+
+function _cbLog(...args) { if (DEBUG_CB) console.debug("[CB]", ...args); }
+
+/* Daily cache helpers: cache key includes date so it expires at midnight local time */
+function _todayDateString() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+function _cacheKeyForBase(base) {
+  base = (base || "").toUpperCase();
+  return `cb_rates::${base}::${_todayDateString()}`;
+}
+function _getCachedRates(base) {
+  try {
+    const k = _cacheKeyForBase(base);
+    const raw = localStorage.getItem(k);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.rates) return parsed.rates;
+  } catch (e) {
+    console.warn("Cache read error", e);
+  }
+  return null;
+}
+function _setCachedRates(base, ratesObj) {
+  try {
+    const k = _cacheKeyForBase(base);
+    localStorage.setItem(k, JSON.stringify({ timestamp: Date.now(), rates: ratesObj }));
+  } catch (e) {
+    console.warn("Cache write error", e);
+  }
+}
+
+/* Fetch /latest and normalize response shapes into { CODE: rate } */
+async function _fetchLatestRates(base, symbols = []) {
+  base = (base || "").toUpperCase();
+  if (!base) return { ok: false, reason: "no_base" };
+
+  // Try daily cache first
+  const cached = _getCachedRates(base);
+  if (cached) {
+    _cbLog("Using daily cache for", base);
+    if (symbols.length === 0) return { ok: true, rates: cached };
+    const filtered = {};
+    symbols.forEach(s => { if (cached[s]) filtered[s] = cached[s]; });
+    return { ok: true, rates: filtered };
+  }
+
+  const url = new URL(`${CB_BASE}/latest`);
+  url.searchParams.set("base", base);
+  if (symbols.length) url.searchParams.set("symbols", symbols.join(","));
+  url.searchParams.set("api_key", CURRENCYBEACON_API_KEY);
+
+  try {
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Accept": "application/json",
+        "Authorization": `Bearer ${CURRENCYBEACON_API_KEY}`
+      },
+      cache: "no-store"
+    });
+
+    if (!res.ok) {
+      const txt = await res.text();
+      _cbLog("latest http error", res.status, txt);
+      return { ok: false, reason: `http_${res.status}`, body: txt };
+    }
+
+    const json = await res.json();
+    _cbLog("latest response for base", base, json);
+
+    // Normalize many possible shapes
+    let rates = {};
+    if (json.rates && typeof json.rates === "object") {
+      Object.keys(json.rates).forEach(k => { rates[k.toUpperCase()] = Number(json.rates[k]); });
+    } else if (json.quotes && typeof json.quotes === "object") {
+      Object.keys(json.quotes).forEach(k => {
+        const v = Number(json.quotes[k]);
+        const key = String(k).toUpperCase();
+        if (key.length === 3) rates[key] = v;
+        else if (key.length === 6) rates[key.slice(3)] = v;
+        else rates[key] = v;
+      });
+    } else if (json.data && json.data.rates && typeof json.data.rates === "object") {
+      Object.keys(json.data.rates).forEach(k => { rates[k.toUpperCase()] = Number(json.data.rates[k]); });
+    } else {
+      Object.keys(json).forEach(k => { if (typeof json[k] === "number") rates[k.toUpperCase()] = Number(json[k]); });
+    }
+
+    if (Object.keys(rates).length > 0) {
+      _setCachedRates(base, rates);
+      return { ok: true, rates };
+    }
+
+    return { ok: false, reason: "no_rates_in_response", body: json };
+  } catch (err) {
+    _cbLog("fetchLatestRates exception", err);
+    return { ok: false, reason: "fetch_exception", err };
+  }
+}
+
+/* Fallback: /convert endpoint for single-pair conversion */
+async function _fetchConvertPair(from, to, amount = 1) {
+  const url = new URL(`${CB_BASE}/convert`);
+  url.searchParams.set("from", from);
+  url.searchParams.set("to", to);
+  url.searchParams.set("amount", String(amount));
+  url.searchParams.set("api_key", CURRENCYBEACON_API_KEY);
+
+  try {
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      mode: "cors",
+      headers: { "Accept": "application/json", "Authorization": `Bearer ${CURRENCYBEACON_API_KEY}` },
+      cache: "no-store"
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      _cbLog("convert http error", res.status, t);
+      return { ok: false, reason: `http_${res.status}`, body: t };
+    }
+    const j = await res.json();
+    _cbLog("convert response", j);
+    if (typeof j.result === "number") return { ok: true, value: Number(j.result) };
+    if (j.data && typeof j.data.result === "number") return { ok: true, value: Number(j.data.result) };
+    if (j.conversion && typeof j.conversion.result === "number") return { ok: true, value: Number(j.conversion.result) };
+    if (typeof j.value === "number") return { ok: true, value: Number(j.value) };
+    if (j.rates && typeof j.rates[to] === "number") return { ok: true, value: Number(j.rates[to]) * amount };
+    return { ok: false, reason: "unknown_convert_shape", body: j };
+  } catch (e) {
+    _cbLog("convert fetch exception", e);
+    return { ok: false, reason: "fetch_exception", err: e };
+  }
+}
+
+/* Resolve rate FROM -> TO. Try (1) latest base=FROM, (2) latest base=TO and invert, (3) convert endpoint */
+async function resolveRate(from, to) {
+  from = (from || "").toUpperCase();
+  to = (to || "").toUpperCase();
+  if (!from || !to) return null;
+  if (from === to) return 1;
+
+  // 1) base = from
+  const a = await _fetchLatestRates(from, [to]);
+  if (a.ok && a.rates && typeof a.rates[to] === "number") {
+    _cbLog(`Rate ${from}->${to} via base ${from}`, a.rates[to]);
+    return Number(a.rates[to]);
+  }
+
+  // 2) base = to, invert
+  const b = await _fetchLatestRates(to, [from]);
+  if (b.ok && b.rates && typeof b.rates[from] === "number" && b.rates[from] !== 0) {
+    const inv = 1 / Number(b.rates[from]);
+    _cbLog(`Rate ${from}->${to} by inverting ${to}->${from}`, inv);
+    return inv;
+  }
+
+  // 3) fallback convert endpoint
+  const c = await _fetchConvertPair(from, to, 1);
+  if (c.ok && typeof c.value === "number") {
+    _cbLog(`Rate ${from}->${to} via convert`, c.value);
+    return Number(c.value);
+  }
+
+  _cbLog(`Failed to resolve rate ${from}->${to}`);
+  return null;
+}
+
+/* ---------- Helper: infer currency code from symbol if possible ---------- */
+function inferCurrencyCodeFromSymbol(symbol) {
+  if (!symbol) return null;
+  if (!inferCurrencyCodeFromSymbol._map) {
+    inferCurrencyCodeFromSymbol._map = {};
+    currencies.forEach(c => {
+      const s = (c.symbol || "").toString();
+      if (!inferCurrencyCodeFromSymbol._map[s]) inferCurrencyCodeFromSymbol._map[s] = new Set();
+      inferCurrencyCodeFromSymbol._map[s].add(c.code.toUpperCase());
+    });
+  }
+  const set = inferCurrencyCodeFromSymbol._map[symbol];
+  if (!set) return null;
+  const arr = Array.from(set);
+  return arr.length === 1 ? arr[0] : null;
+}
+
+/* ---------- convertCapturedItemsToTargetCurrency (used by selectCurrency) ---------- */
+async function convertCapturedItemsToTargetCurrency(targetCurrency, items) {
+  if (!targetCurrency || !targetCurrency.code) return { success: false, reason: "no_target" };
+  const targetCode = targetCurrency.code.toUpperCase();
+
+  // Group items by source code
+  const groups = {};
+  for (const it of items) {
+    const src = (it.srcCode || "").toUpperCase() || null;
+    if (!src || src === targetCode) continue;
+    if (!groups[src]) groups[src] = [];
+    groups[src].push(it);
+  }
+
+  if (Object.keys(groups).length === 0) return { success: true, converted: 0 };
+
+  // Resolve rates once per source
+  const resolved = {};
+  for (const src of Object.keys(groups)) {
+    const rate = await resolveRate(src, targetCode);
+    if (rate === null) {
+      return { success: false, reason: "rate_resolution_failed", source: src };
+    }
+    resolved[src] = rate;
+  }
+
+  // Apply conversions
+  let convertedCount = 0;
+  for (const src of Object.keys(groups)) {
+    const rate = resolved[src];
+    for (const item of groups[src]) {
+      const newVal = Number((item.amount * rate).toFixed(2));
+      item.input.value = newVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (item.span) item.span.dataset.currencyCode = targetCode;
+      convertedCount++;
+    }
+  }
+
+  return { success: true, converted: convertedCount };
+}
+
+/* ---------- convertAllInputsToTargetCurrency (backwards-compatible bulk converter) ---------- */
+async function convertAllInputsToTargetCurrency(targetCurrency) {
+  // This function inspects DOM, captures source codes & numeric amounts,
+  // then delegates to convertCapturedItemsToTargetCurrency
+  if (!targetCurrency || !targetCurrency.code) return { success: false, reason: "no_target" };
+
+  const wrappers = Array.from(document.querySelectorAll(".currency-or-unit-input"));
+  const captured = [];
+
+  // fallback saved selected code
+  let savedSelectedCode = null;
+  try {
+    const saved = localStorage.getItem("selectedCurrency");
+    if (saved) {
+      const s = JSON.parse(saved);
+      if (s && s.code) savedSelectedCode = s.code.toUpperCase();
+    }
+  } catch (e) {}
+
+  for (const w of wrappers) {
+    const span = w.querySelector(".currency-or-unit-display");
+    const input = w.querySelector("input");
+    if (!span || !input) continue;
+
+    let src = (span.dataset.currencyCode || "").toUpperCase();
+    if (!src) {
+      src = inferCurrencyCodeFromSymbol((span.textContent || "").trim());
+    }
+    if (!src) src = savedSelectedCode || "USD";
+
+    const raw = (input.value || "").toString().replace(/,/g, "").trim();
+    const num = raw === "" ? null : Number(raw);
+    if (num === null || !isFinite(num)) {
+      captured.push({ span, input, srcCode: src, amount: 0, shouldConvert: false });
+    } else {
+      captured.push({ span, input, srcCode: src, amount: num, shouldConvert: true });
+    }
+  }
+
+  // items to actually convert:
+  const itemsToConvert = captured
+    .filter(it => it.shouldConvert && it.amount !== null)
+    .map(it => ({ span: it.span, input: it.input, srcCode: it.srcCode, amount: it.amount }));
+
+  if (itemsToConvert.length === 0) return { success: true, converted: 0 };
+
+  return convertCapturedItemsToTargetCurrency(targetCurrency, itemsToConvert);
+}
+
+/* ---------- Replacement selectCurrencyWithAtomicConversion (stable) ---------- */
+async function selectCurrencyWithAtomicConversion(currency) {
+  if (!currency || !currency.code) return;
+
+  const targetCode = currency.code.toUpperCase();
+
+  // collect wrappers and capture source codes/amounts BEFORE changing UI
+  const wrappers = Array.from(document.querySelectorAll(".currency-or-unit-input"));
+  const capturedItems = []; // { span, input, srcCode, amount, shouldConvert }
+  let savedSelectedCode = null;
+  try {
+    const saved = localStorage.getItem("selectedCurrency");
+    if (saved) {
+      const s = JSON.parse(saved);
+      if (s && s.code) savedSelectedCode = s.code.toUpperCase();
+    }
+  } catch (e) {}
+
+  for (const w of wrappers) {
+    const span = w.querySelector(".currency-or-unit-display");
+    const input = w.querySelector("input");
+    if (!span || !input) continue;
+
+    let src = (span.dataset.currencyCode || "").toUpperCase();
+    if (!src) src = inferCurrencyCodeFromSymbol((span.textContent || "").trim());
+    if (!src) src = savedSelectedCode || "USD";
+
+    const raw = (input.value || "").toString().replace(/,/g, "").trim();
+    const num = raw === "" ? null : Number(raw);
+    if (num === null || !isFinite(num)) {
+      capturedItems.push({ span, input, srcCode: src, amount: 0, shouldConvert: false });
+    } else {
+      capturedItems.push({ span, input, srcCode: src, amount: num, shouldConvert: true });
+    }
+  }
+
+  // Start visual flash (opacity animation) on spans
+  const spans = document.querySelectorAll(
+    ".symbol,.currency-or-unit-display, .naira-to-selected-currency-car-custom-duty, .currency-display-for-expanded-results, .currency-display-for-tooltip"
+  );
+  spans.forEach(s => s.classList.add("currency-flash"));
+
+  // Immediately update UI and persist selection
+  applyCurrencyToUI(currency);
+  try { localStorage.setItem("selectedCurrency", JSON.stringify(currency)); } catch (e) { console.warn("save fail", e); }
+
+  document.body.classList.add("converting");
+
+  try {
+    // Prepare items needing conversion
+    const itemsToConvert = capturedItems
+      .filter(it => it.shouldConvert && it.amount !== null)
+      .map(it => ({ span: it.span, input: it.input, srcCode: it.srcCode, amount: it.amount }));
+
+    if (itemsToConvert.length === 0) {
+      // nothing to convert; succeed fast
+      return;
+    }
+
+    const convResult = await convertCapturedItemsToTargetCurrency(currency, itemsToConvert);
+
+    if (!convResult.success) {
+      console.warn("Conversion aborted:", convResult);
+      alert("Currency conversion failed");
+      return;
+    }
+
+    // success: converted inputs already applied
+  } catch (err) {
+    console.error("Conversion error:", err);
+    alert("Currency conversion failed");
+    return;
+  } finally {
+    spans.forEach(s => s.classList.remove("currency-flash"));
+    document.body.classList.remove("converting");
+    closeCurrencyPopup();
+  }
+}
+
+/* ---------- loadSavedCurrency (set UI and data attributes on load) ---------- */
+function loadSavedCurrency() {
+  const saved = localStorage.getItem("selectedCurrency");
+  if (saved) {
+    try {
+      const currency = JSON.parse(saved);
+      applyCurrencyToUI(currency);
+      return;
+    } catch (e) {
+      console.warn("loadSavedCurrency parse error", e);
+    }
+  }
+
+  // If no saved currency, try to seed dataset currency codes where unique
+  const allSymbols = {};
+  currencies.forEach(c => {
+    if (!allSymbols[c.symbol]) allSymbols[c.symbol] = [];
+    allSymbols[c.symbol].push(c.code);
+  });
+  document.querySelectorAll(".currency-or-unit-display").forEach(span => {
+    const txt = (span.textContent || "").trim();
+    if (txt && allSymbols[txt] && allSymbols[txt].length === 1) {
+      span.dataset.currencyCode = allSymbols[txt][0];
+    }
+  });
+}
+
+/* ---------- DOM Ready wiring (keeps your tooltip behavior) ---------- */
+document.addEventListener("DOMContentLoaded", () => {
+  loadSavedCurrency();
+  document.querySelectorAll(".currency-select-svg").forEach(svg => {
+    svg.addEventListener("click", openCurrencyPopup);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const svgElements = document.querySelectorAll(".currency-select-svg");
+  
+  svgElements.forEach(svg => {
+    const tooltip = document.createElement("div");
+    tooltip.className = "currency-tooltip";
+    tooltip.textContent = "Choose your preferred Currency";
+    document.body.appendChild(tooltip);
+    
+    const rect = svg.getBoundingClientRect();
+    tooltip.style.top = rect.top - 30 + "px";
+    tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + "px";
+    
+    setTimeout(() => {
+      tooltip.classList.add("visible");
+      setTimeout(() => tooltip.classList.remove("visible"), 5000);
+    }, 2000);
+  });
+});
+
+/* ---------- Expose helpers for debugging in console if needed ---------- */
+window._cbResolveRate = resolveRate;
+window._cbConvertAll = convertAllInputsToTargetCurrency;
+window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
+
+/**********************************************************/

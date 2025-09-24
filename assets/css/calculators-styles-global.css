@@ -1984,6 +1984,14 @@ footer span svg{
   fill: red;
   width: 1.15em;
 }
+.currency-flash {
+  animation: currencyFlash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes currencyFlash {
+  0% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
 
 @media (min-width: 1400px) {
   
