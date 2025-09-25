@@ -1690,6 +1690,8 @@ line-height: 1.72;
   color: #333;                         /* dark text for contrast */
   line-height: 1.5;                    /* comfortable line height */
   display: inline-block;
+  margin-top: -20px;
+  margin-bottom: 20px;
 }
 
    .description-txt ul {
@@ -1714,7 +1716,7 @@ ul li::marker {
   gap: .5em;
   margin-top: -1.01em;
   padding-left: 15px;
-  margin-bottom: -1em;
+  /*margin-bottom: -1em;*/
 }
 .description-txt ol li{
   
