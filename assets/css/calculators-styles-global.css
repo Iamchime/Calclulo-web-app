@@ -293,7 +293,7 @@ display: block;
   pointer-events: all;
 }
 .sec-one{
-  padding-top: 10em;
+  padding-top: 7em;
   width: 95%;
   position: relative;
   display: flex;
@@ -304,8 +304,7 @@ display: block;
 .last-updated-text{
   font-size: .8em;
 color: #42445ACC;
-margin-bottom: .5em;
-font-family: AlanSans;
+margin-bottom: -1.01em;
 }
 .last-updated-text strong {
   font-weight: 400;
@@ -313,19 +312,14 @@ font-family: AlanSans;
 }
 .hero-sec{
   max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 .hero-text-wrap{
+  
   font-weight: 900;
   font-size: 2em;
-}
-.calculator-info-p{
-  line-height: 1.5;
-  font-size: .92em;
-  color: #42445ACC;
-  margin-top: 1.5em;
-  margin-bottom: 1.5em;
-  font-family: "Young";
-  max-width: 400px;
 }
 
 .hero-sec-one {
@@ -341,7 +335,7 @@ font-family: AlanSans;
   font-size: 1.7em;
   font-weight: 800;
   color: #1f1f1f;
-  margin: 0;
+  margin-bottom: 1em;
   font-family: lexend;
 }
 
@@ -2190,6 +2184,9 @@ footer span svg{
 }
 
 @media (min-width: 900px) {
+  .sec-one{
+    padding-top: 10em;
+  }
   .cookie-wrapper{
     border-radius: 30px;
     left: 2em;
@@ -2212,10 +2209,7 @@ padding: 12px;
 padding-top: 2em;
 margin-left: 6em
  }
- .last-updated-text{
-   padding: 15px;
- }
- .description-txt,.hero-sec,.quick-actions-btn,.last-updated-text,.similar-calculators-wrap,.ng-cgpa-container,.calculation-sources-wrap{
+ .description-txt,.hero-sec,.quick-actions-btn,.similar-calculators-wrap,.ng-cgpa-container,.calculation-sources-wrap{
    margin-left: 6em;
  }
  .quick-actions-btn button{
