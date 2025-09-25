@@ -1158,14 +1158,16 @@ function copyTooltipValue(tooltip) {
   });
 }
 
-/****************************
- * message handling 
-***************************/
 
+/****************************
+
+message handling
+***************************/
 function showMessage(message, state = "error") {
   // Remove existing message if any
   const existing = document.querySelector('.message-toast');
   if (existing) existing.remove();
+  
   
   // Create message container
   const toast = document.createElement('div');
@@ -1178,6 +1180,7 @@ function showMessage(message, state = "error") {
   // Close button (SVG)
   const closeBtn = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   closeBtn.setAttribute("viewBox", "0 0 24 24");
+  closeBtn.id = "closetoast";
   closeBtn.innerHTML = '<path d="M18 6 L6 18 M6 6 L18 18" stroke="white" stroke-width="2" stroke-linecap="round"/>';
   closeBtn.addEventListener('click', () => fadeOut(toast));
   
@@ -1190,29 +1193,156 @@ function showMessage(message, state = "error") {
     toast.classList.add('show');
   });
   
-  // Auto fade out after 4 seconds
-  setTimeout(() => fadeOut(toast), 4000);
+  // Timing logic
+  let duration = 4000; // total ms
+  let startTime = Date.now();
+  let remaining = duration;
+  let autoFade = setTimeout(() => fadeOut(toast), remaining);
+  
+  // Pause function
+  function pauseTimer() {
+    clearTimeout(autoFade);
+    remaining -= Date.now() - startTime;
+  }
+  
+  // Resume function
+  function resumeTimer() {
+    startTime = Date.now();
+    autoFade = setTimeout(() => fadeOut(toast), remaining);
+  }
+  
+  // Listen for hold/click pause & resume
+  toast.addEventListener("mousedown", pauseTimer);
+  toast.addEventListener("touchstart", pauseTimer);
+  
+  toast.addEventListener("mouseup", resumeTimer);
+  toast.addEventListener("mouseleave", resumeTimer);
+  toast.addEventListener("touchend", resumeTimer);
   
   function fadeOut(element) {
     element.classList.remove('show');
     element.addEventListener('transitionend', () => element.remove(), { once: true });
   }
 }
+/*************** handle sources and references section       *****************/
 
-/****** closing side bar when links are clicked *************/
+(function () {
+  const btn = document.querySelector(".calculation-sources");
+  const arrow = document.getElementById("open-sources-svg");
+  const listWrap = document.querySelector(".sources-list-wrap");
+  const list = document.querySelector(".sources-list");
+  const numberNode = document.querySelector(".number-of-source");
 
-document.querySelectorAll(".side-nav a").forEach((link) => {
-  link.addEventListener("click", (e) => {
-    closeNav();
-  });
-});
+  if (!btn || !listWrap || !list || !numberNode) return;
 
-document.addEventListener("click", (e) => {
-  if (e.target.closest(".search-results-a")) {
-    closeNav();
+  // initialize: hidden by default
+  listWrap.hidden = true;
+  listWrap.classList.remove('open');
+  btn.setAttribute('aria-expanded', 'false');
+
+  // update source count text
+  function updateNumber() {
+    const count = list.querySelectorAll("li").length;
+    numberNode.textContent = count === 1 ? "1 source" : `${count} sources`;
   }
-});
+  updateNumber();
 
+  // open with smooth animation (use explicit height to animate)
+  function openList() {
+    if (!listWrap.hidden) return;
+    listWrap.hidden = false;
+    // set explicit small height first so transition has a start
+    listWrap.style.maxHeight = '0px';
+    // Allow browser to paint
+    requestAnimationFrame(() => {
+      const full = list.scrollHeight + 24; // add small padding so content not clipped
+      listWrap.style.transition = 'max-height 320ms ease, opacity 220ms ease';
+      listWrap.style.maxHeight = full + 'px';
+      listWrap.style.opacity = '1';
+      listWrap.classList.add('open');
+      arrow.style.transform = 'rotate(-180deg)';
+      btn.setAttribute('aria-expanded', 'true');
+    });
+
+    // cleanup after transition to allow responsive height
+    listWrap.addEventListener('transitionend', function handler(e) {
+      if (e.propertyName === 'max-height') {
+        listWrap.style.maxHeight = 'none'; // allow natural height
+        listWrap.style.transition = '';
+        listWrap.removeEventListener('transitionend', handler);
+      }
+    });
+  }
+
+  // close with smooth animation
+  function closeList() {
+    if (listWrap.hidden) return;
+    // from 'auto' height -> need to set explicit pixel height first
+    const cur = listWrap.scrollHeight + 24;
+    listWrap.style.maxHeight = cur + 'px';
+    // force reflow
+    // eslint-disable-next-line no-unused-expressions
+    listWrap.offsetHeight;
+
+    requestAnimationFrame(() => {
+      listWrap.style.transition = 'max-height 260ms ease, opacity 180ms ease';
+      listWrap.style.maxHeight = '0px';
+      listWrap.style.opacity = '0';
+      listWrap.classList.remove('open');
+      arrow.style.transform = 'rotate(0deg)';
+      btn.setAttribute('aria-expanded', 'false');
+    });
+
+    listWrap.addEventListener('transitionend', function handler(e) {
+      if (e.propertyName === 'max-height') {
+        listWrap.hidden = true;
+        listWrap.style.transition = '';
+        listWrap.style.maxHeight = '';
+        listWrap.removeEventListener('transitionend', handler);
+      }
+    });
+  }
+
+  function toggleList() {
+    if (listWrap.hidden) openList(); else closeList();
+  }
+
+  // click handler
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    toggleList();
+  });
+
+  // keyboard: Enter/Space toggles, Escape closes
+  btn.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleList();
+    } else if (e.key === 'Escape') {
+      closeList();
+      btn.focus();
+    }
+  });
+
+  // click outside to close
+  document.addEventListener('click', (e) => {
+    if (!listWrap.hidden && !btn.contains(e.target) && !listWrap.contains(e.target)) {
+      closeList();
+    }
+  });
+
+  // expose update function in case you want to change items dynamically
+  window.updateSourcesList = function(items) {
+    if (!Array.isArray(items)) return;
+    const html = items.map(it => `<li>${it}</li>`).join('');
+    list.innerHTML = html;
+    updateNumber();
+    // close when updated to avoid awkward open heights
+    closeList();
+  };
+})();
+
+/***************************************/
 
 /******************* read more or less ******************/
 

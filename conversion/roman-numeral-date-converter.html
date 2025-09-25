@@ -460,7 +460,7 @@ const romanMap = [
 
 function numberToRoman(num) {
   if (num <= 0 || num > 3999999) {
-    showMessage("Number out of range. Enter a value between 1 and 3,999,999.", "error");
+    showMessage("Number out of range. Enter a value between 1 and 3,999,999.", "info");
     return null;
   }
   let result = "";
@@ -495,7 +495,7 @@ function romanToNumber(roman) {
     }
   }
   if (num > 3999999) {
-    showMessage("Roman numeral exceeds maximum value of 3,999,999.", "error");
+    showMessage("Roman numeral exceeds maximum value of 3,999,999.", "info");
     return null;
   }
   return num;
