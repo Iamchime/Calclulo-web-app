@@ -1224,6 +1224,21 @@ function showMessage(message, state = "error") {
     element.addEventListener('transitionend', () => element.remove(), { once: true });
   }
 }
+
+/****** closing side bar when links are clicked *************/
+
+document.querySelectorAll(".side-nav a").forEach((link) => {
+  link.addEventListener("click", (e) => {
+    closeNav();
+  });
+});
+
+document.addEventListener("click", (e) => {
+  if (e.target.closest(".search-results-a")) {
+    closeNav();
+  }
+});
+
 /*************** handle sources and references section       *****************/
 
 (function () {
@@ -1789,14 +1804,6 @@ function showMessage(message, state = "error") {
     maybeShowDrawer();
   });
 })();
-
-
-
-
-
-
-
-
 
 
 
