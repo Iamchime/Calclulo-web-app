@@ -753,6 +753,27 @@ document.addEventListener('click', function(e) {
   const timers = new WeakMap();
   const formattingInProgress = new WeakSet();
   
+  // How long after script start to ignore programmatic "result" flashes (ms)
+  const IGNORE_MS_AFTER_SCRIPT = 800;
+  
+  // Timestamp until which programmatic changes should NOT trigger markResult/flash.
+  // This is set at script start and slightly extended on window 'load'.
+  let ignoreProgrammaticUntil = (typeof performance !== 'undefined' ? performance.now() : Date.now()) + IGNORE_MS_AFTER_SCRIPT;
+  
+  // When the page fully loads, also extend ignore window slightly to cover load-time mutations.
+  if (typeof window !== 'undefined') {
+    window.addEventListener('load', () => {
+      // Give a tiny grace after load handlers (50ms) so load-time programmatic changes are ignored.
+      const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+      ignoreProgrammaticUntil = Math.max(ignoreProgrammaticUntil, now + 50);
+    }, { passive: true });
+  }
+  
+  function isInInitialIgnoreWindow() {
+    const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
+    return now < ignoreProgrammaticUntil;
+  }
+  
   function clearFlash(el) {
     if (timers.has(el)) {
       clearTimeout(timers.get(el));
@@ -779,7 +800,7 @@ document.addEventListener('click', function(e) {
     if (v == null) return '';
     const s = String(v).replace(/,/g, '').trim();
     if (s === '') return '';
-
+    
     if (s === '.') return '.';
     const parts = s.split('.');
     const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -828,10 +849,11 @@ document.addEventListener('click', function(e) {
     el.dataset.flashWired = '1';
     
     if (el.matches('input, textarea, select')) {
-
+      
       el.addEventListener('value-set', (ev) => {
-
+        
         if (formattingInProgress.has(el)) {
+          // This value-set came from our own formatting; consume and ignore.
           formattingInProgress.delete(el);
           return;
         }
@@ -841,13 +863,15 @@ document.addEventListener('click', function(e) {
         
         const underlyingChanged = !underlyingEqual(oldRaw, newRaw);
         
+        // Always run formatting if needed (we want consistent display even during initial ignore).
         const formatted = formatWithCommas(newRaw);
         if (formatted !== newRaw) {
           formattingInProgress.add(el);
           el.value = formatted;
         }
         
-        if (underlyingChanged) {
+        // Only mark/flashing results if we're NOT inside the initial ignore window.
+        if (underlyingChanged && !isInInitialIgnoreWindow()) {
           markResult(el);
         }
       });
@@ -858,8 +882,10 @@ document.addEventListener('click', function(e) {
       }, { passive: true });
       
     } else {
-
+      
       const mo = new MutationObserver(() => {
+        // Ignore mutation flashes during initial load-time window.
+        if (isInInitialIgnoreWindow()) return;
         markResult(el);
       });
       mo.observe(el, { childList: true, characterData: true, subtree: true });
