@@ -5,27 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#464BFF"/>   
 
-<title>Father's Day Countdown</title>    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5BVJ6KMT');</script>          
+<title>Father's Day Countdown</title>
+<script>
+  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5BVJ6KMT');
+  </script>
+  
 <link rel="manifest" href="/assets/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Calclulo">
 
 <link rel="stylesheet" href="/assets/css/calculators-styles-global.css" />
 
-<meta name="description" content="Track the days, hours, minutes, and seconds until Father's Day with Calclulo's live Father's Day Countdown Calculator. Perfect for planning celebrations and gifts with precise timing.">
-
-
+<meta name="description" content="The Father's day countdown calculator displays the amount of time left before this special day comes.">
 
 <link rel="canonical" href="https://calclulo.com/everyday-life/fathers-day-countdown">
 
-
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://calclulo.com/everyday-life/fathers-day-countdown">
-<meta property="og:title" content="Father's Day Countdown Calculator | Live Time Until Father's Day Celebration">
-<meta property="og:description" content="Never miss a moment with Calclulo's live Father's Day Countdown Calculator. See exactly how much time remains to celebrate dad in style.">
-<meta property="og:image" content="https://calclulo.com/assets/images/fathers-day-countdown-calculator-thumbnail.png">
+<meta property="og:title" content="Father's Day Countdown Calculator">
+<meta property="og:description" content="The Father's day countdown calculator displays the amount of time left before this special day comes.">
+<meta property="og:image" content="https://calclulo.com/assets/images/thumbnail-global.png">
 
-<link href="/favicons/favicon.png" rel="icon" sizes="48x48"> <link href="/favicons/favicon-128.png" rel="icon" sizes="128x128"> <link href="/favicons/favicon-192.png" rel="icon" sizes="192x192">
+<link href="/favicons/favicon.png" rel="icon" sizes="48x48">
+<link href="/favicons/favicon-128.png" rel="icon" sizes="128x128">
+<link href="/favicons/favicon-192.png" rel="icon" sizes="192x192">
 
 <script type="application/ld+json">
   {
@@ -33,7 +37,7 @@
     "@type": "WebPage",
     "name": "Father's Day Countdown Calculator",
     "url": "https://calclulo.com/everyday-life/fathers-day-countdown",
-    "description": "Use Calclulo’s live Father's Day Countdown Calculator to see exactly how much time is left until Father's Day. Perfect for timely celebration planning and gift preparation.",
+    "description": "The Father's day countdown calculator displays the amount of time left before this special day comes.",
     "inLanguage": "en",
     "publisher": {
       "@type": "Organization",
@@ -170,9 +174,9 @@ Everyday Life
         </a>
  </nav>
 
-  <section class="sec-one"><span class="last-updated-text">   Last updated:   <time datetime="2025-09-05">     <span class="last-updated-date">September 5, 2025</span>   </time> </span>
+  <section class="sec-one">
     <div class="hero-sec">
-  
+  <span class="last-updated-text">   Last updated:   <time datetime="2025-09-05">     <span class="last-updated-date"><strong>September 5, 2025</strong></span>   </time> </span>
   <h1 id="hero-h1">
     Father's Day Countdown 
   </h1>
@@ -212,9 +216,12 @@ Clear all changes
         <a href="/everyday-life/new-year-countdown-calculator">New Year Countdown</a>
       </div>
     </div>
-<div class="description-txt">
-
-</div>
+    <article class="description-txt">
+  <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">tool</span></h2>
+  <p>
+    The Father's Countdown Calculator displays the time left until Father's day.
+  </p>
+</article>
   </section>
   
 <footer>
@@ -333,7 +340,7 @@ Everyday Life
   </footer>
 
     <style>
-    strong {
+    .container strong {
   font-family: lexend;
   font-weight: 600;
   font-size: .9em;
@@ -378,7 +385,7 @@ function startFathersDayCountdown() {
     const diff = fathersDay - now;
     
     if (diff <= 0) {
-      document.getElementById("countdownResult").textContent = "It's Father's Day! 👨‍👧‍👦❤️";
+      document.getElementById("countdownResult").textContent = "It's Father's Day! 🦸‍♂️❤️";
       clearInterval(countdownInterval);
       return;
     }
@@ -389,7 +396,7 @@ function startFathersDayCountdown() {
     const seconds = Math.floor((diff / 1000) % 60);
     
     document.getElementById("countdownResult").innerHTML =
-      `Only...<br><strong>${days} day(s)</strong>,<br>${hours} hour(s),<br>${minutes} minute(s), and<br>${seconds} second(s)<br><strong>...until Father's Day! 👨‍👧‍👦</strong>`;
+      `Only...<br><strong>${days} day(s)</strong>,<br>${hours} hour(s),<br>${minutes} minute(s), and<br>${seconds} second(s)<br><strong>...until Father's Day! 🦸‍♂️</strong>`;
   }, 1000);
 }
 
