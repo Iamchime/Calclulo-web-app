@@ -1608,7 +1608,7 @@ margin-top: 1em;
 max-width: 400px;
 border-radius: 16px;
 padding: 15px;
-font-family: "young";
+font-family: alansans;
 background: #fff;
 box-shadow: 0 2px 60px #464BFF03, 0 1px 15px #464BFF03;
   }
@@ -1718,9 +1718,7 @@ ul li::marker {
    .description-txt strong{
      font-family: lexend;
    }
-  /*****************************
-  ad blockers 
-  *******************************/
+
   .cookie-wrapper {
   position: fixed;
   bottom: 0;
