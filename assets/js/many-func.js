@@ -648,8 +648,6 @@ function resetCalculator() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
-
-
 /********** options box***********/
 let activeBox = null;
 let activeIcon = null;
@@ -659,14 +657,14 @@ let overlayForExpandedOpt = null;
 document.querySelectorAll('#expanded-input-option-svg, .expanded-input-option-svg').forEach(icon => {
   icon.addEventListener('click', function(e) {
     e.stopPropagation();
-    
+
     if (isRemoving) return;
-    
+
     if (activeIcon === this) {
       removeBox();
       return;
     }
-    
+
     if (activeBox) {
       isRemoving = true;
       removeBox(() => {
@@ -683,36 +681,36 @@ function showBox(icon) {
   overlayForExpandedOpt = document.createElement('div');
   overlayForExpandedOpt.className = 'overlay-blocker';
   document.body.appendChild(overlayForExpandedOpt);
-  
+
   const group = icon.closest('.input-group');
   const box = group?.querySelector('.input-options');
   if (!box) return;
-  
+
   const parent = box.offsetParent || document.body;
   const iconRect = icon.getBoundingClientRect();
   const parentRect = parent.getBoundingClientRect();
-  
+
   const GAP = 8;
-  
+
   const top = iconRect.bottom - parentRect.top + GAP;
   let left = iconRect.right - parentRect.left - (box.offsetWidth || 250);
-  
+
   const parentWidth = (parent === document.body || parent === document.documentElement) ?
     window.innerWidth :
     parent.clientWidth;
-  
+
   const maxLeft = Math.max(0, parentWidth - (box.offsetWidth || 250) - 8);
   left = Math.min(Math.max(8, left), maxLeft);
-  
+
   box.style.top = `${Math.round(top)}px`;
   box.style.left = `${Math.round(left)}px`;
-  
+
   requestAnimationFrame(() => box.classList.add('show'));
   icon.classList.add('rotated');
-  
+
   activeBox = box;
   activeIcon = icon;
-  
+
   overlayForExpandedOpt.addEventListener('click', removeBox);
 }
 
@@ -722,11 +720,11 @@ function removeBox(callback) {
     overlayForExpandedOpt.remove();
     overlayForExpandedOpt = null;
   }
-  
+
   if (activeBox) {
     activeBox.classList.remove('show');
     if (activeIcon) activeIcon.classList.remove('rotated');
-    
+
     setTimeout(() => {
       activeBox = null;
       activeIcon = null;
@@ -752,14 +750,14 @@ document.addEventListener('click', function(e) {
 (function() {
   const timers = new WeakMap();
   const formattingInProgress = new WeakSet();
-  
+
   // How long after script start to ignore programmatic "result" flashes (ms)
   const IGNORE_MS_AFTER_SCRIPT = 800;
-  
+
   // Timestamp until which programmatic changes should NOT trigger markResult/flash.
   // This is set at script start and slightly extended on window 'load'.
   let ignoreProgrammaticUntil = (typeof performance !== 'undefined' ? performance.now() : Date.now()) + IGNORE_MS_AFTER_SCRIPT;
-  
+
   // When the page fully loads, also extend ignore window slightly to cover load-time mutations.
   if (typeof window !== 'undefined') {
     window.addEventListener('load', () => {
@@ -768,12 +766,12 @@ document.addEventListener('click', function(e) {
       ignoreProgrammaticUntil = Math.max(ignoreProgrammaticUntil, now + 50);
     }, { passive: true });
   }
-  
+
   function isInInitialIgnoreWindow() {
     const now = (typeof performance !== 'undefined' ? performance.now() : Date.now());
     return now < ignoreProgrammaticUntil;
   }
-  
+
   function clearFlash(el) {
     if (timers.has(el)) {
       clearTimeout(timers.get(el));
@@ -781,7 +779,7 @@ document.addEventListener('click', function(e) {
     }
     el.classList.remove('flashResult');
   }
-  
+
   function flash(el) {
     if (timers.has(el)) clearTimeout(timers.get(el));
     el.classList.add('flashResult');
@@ -790,35 +788,35 @@ document.addEventListener('click', function(e) {
       timers.delete(el);
     }, 400));
   }
-  
+
   function markResult(el) {
     el.classList.add('result');
     flash(el);
   }
-  
+
   function formatWithCommas(v) {
     if (v == null) return '';
     const s = String(v).replace(/,/g, '').trim();
     if (s === '') return '';
-    
+
     if (s === '.') return '.';
     const parts = s.split('.');
     const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     if (parts.length > 1) return intPart + '.' + parts.slice(1).join('.');
     return intPart;
   }
-  
+
   function underlyingEqual(a, b) {
     const sa = (a == null) ? '' : String(a).replace(/,/g, '').trim();
     const sb = (b == null) ? '' : String(b).replace(/,/g, '').trim();
-    
+
     const na = parseFloat(sa);
     const nb = parseFloat(sb);
     if (!isNaN(na) && !isNaN(nb)) return na === nb;
-    
+
     return sa === sb;
   }
-  
+
   if (!window.__valueSetterPatched) {
     window.__valueSetterPatched = true;
     const patch = (Ctor) => {
@@ -843,46 +841,46 @@ document.addEventListener('click', function(e) {
     patch(HTMLTextAreaElement);
     patch(HTMLSelectElement);
   }
-  
+
   function wire(el) {
     if (el.dataset.flashWired) return;
     el.dataset.flashWired = '1';
-    
+
     if (el.matches('input, textarea, select')) {
-      
+
       el.addEventListener('value-set', (ev) => {
-        
+
         if (formattingInProgress.has(el)) {
           // This value-set came from our own formatting; consume and ignore.
           formattingInProgress.delete(el);
           return;
         }
-        
+
         const oldRaw = ev && ev.detail && ('old' in ev.detail) ? ev.detail.old : el.value;
         const newRaw = ev && ev.detail && ('value' in ev.detail) ? ev.detail.value : el.value;
-        
+
         const underlyingChanged = !underlyingEqual(oldRaw, newRaw);
-        
+
         // Always run formatting if needed (we want consistent display even during initial ignore).
         const formatted = formatWithCommas(newRaw);
         if (formatted !== newRaw) {
           formattingInProgress.add(el);
           el.value = formatted;
         }
-        
+
         // Only mark/flashing results if we're NOT inside the initial ignore window.
         if (underlyingChanged && !isInInitialIgnoreWindow()) {
           markResult(el);
         }
       });
-      
+
       el.addEventListener('focus', () => {
         el.classList.remove('result');
         clearFlash(el);
       }, { passive: true });
-      
+
     } else {
-      
+
       const mo = new MutationObserver(() => {
         // Ignore mutation flashes during initial load-time window.
         if (isInInitialIgnoreWindow()) return;
@@ -891,9 +889,9 @@ document.addEventListener('click', function(e) {
       mo.observe(el, { childList: true, characterData: true, subtree: true });
     }
   }
-  
+
   document.querySelectorAll('input, textarea, select, [data-flash-target]').forEach(wire);
-  
+
   const addObserver = new MutationObserver(() => {
     document.querySelectorAll('input:not([data-flash-wired]), textarea:not([data-flash-wired]), select:not([data-flash-wired]), [data-flash-target]:not([data-flash-wired])')
       .forEach(wire);
@@ -902,256 +900,252 @@ document.addEventListener('click', function(e) {
 })();
 
 
-This code is not working right for date inputs,  when saved it will not  add to the date inputs on load   
-    
-/******** options features ********/    
-    
-document.addEventListener("DOMContentLoaded", () => {    
-document.querySelectorAll(".input-group").forEach(group => {    
-const inputId    = group.dataset.inputId;    
-const saveToggle = group.querySelector('input[data-role="save-toggle"]');    
-const optionsBox = group.querySelector(".input-options");    
-const expandBtn  = group.querySelector(".expanded-input-option-svg");    
-    
-function getMainLabel(g) {        
-  const labels = g.querySelectorAll("label");        
-  for (const lb of labels) if (lb.querySelector(".expanded-input-option-svg")) return lb;        
-  return labels[0] || null;        
-}        
-const mainLabel = getMainLabel(group);        
-if (!saveToggle || !mainLabel) return;        
-    
-const indicatorSVG = `        
-  <svg class="indicate-save-inputs-svg" xmlns="http://www.w3.org/2000/svg"        
-       height="18px" viewBox="0 -960 960 960" width="18px" fill="#1f1f1f"        
-       style="margin-left:6px; vertical-align:middle;">        
-    <path d="M200-120v-640q0-33 23.5-56.5T280-840h400q33 0        
-             56.5 23.5T760-760v640L480-240 200-120Zm80-122        
-             200-86 200 86v-518H280v518Zm0-518h400-400Z"/>        
-  </svg>`;        
-function updateLabelIndicator() {        
-  const existing = mainLabel.querySelector(".indicate-save-inputs-svg");        
-  if (existing) existing.remove();        
-  if (saveToggle.checked) mainLabel.insertAdjacentHTML("beforeend", indicatorSVG);        
-}        
-    
-function getLabelText() {        
-  const txt = Array.from(mainLabel.childNodes).find(n => n.nodeType === Node.TEXT_NODE);        
-  return (txt ? txt.textContent : mainLabel.textContent).trim();        
-}        
-function setLabelText(str) {        
-  let txt = Array.from(mainLabel.childNodes).find(n => n.nodeType === Node.TEXT_NODE);        
-  if (!txt) {        
-    txt = document.createTextNode("");        
-    mainLabel.insertBefore(txt, mainLabel.firstChild);        
-  }        
-  txt.textContent = (str || "").trim() + " ";        
-}        
-    
-const inputs = Array.from(group.querySelectorAll("input, textarea, select"))        
-  .filter(el => el !== saveToggle && !el.closest(".input-options"));        
-    
-function keyFor(el, index) {        
-  return el.dataset.persistKey || el.name || el.id || `${el.tagName.toLowerCase()}:${el.type || ""}#${index}`;        
-}        
-    
-function readValue(el) {        
-  if (el.type === "checkbox") return { t: "cb", v: el.checked };        
-  if (el.type === "radio")    return { t: "radio", name: el.name, v: el.checked ? el.value : null };        
-  if (el.tagName === "SELECT" && el.multiple) {        
-    return { t: "select-multi", v: Array.from(el.selectedOptions).map(o => o.value) };        
-  }        
-  return { t: "val", v: el.value };        
-}        
-    
-function applyValue(el, rec, allValues) {        
-  if (!rec) return;        
-  switch (rec.t) {        
-    case "cb":        
-      el.checked = !!rec.v;        
-      break;        
-    case "radio":        
-      if (!rec.name) break;        
-      const radios = group.querySelectorAll(`input[type="radio"][name="${CSS.escape(rec.name)}"]`);        
-      radios.forEach(r => { r.checked = (r.value === rec.v); });        
-      break;        
-    case "select-multi":        
-      if (!Array.isArray(rec.v)) break;        
-      Array.from(el.options).forEach(opt => { opt.selected = rec.v.includes(opt.value); });        
-      break;        
-    default:        
-      el.value = rec.v ?? "";        
-  }        
-}        
-    
-function persistAllInputs() {        
-  if (!saveToggle.checked) return;        
-  const payload = { fields: {}, radios: {} };        
-    
-  inputs.forEach((el, i) => {        
-    if (el.type === "radio") {        
-      if (!el.name) return;        
-      if (!(el.name in payload.radios)) {        
-        const checked = group.querySelector(`input[type="radio"][name="${CSS.escape(el.name)}"]:checked`);        
-        payload.radios[el.name] = checked ? checked.value : null;        
-      }        
-    } else {        
-      payload.fields[keyFor(el, i)] = readValue(el);        
-    }        
-  });        
-    
-  payload.fields["__radios__"] = { t: "radios", v: payload.radios };        
-  localStorage.setItem(`value-${inputId}`, JSON.stringify(payload));        
-}        
-    
-function restoreAllInputs() {        
-  if (!saveToggle.checked) return;        
-  const raw = localStorage.getItem(`value-${inputId}`);        
-  if (!raw) return;        
-  try {        
-    const payload = JSON.parse(raw) || {};        
-    const fields = payload.fields || {};        
-    const radios = (fields["__radios__"] && fields["__radios__"].v) || {};        
-    
-    inputs.forEach((el, i) => {        
-      if (el.type === "radio") {        
-        if (!el.name) return;        
-        const want = radios[el.name];        
-        el.checked = (el.value === want);        
-      } else {        
-        applyValue(el, fields[keyFor(el, i)], fields);        
-      }        
-    });        
-  } catch (e) {        
-    console.warn("restoreAllInputs failed", e);        
-  }        
-}        
-    
-const savedToggle = localStorage.getItem(`save-${inputId}`);        
-if (savedToggle === "1") saveToggle.checked = true;        
-else if (savedToggle === "0") saveToggle.checked = false;        
-    
-const savedLabel = localStorage.getItem(`label-${inputId}`);        
-if (savedLabel) setLabelText(savedLabel);        
-    
-restoreAllInputs();        
-updateLabelIndicator();        
-    
-saveToggle.addEventListener("change", () => {        
-  localStorage.setItem(`save-${inputId}`, saveToggle.checked ? "1" : "0");        
-  if (!saveToggle.checked) {        
-    localStorage.removeItem(`value-${inputId}`);        
-  } else {        
-    persistAllInputs();        
-  }        
-  updateLabelIndicator();        
-});        
-    
-inputs.forEach(el => {        
-  ["input","change","blur","keyup","paste","cut","drop"].forEach(ev =>        
-    el.addEventListener(ev, persistAllInputs)        
-  );        
-});        
-    
-inputs.forEach(el => {        
-  const proto = Object.getPrototypeOf(el);        
-  const vDesc = proto && Object.getOwnPropertyDescriptor(proto, "value");        
-  if (vDesc && vDesc.configurable && typeof vDesc.set === "function") {        
-    Object.defineProperty(el, "value", {        
-      configurable: true,        
-      enumerable: vDesc.enumerable,        
-      get() { return vDesc.get.call(this); },        
-      set(v) { vDesc.set.call(this, v); Promise.resolve().then(persistAllInputs); }        
-    });        
-  }        
-          
-  if (el.type === "checkbox" || el.type === "radio") {        
-    const cDesc = proto && Object.getOwnPropertyDescriptor(proto, "checked");        
-    if (cDesc && cDesc.configurable && typeof cDesc.set === "function") {        
-      Object.defineProperty(el, "checked", {        
-        configurable: true,        
-        enumerable: cDesc.enumerable,        
-        get() { return cDesc.get.call(this); },        
-        set(v) { cDesc.set.call(this, v); Promise.resolve().then(persistAllInputs); }        
-      });        
-    }        
-  }        
-        
-  const origSetAttr = el.setAttribute.bind(el);        
-  el.setAttribute = function(name, val) {        
-    origSetAttr(name, val);        
-    const n = String(name).toLowerCase();        
-    if (n === "value" || n === "checked" || n === "selected") {        
-      Promise.resolve().then(persistAllInputs);        
-    }        
-  };        
-          
-  const mo = new MutationObserver(() => persistAllInputs());        
-  mo.observe(el, { attributes: true, attributeFilter: ["value","checked","selected","aria-checked"] });        
-});        
-    
-group.querySelectorAll(".input-options-item").forEach(option => {        
-  option.addEventListener("click", async () => {        
-    const action = option.dataset.action;        
-    if (!action) return;        
-    
-    switch (action) {        
-      case "reset":        
-        inputs.forEach(el => {        
-          if(el.type == "text" || el.type == "number"){        
-            el.value = "";        
-          }else return;        
-        });    
-    
-localStorage.removeItem(value-${inputId});    
-saveToggle.checked = false;    
-localStorage.setItem(value-${inputId}, "0");    
-updateLabelIndicator();    
-break;    
-    
-case "rename":        
-        const current = getLabelText();        
-        const newName = prompt("Enter new label name:", current);        
-        if (newName && newName.trim()) {        
-          setLabelText(newName.trim());        
-          localStorage.setItem(`label-${inputId}`, newName.trim());        
-        }        
-        break;        
-    
-      case "copy":    
-    
-const firstTextInput = group.querySelector('input[type="text"]');    
-if (firstTextInput) {    
-try {    
-await navigator.clipboard.writeText(firstTextInput.value || "");    
-} catch (e) {    
-console.warn("Clipboard copy failed:", e);    
-}    
-}    
-break;    
-    
-case "paste":        
-        const pasteTarget = group.querySelector('input[type="text"]');    
-    
-if (pasteTarget) {    
-try {    
-const clipText = await navigator.clipboard.readText();    
-pasteTarget.value = clipText;    
-pasteTarget.dispatchEvent(new Event("input", { bubbles: true }));    
-} catch (e) {    
-console.warn("Clipboard read failed:", e);    
-}    
-}    
-break;    
-}    
-    
-if (optionsBox) optionsBox.classList.remove("show");        
-    if (expandBtn)  expandBtn.classList.remove("rotated");        
-  });        
-});    
-    
-});    
-});  
+/******** options features ********/
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".input-group").forEach(group => {
+    const inputId    = group.dataset.inputId;
+    const saveToggle = group.querySelector('input[data-role="save-toggle"]');
+    const optionsBox = group.querySelector(".input-options");
+    const expandBtn  = group.querySelector(".expanded-input-option-svg");
+
+    function getMainLabel(g) {
+      const labels = g.querySelectorAll("label");
+      for (const lb of labels) if (lb.querySelector(".expanded-input-option-svg")) return lb;
+      return labels[0] || null;
+    }
+    const mainLabel = getMainLabel(group);
+    if (!saveToggle || !mainLabel) return;
+
+    const indicatorSVG = `<svg class="indicate-save-inputs-svg" xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 -960 960 960" width="18px" fill="#1f1f1f" style="margin-left:6px; vertical-align:middle;"><path d="M200-120v-640q0-33 23.5-56.5T280-840h400q33 0 56.5 23.5T760-760v640L480-240 200-120Zm80-122 200-86 200 86v-518H280v518Zm0-518h400-400Z"/></svg>`;
+
+    function updateLabelIndicator() {
+      const existing = mainLabel.querySelector(".indicate-save-inputs-svg");
+      if (existing) existing.remove();
+      if (saveToggle.checked) mainLabel.insertAdjacentHTML("beforeend", indicatorSVG);
+    }
+
+    function getLabelText() {
+      const txt = Array.from(mainLabel.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
+      return (txt ? txt.textContent : mainLabel.textContent).trim();
+    }
+    function setLabelText(str) {
+      let txt = Array.from(mainLabel.childNodes).find(n => n.nodeType === Node.TEXT_NODE);
+      if (!txt) {
+        txt = document.createTextNode("");
+        mainLabel.insertBefore(txt, mainLabel.firstChild);
+      }
+      txt.textContent = (str || "").trim() + " ";
+    }
+
+    const inputs = Array.from(group.querySelectorAll("input, textarea, select"))
+      .filter(el => el !== saveToggle && !el.closest(".input-options"));
+
+    function keyFor(el, index) {
+      return el.dataset.persistKey || el.name || el.id || `${el.tagName.toLowerCase()}:${el.type || ""}#${index}`;
+    }
+
+    function readValue(el) {
+      if (el.type === "checkbox") return { t: "cb", v: el.checked };
+      if (el.type === "radio")    return { t: "radio", name: el.name, v: el.checked ? el.value : null };
+      if (el.tagName === "SELECT" && el.multiple) {
+        return { t: "select-multi", v: Array.from(el.selectedOptions).map(o => o.value) };
+      }
+      return { t: "val", v: el.value };
+    }
+
+    function applyValue(el, rec, allValues) {
+      if (!rec) return;
+      switch (rec.t) {
+        case "cb":
+          el.checked = !!rec.v;
+          break;
+        case "radio":
+          if (!rec.name) break;
+          {
+            const radios = group.querySelectorAll(`input[type="radio"][name="${CSS.escape(rec.name)}"]`);
+            radios.forEach(r => { r.checked = (r.value === rec.v); });
+          }
+          break;
+        case "select-multi":
+          if (!Array.isArray(rec.v)) break;
+          Array.from(el.options).forEach(opt => { opt.selected = rec.v.includes(opt.value); });
+          break;
+        default:
+          el.value = rec.v ?? "";
+      }
+    }
+
+    function persistAllInputs() {
+      if (!saveToggle.checked) return;
+      const payload = { fields: {}, radios: {} };
+
+      inputs.forEach((el, i) => {
+        if (el.type === "radio") {
+          if (!el.name) return;
+          if (!(el.name in payload.radios)) {
+            const checked = group.querySelector(`input[type="radio"][name="${CSS.escape(el.name)}"]:checked`);
+            payload.radios[el.name] = checked ? checked.value : null;
+          }
+        } else {
+          payload.fields[keyFor(el, i)] = readValue(el);
+        }
+      });
+
+      payload.fields["radios"] = { t: "radios", v: payload.radios };
+      localStorage.setItem(`value-${inputId}`, JSON.stringify(payload));
+    }
+
+    function restoreAllInputs() {
+      if (!saveToggle.checked) return;
+      const raw = localStorage.getItem(`value-${inputId}`);
+      if (!raw) return;
+      try {
+        const payload = JSON.parse(raw) || {};
+        const fields = payload.fields || {};
+        const radios = (fields["radios"] && fields["radios"].v) || {};
+
+        inputs.forEach((el, i) => {
+          if (el.type === "radio") {
+            if (!el.name) return;
+            const want = radios[el.name];
+            el.checked = (el.value === want);
+          } else {
+            applyValue(el, fields[keyFor(el, i)], fields);
+          }
+        });
+
+      } catch (e) {
+        console.warn("restoreAllInputs failed", e);
+      }
+    }
+
+    const savedToggle = localStorage.getItem(`save-${inputId}`);
+    if (savedToggle === "1") saveToggle.checked = true;
+    else if (savedToggle === "0") saveToggle.checked = false;
+
+    const savedLabel = localStorage.getItem(`label-${inputId}`);
+    if (savedLabel) setLabelText(savedLabel);
+
+    restoreAllInputs();
+    updateLabelIndicator();
+
+    saveToggle.addEventListener("change", () => {
+      localStorage.setItem(`save-${inputId}`, saveToggle.checked ? "1" : "0");
+      if (!saveToggle.checked) {
+        localStorage.removeItem(`value-${inputId}`);
+      } else {
+        persistAllInputs();
+      }
+      updateLabelIndicator();
+    });
+
+    inputs.forEach(el => {
+      ["input","change","blur","keyup","paste","cut","drop"].forEach(ev =>
+        el.addEventListener(ev, persistAllInputs)
+      );
+    });
+
+    inputs.forEach(el => {
+      const proto = Object.getPrototypeOf(el);
+      const vDesc = proto && Object.getOwnPropertyDescriptor(proto, "value");
+      if (vDesc && vDesc.configurable && typeof vDesc.set === "function") {
+        Object.defineProperty(el, "value", {
+          configurable: true,
+          enumerable: vDesc.enumerable,
+          get() { return vDesc.get.call(this); },
+          set(v) { vDesc.set.call(this, v); Promise.resolve().then(persistAllInputs); }
+        });
+      }
+
+      if (el.type === "checkbox" || el.type === "radio") {
+        const cDesc = proto && Object.getOwnPropertyDescriptor(proto, "checked");
+        if (cDesc && cDesc.configurable && typeof cDesc.set === "function") {
+          Object.defineProperty(el, "checked", {
+            configurable: true,
+            enumerable: cDesc.enumerable,
+            get() { return cDesc.get.call(this); },
+            set(v) { cDesc.set.call(this, v); Promise.resolve().then(persistAllInputs); }
+          });
+        }
+      }
+
+      const origSetAttr = el.setAttribute.bind(el);
+      el.setAttribute = function(name, val) {
+        origSetAttr(name, val);
+        const n = String(name).toLowerCase();
+        if (n === "value" || n === "checked" || n === "selected") {
+          Promise.resolve().then(persistAllInputs);
+        }
+      };
+
+      const mo = new MutationObserver(() => persistAllInputs());
+      mo.observe(el, { attributes: true, attributeFilter: ["value","checked","selected","aria-checked"] });
+    });
+
+    group.querySelectorAll(".input-options-item").forEach(option => {
+      option.addEventListener("click", async () => {
+        const action = option.dataset.action;
+        if (!action) return;
+
+        switch (action) {
+          case "reset":
+            inputs.forEach(el => {
+              if (el.type === "text" || el.type === "number") {
+                el.value = "";
+              } else {
+                return;
+              }
+            });
+
+            localStorage.removeItem(`value-${inputId}`);
+            saveToggle.checked = false;
+            localStorage.setItem(`save-${inputId}`, "0");
+            updateLabelIndicator();
+            break;
+
+          case "rename":
+            const current = getLabelText();
+            const newName = prompt("Enter new label name:", current);
+            if (newName && newName.trim()) {
+              setLabelText(newName.trim());
+              localStorage.setItem(`label-${inputId}`, newName.trim());
+            }
+            break;
+
+          case "copy":
+            const firstTextInput = group.querySelector('input[type="text"]');
+            if (firstTextInput) {
+              try {
+                await navigator.clipboard.writeText(firstTextInput.value || "");
+              } catch (e) {
+                console.warn("Clipboard copy failed:", e);
+              }
+            }
+            break;
+
+          case "paste":
+            const pasteTarget = group.querySelector('input[type="text"]');
+
+            if (pasteTarget) {
+              try {
+                const clipText = await navigator.clipboard.readText();
+                pasteTarget.value = clipText;
+                pasteTarget.dispatchEvent(new Event("input", { bubbles: true }));
+              } catch (e) {
+                console.warn("Clipboard read failed:", e);
+              }
+            }
+            break;
+        }
+
+        if (optionsBox) optionsBox.classList.remove("show");
+        if (expandBtn)  expandBtn.classList.remove("rotated");
+      });
+    });
+
+  });
+});
 
 
 
