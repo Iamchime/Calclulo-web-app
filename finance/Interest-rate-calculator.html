@@ -7,20 +7,21 @@
 
 <title>Interest Rate Calculator</title>    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5BVJ6KMT');</script>          
 <link rel="manifest" href="/assets/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Calclulo">
 
 <link rel="stylesheet" href="/assets/css/calculators-styles-global.css" />
 
-<meta name="description" content="Easily calculate your loan's effective interest rate (APR), total interest paid, and total monthly payments. Perfect for auto, personal, or home loans.">
+<meta name="description" content="calculate the interest rate and the total interest payment of an amortized loan with a given amount of payment per month.">
 
 <link rel="canonical" href="https://calclulo.com/finance/Interest-rate-calculator">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://calclulo.com/finance/Interest-rate-calculator">
-<meta property="og:title" content="Interest Rate Calculator | APR & Loan Repayment Breakdown">
-<meta property="og:description" content="Estimate your loan interest rate, total interest paid, and monthly repayment details with this free Interest Rate Calculator. Useful for car, personal, and mortgage loans.">
-<meta property="og:image" content="https://calclulo.com/assets/images/interest-rate-calculator-thumbnail.png">
+<meta property="og:title" content="Interest Rate Calculator">
+<meta property="og:description" content="calculate the interest rate and the total interest payment of an amortized loan with a given amount of payment per month.">
+<meta property="og:image" content="https://calclulo.com/assets/images/thumbnail-global.png">
 
 <link href="/favicons/favicon.png" rel="icon" sizes="48x48"> <link href="/favicons/favicon-128.png" rel="icon" sizes="128x128"> <link href="/favicons/favicon-192.png" rel="icon" sizes="192x192">
 
@@ -30,7 +31,7 @@
     "@type": "WebPage",
     "name": "Interest Rate Calculator",
     "url": "https://calclulo.com/finance/Interest-rate-calculator",
-    "description": "Quickly calculate your loan's effective annual interest rate (APR), total monthly payments, and interest paid. Useful for comparing loan offers and planning your finances.",
+    "description": "calculate the interest rate and the total interest payment of an amortized loan with a given amount of payment per month.",
     "inLanguage": "en",
     "publisher": {
       "@type": "Organization",
@@ -167,16 +168,12 @@ Everyday Life
         </a>
  </nav>
 
-  <section class="sec-one"><span class="last-updated-text">   Last updated:   <time datetime="2025-09-05">     <span class="last-updated-date">September 5, 2025</span>   </time> </span>
+  <section class="sec-one">
     <div class="hero-sec">
-     
+     <span class="last-updated-text">   Last updated:   <time datetime="2025-09-27">     <span class="last-updated-date"><strong>September 27, 2025</strong></span>   </time> </span>
 <h1 id="hero-h1">
   Interest Rate Calculator
 </h1>
-
-  <p class="calculator-info-p">
-    Calculate the interest rate on your loan by entering the loan amount, loan term, and monthly payment.
-  </p>
 </div>
 
 <div class="container">
@@ -353,9 +350,14 @@ Clear all changes
         <a href="/finance/bond-price-calculator">Bond Price Calculator</a>
       </div>
     </div>
-<div class="description-txt">
-
-</div>
+<article class="description-txt">
+   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
+   <p>
+     The Interest rate Calculator calculates the real interest rate of loans that are fixed in terms of time and in the monthly payments. 
+   </p>
+   <h2 class="not-hd">What is interest rate?</h2>
+   <p>An interest rate is the percentage rate of money charged or earned over a period of time that is, the cost of money being borrowed or the reward to the money lender. When you loan out money (a loan, mortgage, credit card) the interest rate will tell you how much additional money you will pay the lender; and when you save or invest (a savings account, bond or deposit) what will you get back. Interest rates may be it in a simple annual percentage and are offered in various flavors: fixed (remain the same rate throughout the agreed period) or variable (the rate may change according to the market). Another difference made by economists is between the nominal rate (percentage listed) and the real rate (nominal rate corrected by inflation, demonstrating the change in purchasing power in reality). The rates offered by the lenders depend on aspects such as central bank policy, inflation expectations, the credit risk of the borrower, the term of the loan, and the competition in the market; the actual cost of the borrower is also determined by the frequency of compounding, fees and the manner in which the interest is charged. In practical terms, the awareness of interest rates is used to compare loans and savings: Low rates mean that it costs you less to borrow money, high rates mean that you earn more to save, and every little bit counts in the long run.</p>
+ </article>
   </section>
   
 <footer>
@@ -569,8 +571,7 @@ font-weight: 410;
   
   const recommendations = `
   <div class="recommendations-list">
-      <div>Your effective annual interest rate is <strong class="money"><span class="currency-display-for-expanded-results" >$
-  </span> ${formatted.interestRate}</strong>, which determines the true cost of the loan over time.</div>
+      <div>Your effective annual interest rate is <strong class="money"> ${formatted.interestRate}</strong>, which determines the true cost of the loan over time.</div>
       <div>Over the course of <strong class="money">${totalMonths}</strong> months, you will pay back a total of <strong class="money"><span class="currency-display-for-expanded-results" >$
   </span>${formatted.totalPayments}</strong>.</div>
       <div>The total interest you will pay on the loan is <strong class="money"><span class="currency-display-for-expanded-results" >$

@@ -813,7 +813,7 @@ border: none;
   border: 1.5px solid #464BFF;
   outline: 3px solid #464BFF14;
 }
-.currency-or-unit-display,.unit-display{
+.currency-or-unit-input .currency-or-unit-display,.unit-display{
   transition: .2s;
   font-size: .9em;
   user-select: none;
@@ -1479,6 +1479,13 @@ color: #4F5163;
   .sources-list li{
     margin: .25rem 0;
   }
+  .sources-list li a{
+  cursor: help;
+  transition: .2s;
+}
+  .sources-list li a:hover {
+  color: darkblue;
+}
 
   @media (max-width:480px){
     .calculation-sources{ gap: 6px; }
