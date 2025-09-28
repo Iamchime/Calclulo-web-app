@@ -7,21 +7,21 @@
 
 <title>Roman Numeral Converter</title>    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5BVJ6KMT');</script>          
 <link rel="manifest" href="/assets/manifest.json">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Calclulo">
 
 <link rel="stylesheet" href="/assets/css/calculators-styles-global.css" />
 
-<meta name="description" content="Easily convert numbers to Roman numerals and Roman numerals to numbers with our free Roman Numeral Converter. Fast, accurate, and perfect for students, designers, and history lovers.">
+<meta name="description" content="convert numbers to Roman numerals or vice versa.">
 
 <link rel="canonical" href="https://calclulo.com/conversion/roman-numeral-converter">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://calclulo.com/conversion/roman-numeral-converter">
-<meta property="og:title" content="Roman Numeral Converter | Free Online Conversion Tool">
-<meta property="og:description" content="Convert numbers to Roman numerals and back instantly with our accurate Roman Numeral Converter. Simple, fast, and perfect for learning or design projects.">
-<meta property="og:image" content="https://calclulo.com/assets/images/roman-numeral-converter-thumbnail.png">
-
+<meta property="og:title" content="Roman Numeral Converter">
+<meta property="og:description" content="convert numbers to Roman numerals or vice versa.">
+<meta property="og:image" content="https://calclulo.com/assets/images/thumbnail-global.png">
 
 <link href="/favicons/favicon.png" rel="icon" sizes="48x48">
 <link href="/favicons/favicon-128.png" rel="icon" sizes="128x128">
@@ -33,7 +33,7 @@
     "@type": "WebPage",
     "name": "Roman Numeral Converter",
     "url": "https://calclulo.com/conversion/roman-numeral-converter",
-    "description": "Use our free Roman Numeral Converter to quickly convert numbers into Roman numerals or Roman numerals into numbers. Accurate, fast, and simple to use.",
+    "description": "convert numbers to Roman numerals or vice versa.",
     "inLanguage": "en",
     "publisher": {
       "@type": "Organization",
@@ -170,16 +170,12 @@ Everyday Life
         </a>
  </nav>
 
-  <section class="sec-one"><span class="last-updated-text">   Last updated:   <time datetime="2025-09-07">     <span class="last-updated-date">September 7, 2025</span>   </time> </span>
+  <section class="sec-one">
     <div class="hero-sec">
-     
+     <span class="last-updated-text">   Last updated:   <time datetime="2025-09-07">     <span class="last-updated-date"><strong>September 28, 2025</strong></span>   </time> </span>
 <h1 id="hero-h1">
   Roman Numeral Converter
 </h1>
-
-  <p class="calculator-info-p">
-    Quickly convert numbers to Roman numerals or vice versa.
-  </p>
 </div>
 
 <div class="container">
@@ -256,9 +252,16 @@ Clear all changes
         <a href="/everyday-life/age-difference-calculator">Age Difference Calculator</a>
       </div>
     </div>
-<div class="description-txt">
-
-</div>
+<article class="description-txt">
+   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
+   <p>
+     With our Roman Numeral Converter you can convert numbers to Roman numerals or vice versa.
+   </p>
+   <h2 class="not-hd">What are roman numerals?</h2>
+<p>Roman numerals are a numeric system whereby numbers are represented by using a combination of letters. Rather than using numbers such as 1, 2, or 3, the system uses certain symbols: I 1, V 5, X 10, L 50, C 100, D 500, and M 1000. Numbers are constructed by a combination of these symbols in a definite order where the general rule is that a smaller number preceding a greater number is to be subtracted, and those that follow it are to be added. As a case in point, VI = 6, IV = 4. Unless the symbols are used individually, such as 20, or 900, larger numbers are formed by the combination of symbols, e.g. XX or CM. This form of number writing is still used in modern times in clocks, in the titles of chapters of books, in the names of kings and Popes, in anniversaries or series. Roman numerals are a timeless and ornamental method of expressing numbers and they are more formal and traditional.</p>
+   <h2 class="not-hd">Where do Roman numerals come from?</h2>
+   <p>The Roman numerals originated in the ancient system of counting in Rome, where ancient people used signs and symbols to count and keep track of numbers, out of trade, record keeping and in their daily life. They did not use place value as we do today such as 1, 2, 3, 4, 5, etc. but rather used letters of the Latin alphabet to signify particular numbers. The symbols were standardized over time, to the set that we are familiar with today: I, V, X, L, C, D, and M. The system was convenient as it could be written on stone, parchment and other materials as it was easy and straightforward. Roman numerals have been used ceremonial, ornamental and traditional, even though ultimately they have been superseded by the Arabic numeral system, in recognition of their strong origins in Roman culture.</p>
+ </article>
   </section>
   
 <footer>
@@ -477,7 +480,7 @@ function romanToNumber(romanInput) {
     }
     
     if (!matched) {
-      showMessage("Hmm… that doesn't seem like a valid Roman numeral.", "error");
+      showMessage("🧐 Hmm… that doesn't seem like a valid Roman numeral.", "info");
       return null;
     }
   }
