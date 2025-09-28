@@ -1006,11 +1006,11 @@ outline: none;
 .currency-popup-overlay {
   position: fixed;
   inset: 0; 
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.85);
    
   z-index: 9998;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
 }
 
 #currencyPopup.active .currency-popup-overlay {
@@ -1664,8 +1664,8 @@ font-weight: 400;
 font-size: 1.1em;
   }
   .description-txt strong{
-    font-family: lexend;
-font-weight: 400;
+font-weight: 800;
+font-family: AlanSans;
   }
   .description-txt a{
     transition: .3s;
@@ -1722,9 +1722,6 @@ ul li::marker {
 .description-txt ol li{
   
 }
-   .description-txt strong{
-     font-family: lexend;
-   }
 
   .cookie-wrapper {
   position: fixed;
