@@ -293,7 +293,7 @@ display: block;
   pointer-events: all;
 }
 .sec-one{
-  padding-top: 7em;
+  padding-top: 10em;
   width: 95%;
   position: relative;
   display: flex;
@@ -2055,16 +2055,7 @@ font-family: young;
 #decline-cookieBtn:hover{
   background: #484A582E;
 }
-.adsterra-anchor-fixed {
-  position: fixed;
-  top: 60px;
-  left: 0;
-  width: 100%;
-  text-align: center;
-  background: #fff;
-  box-shadow: 0 2px 20px #464BFF14, 0 1px 15px #464BFF14;
-  z-index: 999;
-}
+
   /********* Adsterra ***********/
 .adsterra-anchor-fixed {
 position: fixed;
@@ -2298,7 +2289,15 @@ margin-left: 6em
 .calculator-categories-footer a{
   margin-right: 5em;
 }
-
+/****** adsterra ads ******/
+.adInLine:first-of-type {
+  position: fixed;
+  top: 50%;
+  right: 2em;
+}
+.adInLine:first-of-type iframe{
+  border-radius: 12px;
+}
 }
 @media (min-width: 700px) {
   

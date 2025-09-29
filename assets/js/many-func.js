@@ -1937,7 +1937,7 @@ function injectAdsterra() {
       const adInline = createIframeAd('adsterra-inline', 'f81dbf09c683afc118e38803230f52e9', 300, 250);
       // only tiny vertical margin as requested
       adInline.style.margin = '12px 0';
-      
+      adInline.classList = "adInLine";
       target.insertAdjacentElement('afterend', adInline);
     }
     
@@ -1952,46 +1952,7 @@ function injectAdsterra() {
 // Run after full load
 window.addEventListener('load', injectAdsterra);
 /************* end Adsterra ads ***************/
-/*function injectAdsterra() {
-  // Helper function to create ad containers
-  function createAd(className) {
-    const container = document.createElement("div");
-    container.className = className;
-    
-    // Script that defines atOptions
-    const configScript = document.createElement("script");
-    configScript.type = "text/javascript";
-    configScript.text = `
-      var atOptions = {
-        'key': '7bb9e23e1f2a3af8def78984ec27c5b7',
-        'format': 'iframe',
-        'height': 50,
-        'width': 320,
-        'params': {}
-      };
-    `;
-    
-    // External invoke script
-    const invokeScript = document.createElement("script");
-    invokeScript.type = "text/javascript";
-    invokeScript.src = "//www.highperformanceformat.com/7bb9e23e1f2a3af8def78984ec27c5b7/invoke.js";
-    
-    container.appendChild(configScript);
-    container.appendChild(invokeScript);
-    
-    return container;
-  }
-  
-  // First ad
-  document.body.appendChild(createAd("adsterra-anchor"));
-  
-  // Second ad (fixed position at bottom)
-  const adFixed = createAd("adsterra-anchor-fixed");
-  document.body.appendChild(adFixed);
-}
 
-window.addEventListener("load", injectAdsterra);
-*/
 /*********************************************
  currency handling 
 ****************************/
