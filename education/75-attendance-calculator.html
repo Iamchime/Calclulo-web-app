@@ -655,7 +655,7 @@ function calculateAttendance() {
   const projectedFinal = (presentClasses + remainingClasses) / (totalClasses + remainingClasses) * 100;
   
   let resultHTML = `
-    <p><strong>Current Attendance:</strong> ${presentClasses}/${totalClasses} 👉 ${currentPercentage.toFixed(2)}%</p>
+    <p><strong>Current Attendance:</strong> ${presentClasses}/${totalClasses} ➺ ${currentPercentage.toFixed(2)}%</p>
     <p><strong>Required Attendance:</strong> ${requiredPercentage}%</p>
     <p><strong>Safe Bunkable Classes:</strong> ${safeBunks} </p>
   `;

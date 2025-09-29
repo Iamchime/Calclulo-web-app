@@ -13,14 +13,14 @@
 
 <link rel="stylesheet" href="/assets/css/calculators-styles-global.css" />
 
-<meta name="description" content="">
+<meta name="description" content="Calculate arithmetic, geometric, and harmonic mean.">
 
 <link rel="canonical" href="https://calclulo.com/math/mean-calculator">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://calclulo.com/math/mean-calculator">
 <meta property="og:title" content="Mean Calculator">
-<meta property="og:description" content="">
+<meta property="og:description" content="Calculate arithmetic, geometric, and harmonic mean.">
 <meta property="og:image" content="https://calclulo.com/assets/images/thumbnail-global.png">
 
 <link href="/favicons/favicon.png" rel="icon" sizes="48x48"> <link href="/favicons/favicon-128.png" rel="icon" sizes="128x128"> <link href="/favicons/favicon-192.png" rel="icon" sizes="192x192">
@@ -31,7 +31,7 @@
     "@type": "WebPage",
     "name": "Mean Calculator",
     "url": "https://calclulo.com/math/mean-calculator",
-    "description": "",
+    "description": "Calculate arithmetic, geometric, and harmonic mean.",
     "inLanguage": "en",
     "publisher": {
       "@type": "Organization",
@@ -170,7 +170,7 @@ Everyday Life
 
   <section class="sec-one">
     <div class="hero-sec">
-     <span class="last-updated-text">   Last updated:   <time datetime="2025-09-05">     <span class="last-updated-date"><strong>September 5, 2025</strong></span>   </time> </span>
+     <span class="last-updated-text">   Last updated:   <time datetime="2025-09-29">     <span class="last-updated-date"><strong>September 29, 2025</strong></span>   </time> </span>
 <h1 id="hero-h1">
   Mean Calculator
 </h1>
@@ -394,9 +394,16 @@ Clear all changes
       </div>
     </div>
 <article class="description-txt">
-   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">tool</span></h2>
+   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
    <p>
-     
+     This mean calculator lets you calculate arithmetic, geometric, and harmonic mean.
+   </p>
+   <h2 class="not-hd">What is mean?</h2>
+   <p>
+     The average, or mean, is a statistical measure that is used to estimate the central value of a data set. It is determined by adding all of the values in the dataset and dividing by the number of values.
+   </p>
+   <p>
+But did you know that the mean is not necessarily the normal average? Means have various forms; Arithmetic mean, geometric mean, and harmonic mean each is applicable to a particular type of data.
    </p>
  </article>
   </section>
@@ -588,7 +595,7 @@ function onInputChange(e) {
 }
 
 function calculateResults() {
-  clearError();
+  
   
   const inputs = getAllNumberInputs();
   
@@ -661,7 +668,7 @@ function resetFields() {
     inputs[i].value = '';
   }
   meanResultDiv.innerHTML = '';
-  clearError();
+  
 }
 
 function init() {
