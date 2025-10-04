@@ -2067,7 +2067,8 @@ text-align: center;
 background: #fff;
 padding-bottom: 5px;
 z-index: 999;
-
+opacity: 0;
+pointer-events: none;
 }
 .adsterra-anchor-fixed iframe {
 margin: auto;
@@ -2297,6 +2298,10 @@ margin-left: 6em
 }
 .adInLine:first-of-type iframe{
   border-radius: 12px;
+}
+.adsterra-anchor-fixed{
+  opacity: 1;
+pointer-events: all;
 }
 }
 @media (min-width: 700px) {
