@@ -661,6 +661,78 @@ input.flashResult{
   color: #000;
   transition: color 0.4s ease;
 }
+.input-group .input-select-wrap {
+  display: flex;
+  width: 100%;
+  border: 1.4px solid #464BFF2B;
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden;
+}
+
+.input-group .input-select-wrap:focus-within {
+  border-color: #464BFF;
+  box-shadow: 0 0 0 3px #464BFF17;
+}
+.input-group .input-select-wrap input[type="text"],
+.input-group .input-select-wrap input[type="number"] {
+  flex: 1 1 auto;
+  font-family: zalando;
+  font-size: 16px;
+  line-height: 20px;
+  color: #111;
+  padding: 12px;
+  min-height: 48px;
+  border: none;
+  outline: none;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.input-group .input-select-wrap select {
+  flex: 0 0 auto;
+  font-family: alanSans;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 20px;
+  color: #464BFF;
+  padding: 12px 36px 12px 12px;
+  min-height: 48px;
+padding-left: 0;
+text-align: center;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30.727 30.727' xml:space='preserve'><path fill='%232428AF' d='M29.994 10.183 15.363 24.812.733 10.184a2.5 2.5 0 1 1 3.536-3.536l11.095 11.093L26.461 6.647a2.5 2.5 0 1 1 3.533 3.536'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 14px;
+  transition: .2s;
+}
+
+.input-group .input-select-wrap input:focus,
+.input-group .input-select-wrap select:focus {
+  outline: none;
+  box-shadow: none;
+}
+.input-group .input-select-wrap select:focus{
+  background-color: #75778121;
+}
+
+.input-group .input-select-wrap input[type="number"]::-webkit-outer-spin-button,
+.input-group .input-select-wrap input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.input-group .input-select-wrap input[type="number"] {
+  -moz-appearance: textfield;
+}
+
 
 .input-group .currency-or-unit-input {
   display: flex;
