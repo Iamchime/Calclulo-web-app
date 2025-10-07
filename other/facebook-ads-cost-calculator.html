@@ -319,7 +319,7 @@ Everyday Life
  </div>
   </div>
   
-  <div id="resultdiv">
+  <div class="output-group">
     
   </div>
   
@@ -489,17 +489,17 @@ border-radius: 10px;
       width: 90%;
       user-select: none;
     }
-    #resultdiv{
+    .output-group{
 font-family: "young";
 line-height: 1.6;
 border-radius: 10px;
     }
-    #resultdiv h3{
+    .output-group h3{
       font-family: lexend;
       font-weight: 800;
       font-size: 1em;
     }
-    #resultdiv .result-fb{
+    .output-group .result-fb{
       background: #464BFF14;
       border-radius: 10px;
       padding: 1em;
@@ -514,7 +514,7 @@ border-radius: 10px;
        color: #464BFF;
        font-weight: 600;
      }
-    #resultdiv strong{
+    .output-group strong{
      font-size: 15px;
     }
   </style>
@@ -526,7 +526,7 @@ border-radius: 10px;
   const adSpendInput = document.querySelector('#adspend');
   const avgCpcInput = document.querySelector('#averageCpc');
   const leadConvRateInput = document.querySelector('#leadConversionRate');
-  const resultDiv = document.querySelector('#resultdiv');
+  const resultDiv = document.querySelector('.output-group');
   
   const adSpend = parseFloat(adSpendInput.value);
   const avgCpc = parseFloat(avgCpcInput.value);

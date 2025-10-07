@@ -843,7 +843,6 @@ border: none;
 .input-group textarea.result {
   color: #464BFF!important;
 }
-/* Flash animation — short pop */
 .result-flash {
   animation: popFlash 160ms ease-out;
 }
@@ -853,6 +852,82 @@ border: none;
   40%  { transform: scale(1.02);  }
   100% { transform: scale(1);}
 }
+.output-group{
+  
+}
+.output-group .money {
+  font-family: "zalando";
+  font-weight: 550;
+  background: #D5A61A21;
+  color: #D4A61B;
+  padding: 2px;
+  border-radius: 10px;
+  font-size: .9em;
+}
+.result-line {
+  margin: 9px 0;
+  font-family: "Young";
+  color: #464752E0;
+}
+.download{
+font-size: 15px;
+border-radius: 10px;
+font-weight: 400;
+display: flex;
+align-items: center;
+transition: .1s;
+justify-content: center;
+font-family: 'Young';
+text-decoration: underline;
+            background: transparent;
+            border: none;
+            margin-top: 15px;
+            color: #3D3E45E8;
+            user-select: none;
+}
+.download:active{
+  transform: scale(.98);
+}
+  .interest-rate-results{
+    font-family: "young";
+    color: #42445A;
+  }
+  .recommendations-list{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .recommendations-list div{
+    line-height: 1.5;
+font-size: .95em;
+background: #57555C0D;
+border-radius: 12px;
+padding: 10px;
+  }
+  .money-one {
+  font-family: "young";
+  font-size: .91em;
+}
+.head-txt-re-wrap{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  line-height: 1.4;
+}
+.head-txt-re{
+font-family: young;
+font-weight: 410;
+}
+  .money{
+    font-family: "zalando";
+    font-weight: 550;
+    background: #D5A61A21;
+    color: #D4A61B;
+    padding: 2px;
+    border-radius: 10px;
+    font-size: .9em;
+  }
 /******************************/
 
 .currency-select-svg{

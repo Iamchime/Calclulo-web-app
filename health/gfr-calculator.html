@@ -182,7 +182,7 @@ Everyday Life
   <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
   <div class="input-select-wrap">
     <input   inputmode="numeric" pattern="[0-9]*" type="text" id="Serumcreatinine">
-    <select style="flex-basis: 70%;" id="fileUnit">
+    <select style="flex-basis: 70%;" id="serumCreatinineUnit">
       <option value="mg/dL">mg/dL</option>
       <option value="micromole/L">micromole/L</option>
     </select>
@@ -504,7 +504,7 @@ Everyday Life
   </footer>
 
   <style>
-  .gfr-result-box {
+  .output-group {
     display: flex;
     flex-direction: column;
     gap: 1em;
@@ -514,14 +514,14 @@ Everyday Life
   font-family: young;
   color: #42445A;
 }
-.gfr-result-box h3,.container strong{
+.output-group h3,.container strong{
   font-family: lexend;
   font-size: .9em;
 }
-.gfr-result-box h3{
+.output-group h3{
   margin-bottom: -6px;
 }
-.gfr-result-box label{
+.output-group label{
   letter-spacing: .25px;
 }
 .resultLine{
@@ -539,16 +539,22 @@ width: 90%;
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 <script defer crossorigin="anonymous">
-  document.querySelectorAll(
-  "#Serumcreatinine, #fileUnit, #age, #female, #male, #black, #notBlack"
-).forEach(input => {
-  input.addEventListener("input", calculateResults);
-  input.addEventListener("change", calculateResults);
+  document.addEventListener("DOMContentLoaded", () => {
+  const inputs = document.querySelectorAll(
+    "#Serumcreatinine, #serumCreatinineUnit, #age, #female, #male, #black, #notBlack"
+  );
+  
+  inputs.forEach(input => {
+    input.addEventListener("input", calculateResults);
+    input.addEventListener("change", calculateResults);
+  });
+  
+  calculateResults(); // initial calculation
 });
 
 function calculateResults() {
   const scrInput = parseFloat(document.getElementById('Serumcreatinine').value.replace(/,/g, ""));
-  const scrUnit = document.getElementById('fileUnit').value;
+  const scrUnit = document.getElementById('serumCreatinineUnit').value;
   const age = parseInt(document.getElementById('age').value.replace(/,/g, ""));
   const gender = document.getElementById('female').checked ? 'female' : 'male';
   const race = document.getElementById('black').checked ? 'black' : 'notBlack';
@@ -557,66 +563,62 @@ function calculateResults() {
   removeErrorBox();
   resultBox.innerHTML = "";
   
+  // Validation
   if (isNaN(scrInput) || isNaN(age) || scrInput <= 0 || age <= 0) {
-    resultBox.innerHTML = "";
     showErrorGFR("Please enter valid Serum Creatinine and Age.");
     return;
   }
   
   if (age < 18) {
-    resultBox.innerHTML = "";
     showErrorGFR("This calculator is for adults. Use the pediatric version instead.");
     return;
   }
   
-  
+  // Convert micromole/L to mg/dL
   const scr = (scrUnit === 'micromole/L') ? scrInput / 88.4 : scrInput;
   
-  
+  // Constants for CKD-EPI
   const k = (gender === 'female') ? 0.7 : 0.9;
   const alpha = (scr > k) ? -1.209 : (gender === 'female' ? -0.329 : -0.411);
   const sexFactor = (gender === 'female') ? 1.018 : 1;
   const raceFactor = (race === 'black') ? 1.159 : 1;
   
-  const ckdepi = 141 * Math.pow(Math.min(scr / k, 1), alpha) *
+  // CKD-EPI Formula
+  const ckdepi = 141 *
+    Math.pow(Math.min(scr / k, 1), alpha) *
     Math.pow(Math.max(scr / k, 1), -1.209) *
     Math.pow(0.993, age) *
     sexFactor *
     raceFactor;
   
-  
+  // MDRD Formula
   let mdrd = 175 * Math.pow(scr, -1.154) * Math.pow(age, -0.203);
   if (gender === 'female') mdrd *= 0.742;
   if (race === 'black') mdrd *= 1.212;
   
-  
+  // Mayo Quadratic Formula
   let mayo = (scr < 0.8) ?
     107.3 / (scr / 0.7) :
     107.3 / Math.pow(scr / 0.7, 1.5);
   mayo *= Math.pow(0.996, age);
   if (gender === 'female') mayo *= 0.762;
   
-  
+  // Display Results
   resultBox.innerHTML = `
-  <h3>Gfr Calculation Results</h3>
-    <div class="resultLine">
-      <strong>MDRD 4-Variable Equation:</strong> ${mdrd.toFixed(1)} mL/min/1.73 m²
-    </div>
-    <div class="resultLine">
-      <strong>CKD-EPI Formula:</strong> ${ckdepi.toFixed(1)} mL/min/1.73 m²
-    </div>
-    <div class="resultLine">
-      <strong>Mayo Quadratic Formula:</strong> ${mayo.toFixed(1)} mL/min/1.73 m²
-    </div>
+    <h3>GFR Calculation Results</h3>
+    <div class="resultLine"><strong>MDRD 4-Variable Equation:</strong> ${mdrd.toFixed(1)} mL/min/1.73 m²</div>
+    <div class="resultLine"><strong>CKD-EPI Formula:</strong> ${ckdepi.toFixed(1)} mL/min/1.73 m²</div>
+    <div class="resultLine"><strong>Mayo Quadratic Formula:</strong> ${mayo.toFixed(1)} mL/min/1.73 m²</div>
   `;
 }
+
 function showErrorGFR(message) {
   removeErrorBox();
   const error = document.createElement("div");
   error.id = "error-txt";
-  error.style.color = "red";
+  error.className = "error-message";
   error.textContent = message;
-  document.querySelector(".container").appendChild(error);
+  document.querySelector(".output-group").appendChild(error);
 }
 
 function removeErrorBox() {
@@ -625,10 +627,10 @@ function removeErrorBox() {
 }
 
 function getOrCreateResultBox() {
-  let box = document.querySelector(".gfr-result-box");
+  let box = document.querySelector(".output-group");
   if (!box) {
     box = document.createElement("div");
-    box.className = "gfr-result-box";
+    box.className = "output-group";
     document.querySelector(".container").appendChild(box);
   }
   return box;

@@ -431,7 +431,7 @@ Everyday Life
   </div>
  </div>
 </div>
-<div class="coffeeFeedback">
+<div class="output-group">
   
 </div>
 
@@ -723,7 +723,7 @@ Everyday Life
   </footer>
 
   <style>
-  .coffeeFeedback{
+  .output-group{
     border-radius: 10px;
 font-family: "young";
 line-height: 1.6;
@@ -877,7 +877,7 @@ function calculateCaffeine() {
       `<p class="coffee-recommendation"><strong>Warning:</strong> Your daily dose exceeds the recommended 400 mg per day.</p>`
     );
   }
-  document.querySelector(".coffeeFeedback").innerHTML = `<p>${feedback.join("<br>")}</p>`;
+  document.querySelector(".output-group").innerHTML = `<p>${feedback.join("<br>")}</p>`;
 }
 
 

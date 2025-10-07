@@ -218,7 +218,7 @@ Everyday Life
   </div>
  </div>
   </div>
-  <div id="resultdiv">
+  <div class="output-group">
     
   </div>
   
@@ -381,21 +381,21 @@ Everyday Life
 
   <style>
 
-    #resultdiv{
+    .output-group{
       font-family: "Young";
       line-height: 1.6;
       font-size: .96em;
       color: #42445A;
     }
-    #resultdiv h3,h4{
+    .output-group h3,h4{
       font-family: lexend;
       font-size: .95em;
     }
-    #resultdiv strong{
+    .output-group strong{
       font-family: lexend;
       font-size: .9em;
     }
-    #resultdiv hr{
+    .output-group hr{
       border: .5px solid #42445A2E;
       
     }
@@ -405,7 +405,7 @@ Everyday Life
 
 <script defer crossorigin="anonymous">
   const inputField = document.getElementById("NumberOrRomanNumeral");
-const resultDiv = document.getElementById("resultdiv");
+const resultDiv = document.querySelector(".output-group");
 
 const romanMap = [
   { value: 1000000, numeral: "M̅" },

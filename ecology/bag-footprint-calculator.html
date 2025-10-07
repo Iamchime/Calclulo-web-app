@@ -319,7 +319,7 @@ Everyday Life
  </div>
   </div>
   
-<div class="bag-footprint-result">
+<div class="output-group">
   
 </div>
   
@@ -478,7 +478,7 @@ Everyday Life
   </footer>
   
   <style>
-  .bag-footprint-result li ,span{
+  .output-group li ,span{
     font-family: young;
   }
   .footprint-sec-one{
@@ -547,7 +547,7 @@ letter-spacing: .3px;
   const uses = parseFloat(document.getElementById('numberofuse').value.replace(/,/g, ''));
   const disposed = parseFloat(document.getElementById('numberofbagdisposed').value.replace(/,/g, ''));
   const frequency = document.getElementById('frequency').value;
-  const resultDiv = document.querySelector('.bag-footprint-result');
+  const resultDiv = document.querySelector('.output-group');
   
   if (isNaN(uses) || uses <= 0 || isNaN(disposed) || disposed <= 0) {
     resultDiv.innerHTML = `<p id="error-txt" style="color: red;">Please enter valid positive numbers.</p>`;
@@ -623,7 +623,7 @@ function resetFields() {
   document.getElementById('numberofbagdisposed').value = '';
   document.getElementById('frequency').selectedIndex = 0;
   document.querySelector('#plasticbag').checked = true;
-  document.querySelector('.bag-footprint-result').innerHTML = '';
+  document.querySelector('.output-group').innerHTML = '';
 }
 
 document.querySelectorAll('input[name="bagtype"], #numberofuse, #numberofbagdisposed, #frequency').forEach(el => {

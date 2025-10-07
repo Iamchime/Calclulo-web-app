@@ -466,7 +466,7 @@ Everyday Life
 
  </div>
 </div>
-    <div class="bond-price-results">
+    <div class="output-group">
       
     </div>
   </div>
@@ -632,22 +632,22 @@ Everyday Life
   </footer>
  
   <style>
-  .bond-price-results strong{
+  .output-group strong{
     font-family: lexend;
     font-weight: 400;
     font-size: 1em;
   }
-  .bond-price-results{
+  .output-group{
     font-family: "young";
   }
-  .bond-price-results span{
+  .output-group span{
   font-family: "zalando";
   font-size: 1em;
   color: #464BFF;
   font-weight: bold;
   margin-left: 6px;
 }
-.bond-price-results strong{
+.output-group strong{
   color: #42445A;
 }
   </style>
@@ -702,7 +702,7 @@ function calculateResults() {
   const couponUnit = document.getElementById("annualcouponCurrencyorPercent")?.value || "percent";
   const freqStr = document.getElementById("couponfrequencySelect")?.value || "annually";
 
-  const outEl = document.querySelector(".bond-price-results");
+  const outEl = document.querySelector(".output-group");
   const format = (v) =>
     v.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 });
 

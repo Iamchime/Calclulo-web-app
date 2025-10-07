@@ -303,7 +303,7 @@ Everyday Life
  </div>
 </div>
 
-<div class="roi-results">
+<div class="output-group">
   
 </div>
   
@@ -531,7 +531,7 @@ function calculateResults() {
   const returned = parseFloat(document.getElementById("amountReturned").value.replace(/,/g, "")) || 0;
   const dateFrom = new Date(document.getElementById("dateFrom").value);
   const dateTo = new Date(document.getElementById("dateTo").value);
-  const resultDiv = document.querySelector(".roi-results");
+  const resultDiv = document.querySelector(".output-group");
   
   resultDiv.innerHTML = "";
   

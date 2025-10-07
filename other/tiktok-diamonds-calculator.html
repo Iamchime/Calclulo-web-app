@@ -217,7 +217,7 @@ Everyday Life
   </div>
  </div>
   </div>
-  <div class="tiktokDiamondsResult">
+  <div class="output-group">
     
   </div>
   <p class="visible-tips">
@@ -379,7 +379,7 @@ Everyday Life
   </footer>
 
   <style>
-    .tiktokDiamondsResult{
+    .output-group{
     margin-top: -1.2em;
      display: flex;
     flex-direction: column;
@@ -420,7 +420,7 @@ font-family: "zalando";
 <script defer crossorigin="anonymous">
   document.addEventListener("DOMContentLoaded", function() {
   const diamondInput = document.getElementById("tiktokdiamonds");
-  const resultDiv = document.querySelector(".tiktokDiamondsResult");
+  const resultDiv = document.querySelector(".output-group");
   
   function calculateResults() {
     const diamonds = parseFloat(diamondInput.value.replace(/,/g, "")) || 0;

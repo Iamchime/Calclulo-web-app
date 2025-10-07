@@ -619,36 +619,8 @@ function resetCalculator() {
     container.onanimationend = () => container.classList.remove("flash", "flash-overlay");
   });
   
-  const tiktokCoinsResult = document.querySelector(".tiktokCoinsResult");
-  if (tiktokCoinsResult) tiktokCoinsResult.innerHTML = ``;
-  const tiktokDiamondsResult = document.querySelector(".tiktokDiamondsResult");
-  if (tiktokDiamondsResult) tiktokDiamondsResult.innerHTML = ``;
-  const riskResult = document.querySelector(".risk-insights-result");
-  if (riskResult) riskResult.innerHTML = ``;
-  const coffeeFeedbackResult = document.querySelector(".coffeeFeedback");
-  if (coffeeFeedbackResult) coffeeFeedbackResult.innerHTML = ``;
-  const fatIntakeResult = document.querySelector("#fatResults");
-  if (fatIntakeResult) fatIntakeResult.innerHTML = ``;
-  const gfrResult = document.querySelector(".gfr-result-box");
-  if (gfrResult) gfrResult.innerHTML = ``;
-  const foilResult = document.querySelector(".foil-results");
-  if (foilResult) foilResult.innerHTML = ``;
-  const resultdiv = document.querySelector("#resultdiv");
-  if (resultdiv) resultdiv.innerHTML = ``;
-  const roiResult = document.querySelector(".roi-results");
-  if (roiResult) roiResult.innerHTML = ``;
-  const rentResult = document.querySelector("#rent-output");
-  if (rentResult) rentResult.innerHTML = ``;
-  const interestRateResult = document.querySelector(".interest-rate-results");
-  if (interestRateResult) interestRateResult.innerHTML = ``;
-  const ageResult = document.querySelector("#ageResult");
-  if (ageResult) ageResult.innerHTML = ``;
-  const bondPriceResults = document.querySelector(".bond-price-results");
-  if (bondPriceResults) bondPriceResults.innerHTML = ``;
-  const seedRateResult = document.querySelector(".seed-rate-results");
-  if (seedRateResult) seedRateResult.innerHTML = ``;
-  const bagFootPrintResult = document.querySelector(".bag-footprint-result");
-  if (bagFootPrintResult) bagFootPrintResult.innerHTML = ``;
+  const outputGroup = document.querySelector(".output-group");
+  if (outputGroup) outputGroup.innerHTML = ``;
   
   const errorMessages = document.querySelectorAll(".error-message");
   errorMessages.forEach(msg => msg.remove());

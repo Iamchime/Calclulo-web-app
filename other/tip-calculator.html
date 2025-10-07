@@ -677,7 +677,7 @@ Everyday Life
   </footer>
   
   <style>
-#resultdiv {
+.output-group {
   margin-top: 20px;
   font-family: "Segoe UI", Arial, sans-serif;
   font-size: 14px;
@@ -689,7 +689,7 @@ display: flex;
 flex-direction: column;
 }
 
-#resultdiv h3 {
+.output-group h3 {
   text-align: center;
   margin-bottom: 15px;
   font-size: 1.2em;
@@ -699,7 +699,7 @@ flex-direction: column;
 }
 
 /* Table styles */
-#resultdiv table {
+.output-group table {
   border-collapse: collapse;
   width: 100%;
   margin-bottom: 20px;
@@ -711,8 +711,8 @@ flex-direction: column;
   
 }
 
-#resultdiv th, 
-#resultdiv td {
+.output-group th, 
+.output-group td {
   text-align: left;
   font-size: 1em;
 user-select: none;
@@ -722,26 +722,26 @@ color: #42445AED;
 padding: 15px;
 }
 
-#resultdiv th {
+.output-group th {
   background: #f5f6fa;
   font-weight: 600;
   color: #333;
 }
-#resultdiv tr{
+.output-group tr{
   border-bottom: 1px solid #42445A21;
 }
-#resultdiv tr:nth-child(even) td {
+.output-group tr:nth-child(even) td {
   background: #fafafa;
   font-size: 1.1em;
 }
 
-#resultdiv td:last-child {
+.output-group td:last-child {
   text-align: right;
   font-weight: 500;
 }
 
 /* Totals row highlight */
-#resultdiv tr:last-child td {
+.output-group tr:last-child td {
   /*background: #e8f0ff;*/
   font-weight: bold;
   color: #000;
@@ -749,15 +749,15 @@ padding: 15px;
 }
 
 /* Box effect */
-#resultdiv .box {
+.output-group .box {
   border-radius: 12px;
   overflow: hidden;
 }
 
 /* Section headings inside tables */
-#resultdiv .table-income th,
-#resultdiv .table-summary th,
-#resultdiv .table-brackets th {
+.output-group .table-income th,
+.output-group .table-summary th,
+.output-group .table-brackets th {
   background: #464BFF;
   color: #fff;
   text-align: center;
@@ -767,10 +767,10 @@ padding: 15px;
 }
 
 /* Summary table special styling */
-#resultdiv .table-summary td {
+.output-group .table-summary td {
   font-size: 15px;
 }
-#resultdiv .table-summary td:last-child {
+.output-group .table-summary td:last-child {
   font-weight: bold;
   color: #464BFF;
 }
