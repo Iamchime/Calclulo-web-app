@@ -819,24 +819,15 @@ const apyEl = document.getElementById('AnnualPercentageYield');
 if (aprEl) {
   aprEl.addEventListener('input', () => {
     if (isSyncing) return;
-    setActiveInput(aprEl);
     calculateResults('apr');
   });
 }
 if (apyEl) {
   apyEl.addEventListener('input', () => {
     if (isSyncing) return;
-    setActiveInput(apyEl);
     calculateResults('apy');
   });
 }
-
-function setActiveInput(el) {
-  if (!el) return;
-  [aprEl, apyEl].forEach(e => { if (e) e.classList.add('result'); });
-  el.classList.remove('result');
-}
-
 
 window.addEventListener('DOMContentLoaded', () => calculateResults('apr'));
 </script>

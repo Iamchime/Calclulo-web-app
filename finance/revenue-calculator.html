@@ -574,7 +574,6 @@ Everyday Life
   const taxInput = document.getElementById('tax/vat');
   const totalInput = document.getElementById('totalRevenue');
   
-  // Helper to safely parse numbers (remove commas)
   const parseNum = (val) => parseFloat(val.replace(/,/g, '')) || 0;
   const formatNum = (num) => num.toLocaleString('en-US', { maximumFractionDigits: 2 });
   
@@ -587,14 +586,14 @@ Everyday Life
   const active = document.activeElement;
   
   if (active === totalInput) {
-    // Reverse calculation — user changed total revenue
+
     if (quantity > 0) {
-      const baseAmount = total / (1 + tax / 100); // remove tax
-      const priceBeforeDiscount = baseAmount / (quantity * (1 - discount / 100)); // remove discount
+      const baseAmount = total / (1 + tax / 100);
+      const priceBeforeDiscount = baseAmount / (quantity * (1 - discount / 100));
       priceInput.value = formatNum(priceBeforeDiscount);
     }
   } else {
-    // Forward calculation — user changed other fields
+
     const subTotal = price * quantity;
     const discounted = subTotal * (1 - discount / 100);
     const taxed = discounted * (1 + tax / 100);
@@ -602,13 +601,11 @@ Everyday Life
   }
 }
 
-// Attach listeners
 ['PricePerUnit', 'quantitySold', 'discount', 'tax/vat', 'totalRevenue'].forEach(id => {
   const el = document.getElementById(id);
   if (el) el.addEventListener('input', calculateResults);
 });
 
-// Auto-calc on load
 window.addEventListener('load', calculateResults);
 </script>
 

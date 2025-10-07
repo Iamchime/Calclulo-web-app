@@ -72,6 +72,7 @@ searchBtn.addEventListener("click", () => {
 });
 hamburger.addEventListener("click", openNav);
 closeBtn.addEventListener("click", closeNav);
+/****************************************/
 
 /*******************************/
 /********** list the total number of calculators in a category *********/
@@ -112,9 +113,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     console.error("Error loading calculator counts:", error);
   }
 });
+/****************************************/
 
-/************ PWA helper
- ******/
+/***************** PWA helper
+ ******************/
  document.addEventListener("DOMContentLoaded", () => {
   const homeLink = document.querySelector(".home-link");
   const isStandalone =
@@ -140,6 +142,7 @@ updateHomeLink();
 
   window.addEventListener("resize", updateHomeLink);
 });
+/****************************************/
 
 /********************************
   Progressive Web App
@@ -190,7 +193,7 @@ window.addEventListener('appinstalled', () => {
   installBtn.style.display = 'none';
 });
 
-/********** share global *************************/
+/********** share calculators global function *************************/
 document.querySelector(".global-share-btn").addEventListener("click", () => {
   const overlay = document.createElement("div");
   overlay.className = "share-modal-overlay";
@@ -288,7 +291,7 @@ document.querySelector(".global-share-btn").addEventListener("click", () => {
   
   modal.querySelector(".close-share-modal").addEventListener("click", closeModal);
 });
-/*******************************/
+/**********************************************/
 
 /***************************** cookie management 
 **************************/
@@ -330,6 +333,8 @@ document.querySelector(".global-share-btn").addEventListener("click", () => {
 });
 
 /***************************************************************/
+
+/************* open inputs tips ***************************/
 
 document.querySelectorAll('.input-group #input-tip-icon').forEach((icon) => {
   icon.addEventListener('click', () => {
@@ -381,9 +386,9 @@ function collapseTip(tip, icon = null) {
   
   if (icon) icon.classList.remove('rotate');
 }
+/****************************************/
 
- /**************************************
- * Overflowing text handling + programmatic updates + initial
+ /************************************** Overflowing text handling
  **************************************/
 document.addEventListener('DOMContentLoaded', () => {
   setupSmartInputs({ minFontSize: 10 });
@@ -518,6 +523,7 @@ function setupSmartInputs(options = {}) {
     requestAnimationFrame(watchValues);
   })();
 }
+/****************************************/
 
 /*************************** formatting input ***********************/
 
@@ -564,6 +570,7 @@ document.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("blur", handleFormat);
   });
 });
+/****************************************/
 
 /***********************************
  Reset all inputs across containers
@@ -647,8 +654,9 @@ function resetCalculator() {
   errorMessages.forEach(msg => msg.remove());
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+/****************************************/
 
-/********** options box***********/
+/********** inputs options box***********/
 let activeBox = null;
 let activeIcon = null;
 let isRemoving = false;
@@ -745,9 +753,9 @@ document.addEventListener('click', function(e) {
     removeBox();
   }
 });
+/****************************************/
 
-/******** options features ********/  
-  
+/******** inputs options features ********/  
 document.addEventListener("DOMContentLoaded", () => {  
   document.querySelectorAll(".input-group").forEach(group => {  
     const inputId    = group.dataset.inputId;  
@@ -995,38 +1003,21 @@ document.addEventListener("DOMContentLoaded", () => {
 /***************************************/
 
 /******************** animating output ******************/
-/**
- * Robust programmatic-change monitor (handles formatter functions)
- *
- * - Waits until window.load.
- * - Normalizes formatted numeric strings (commas, spaces, currency symbols,
- *   ArabicIndic digits, NBSP, thin spaces, parentheses negative, percent, exponent).
- * - Compares numbers with epsilon.
- * - Runs scan after microtask + rAF to allow synchronous formatters to finish.
- * - Only clears "result" highlights from other fields if at least one programmatic
- *   change occurred this round.
- *
- * Usage: include as-is. To scope to your calculator container:
- *   startMonitor(document.querySelector('.calculator'));
- */
 
 (function () {
-  // ---------- CONFIG ----------
   const RESULT_CLASS = "result";
   const FLASH_CLASS = "result-flash";
   const FLASH_MS = 160;
   const USER_INTERACTION_WINDOW_MS = 800;
   const NUM_EPSILON = 1e-9;
-
-  // ---------- Helpers ----------
+  
   const isControl = (el) => el && el.tagName && ["INPUT", "SELECT", "TEXTAREA"].includes(el.tagName);
 
-  // Convert Arabic-Indic / Persian digits to ASCII
   const digitMap = (() => {
     const map = Object.create(null);
-    // Arabic-Indic ٠١٢٣٤٥٦٧٨٩ U+0660..U+0669
+
     for (let i = 0; i <= 9; i++) map[String.fromCharCode(0x0660 + i)] = String(i);
-    // Extended Arabic-Indic (Persian) ۰۱۲۳۴۵۶۷۸۹ U+06F0..U+06F9
+    
     for (let i = 0; i <= 9; i++) map[String.fromCharCode(0x06F0 + i)] = String(i);
     return map;
   })();
@@ -1038,62 +1029,49 @@ document.addEventListener("DOMContentLoaded", () => {
     return out;
   }
 
-  // Try parse a formatted string into a Number (or return null)
   function tryParseNumericString(raw) {
     if (raw == null) return null;
     let s = String(raw).trim();
     if (s === "") return null;
 
-    // Map exotic digits first
     s = mapDigits(s);
 
-    // Replace common minus char variants with ASCII minus
-    s = s.replace(/\u2212/g, "-"); // unicode minus
-
-    // Remove common whitespace (NBSP U+00A0, narrow NBSP U+202F, thin U+2009, regular \s)
+    s = s.replace(/\u2212/g, "-");
     s = s.replace(/[\u00A0\u202F\u2009\u2007\u2008]/g, "").replace(/\s+/g, "");
 
-    // handle parentheses negative e.g. (123.45)
     let negative = false;
     if (/^\(.+\)$/.test(s)) {
       negative = true;
       s = s.slice(1, -1).trim();
     }
 
-    // percentage
     let isPercent = false;
     if (s.endsWith("%")) {
       isPercent = true;
       s = s.slice(0, -1).trim();
     }
 
-    // Remove any currency symbols/letters except digits, dot, comma, sign, exponent letter e/E, parentheses, +,-
-    // Keep only characters useful for numeric parsing
-    // Allow: digits 0-9, '.', ',', '+', '-', 'e', 'E'
     s = s.replace(/[^0-9\.\,\+\-eE]/g, "");
 
     if (s === "" || s === "+" || s === "-" || s === "." || s === "," ) return null;
-
-    // If both '.' and ',' are present decide which is decimal by last occurrence
+    
     if (s.includes(".") && s.includes(",")) {
       if (s.lastIndexOf(",") > s.lastIndexOf(".")) {
-        // comma is decimal -> remove dots (thousands), replace comma with dot
+
         s = s.replace(/\./g, "").replace(/,/g, ".");
       } else {
-        // dot is decimal -> remove commas
+
         s = s.replace(/,/g, "");
       }
     } else if (s.includes(",") && !s.includes(".")) {
-      // one comma only: guess decimal if fractional part length reasonable (<= 3), otherwise remove commas (thousands)
+
       const parts = s.split(",");
       if (parts.length === 2 && parts[1].length <= 3) {
         s = parts[0] + "." + parts[1];
       } else {
         s = s.replace(/,/g, "");
       }
-    } // else only dots or neither -> ok
-
-    // Final simple numeric pattern allowed (with exponent)
+    }
     if (!/^[-+]?\d+(\.\d+)?([eE][-+]?\d+)?$/.test(s)) return null;
 
     const n = Number(s);
@@ -1104,8 +1082,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return final;
   }
 
-  // canonical comparable object for an element's value:
-  // { k: 'num', v: Number } or { k: 'str', v: String } or { k: 'other', v: String }
   function toComparable(el) {
     if (!el) return { k: "str", v: "" };
     const tag = el.tagName && el.tagName.toLowerCase();
@@ -1118,16 +1094,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     if (tag === "select") return { k: "other", v: `select:${el.value ?? ""}` };
     if (type === "file") return { k: "other", v: `files:${el.files ? el.files.length : 0}` };
-
-    // attempt numeric parse first
+    
     const raw = String(el.value ?? "");
     const num = tryParseNumericString(raw);
     if (num !== null) return { k: "num", v: num };
-    // fallback to trimmed string
+    
     return { k: "str", v: raw.trim() };
   }
 
-  // Compare two comparable objects for equality (numbers with epsilon)
   function compsEqual(a, b) {
     if (!a || !b) return false;
     if (a.k === "num" && b.k === "num") {
@@ -1145,22 +1119,19 @@ document.addEventListener("DOMContentLoaded", () => {
       const p = tryParseNumericString(a.v);
       return p === null ? false : compsEqual({ k: "num", v: p }, b);
     }
-    // otherwise string/other exact compare
+    
     return a.k === b.k && String(a.v) === String(b.v);
   }
 
   const collect = (root = document) => Array.from(root.querySelectorAll("input, select, textarea"));
   const now = () => Date.now();
 
-  // ---------- State ----------
-  const lastValues = new WeakMap();           // el -> comparable
-  const lastUserInteraction = new WeakMap();  // el -> timestamp
-  const flashTimers = new WeakMap();          // el -> timer id
-  const flaggedValue = new WeakMap();         // el -> comparable when flagged
+  const lastValues = new WeakMap();
+  const lastUserInteraction = new WeakMap();
+  const flashTimers = new WeakMap();
+  const flaggedValue = new WeakMap(); 
   let scanScheduled = false;
-  let pendingEventTargets = new Set();        // set of event targets that caused scheduleScan
-
-  // Mark user interaction on an element
+  let pendingEventTargets = new Set();  
   function markUser(el) {
     if (!isControl(el)) return;
     lastUserInteraction.set(el, now());
@@ -1170,7 +1141,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return (now() - t) <= USER_INTERACTION_WINDOW_MS;
   }
 
-  // Flash then persistent flag
   function flashThenFlag(el, compObj) {
     const prevTimer = flashTimers.get(el);
     if (prevTimer) {
@@ -1197,12 +1167,10 @@ document.addEventListener("DOMContentLoaded", () => {
     lastValues.set(el, toComparable(el));
   }
 
-  // ---------- Core scan ----------
   function scanAndUpdate(root = document) {
     scanScheduled = false;
     const els = collect(root);
 
-    // 1) find which elements actually changed (using compsEqual)
     const changedThisRound = new Set();
     els.forEach(el => {
       const prev = lastValues.has(el) ? lastValues.get(el) : toComparable(el);
@@ -1210,64 +1178,56 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!compsEqual(prev, cur)) changedThisRound.add(el);
     });
 
-    // 2) if nothing changed, do nothing (avoid clears on mere focus/blur)
     if (changedThisRound.size === 0) {
       els.forEach(el => lastValues.set(el, toComparable(el)));
       pendingEventTargets.clear();
       return;
     }
 
-    // 3) detect if there is at least one programmatic change this round
     const hasProgrammaticChange = Array.from(changedThisRound).some(el => !isRecentUserInteraction(el));
 
-    // 4) apply logic
     els.forEach(el => {
       const prev = lastValues.has(el) ? lastValues.get(el) : toComparable(el);
       const cur = toComparable(el);
 
       if (changedThisRound.has(el)) {
-        // this element changed value this round
+        
         if (isRecentUserInteraction(el) && !hasProgrammaticChange) {
-          // user changed it and no programmatic changes elsewhere -> user owns it: clear its highlight only
+
           if (el.classList.contains(RESULT_CLASS) || el.classList.contains(FLASH_CLASS)) {
             clearHighlight(el);
           }
         } else if (!isRecentUserInteraction(el)) {
-          // programmatic change -> flash & flag (re-flash if already flagged)
+          
           flashThenFlag(el, cur);
         } else {
-          // mixed case: user changed this element but there are also programmatic changes elsewhere.
-          // user owned element -> clear its highlight (user intent)
+          
           if (el.classList.contains(RESULT_CLASS) || el.classList.contains(FLASH_CLASS)) {
             clearHighlight(el);
           }
         }
       } else {
-        // element did NOT change this round
-        // Only remove highlights from these elements if there was at least one programmatic change somewhere.
+        
         if (hasProgrammaticChange) {
           if (el.classList.contains(RESULT_CLASS) || el.classList.contains(FLASH_CLASS)) {
             clearHighlight(el);
           }
         } else {
-          // no programmatic changes -> preserve highlights (user-only changes shouldn't wipe others)
+          
         }
       }
     });
 
-    // 5) update snapshot
     els.forEach(el => lastValues.set(el, toComparable(el)));
     pendingEventTargets.clear();
   }
 
-  // schedule scan: wait until microtask + next animation frame so synchronous formatters can finish.
   function scheduleScan(root = document, sourceEl = null) {
     if (sourceEl && isControl(sourceEl)) pendingEventTargets.add(sourceEl);
 
     if (scanScheduled) return;
     scanScheduled = true;
 
-    // microtask -> rAF -> run scan; this is fast but lets synchronous/rAF formatters complete
     Promise.resolve().then(() => {
       requestAnimationFrame(() => {
         scanAndUpdate(root);
@@ -1275,7 +1235,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // ---------- Event listeners ----------
   function installUserInteractionListeners(root = document) {
     const userEvents = ["keydown", "keypress", "input", "paste", "pointerdown", "mousedown", "touchstart"];
     userEvents.forEach(ev => {
@@ -1295,7 +1254,7 @@ document.addEventListener("DOMContentLoaded", () => {
         scheduleScan(root, t);
       }, true);
     });
-    // helpful: if your formatter runs asynchronously and you can edit it, dispatch 'valuechange' after formatting
+
     root.addEventListener("valuechange", (e) => scheduleScan(root, e && e.target), true);
   }
 
@@ -1309,23 +1268,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function startMonitor(root = document) {
-    // initial snapshot
     collect(root).forEach(el => lastValues.set(el, toComparable(el)));
     installUserInteractionListeners(root);
     installChangeListeners(root);
     document.addEventListener("focus", onFocus, true);
   }
 
-  // ---------- boot ----------
   window.addEventListener("load", () => {
-    // For performance you can scope this to your calculator container:
-    // startMonitor(document.querySelector('.calculator'));
     startMonitor(document);
   });
 })();
 /***********************************/
 
-/*************************************** long press to copy  tooltip *******************************/
+/*************************************** long press to copy in tooltip *******************************/
  
  document.addEventListener("DOMContentLoaded", () => {
   enableLongPressCopy(".input-tooltip-float", 600);
@@ -1361,27 +1316,22 @@ function copyTooltipValue(tooltip) {
     console.error("Failed to copy tooltip value");
   });
 }
+/****************************************/
 
-
-/****************************
-
+/*************************************
 message handling
-***************************/
+*******************************/
+
 function showMessage(message, state = "error") {
-  // Remove existing message if any
   const existing = document.querySelector('.message-toast');
   if (existing) existing.remove();
   
-  
-  // Create message container
   const toast = document.createElement('div');
   toast.classList.add('message-toast', state);
   
-  // Message text
   const text = document.createElement('span');
   text.textContent = message;
   
-  // Close button (SVG)
   const closeBtn = document.createElementNS("http://www.w3.org/2000/svg", "svg");
   closeBtn.setAttribute("viewBox", "0 0 24 24");
   closeBtn.id = "closetoast";
@@ -1392,30 +1342,25 @@ function showMessage(message, state = "error") {
   toast.appendChild(closeBtn);
   document.body.appendChild(toast);
   
-  // Fade in
   requestAnimationFrame(() => {
     toast.classList.add('show');
   });
   
-  // Timing logic
-  let duration = 4000; // total ms
+  let duration = 4000;
   let startTime = Date.now();
   let remaining = duration;
   let autoFade = setTimeout(() => fadeOut(toast), remaining);
   
-  // Pause function
   function pauseTimer() {
     clearTimeout(autoFade);
     remaining -= Date.now() - startTime;
   }
   
-  // Resume function
   function resumeTimer() {
     startTime = Date.now();
     autoFade = setTimeout(() => fadeOut(toast), remaining);
   }
   
-  // Listen for hold/click pause & resume
   toast.addEventListener("mousedown", pauseTimer);
   toast.addEventListener("touchstart", pauseTimer);
   
@@ -1428,8 +1373,9 @@ function showMessage(message, state = "error") {
     element.addEventListener('transitionend', () => element.remove(), { once: true });
   }
 }
+/****************************************/
 
-/****** closing side bar when links are clicked *************/
+/***************** closing side bar when links are clicked *******************/
 
 document.querySelectorAll(".side-nav a").forEach((link) => {
   link.addEventListener("click", (e) => {
@@ -1442,8 +1388,9 @@ document.addEventListener("click", (e) => {
     closeNav();
   }
 });
+/****************************************/
 
-/*************** handle sources and references section       *****************/
+/*************** handle sources section       *****************/
 
 (function () {
   const btn = document.querySelector(".calculation-sources");
@@ -1454,27 +1401,23 @@ document.addEventListener("click", (e) => {
 
   if (!btn || !listWrap || !list || !numberNode) return;
 
-  // initialize: hidden by default
   listWrap.hidden = true;
   listWrap.classList.remove('open');
   btn.setAttribute('aria-expanded', 'false');
 
-  // update source count text
   function updateNumber() {
     const count = list.querySelectorAll("li").length;
     numberNode.textContent = count === 1 ? "1 source" : `${count} sources`;
   }
   updateNumber();
 
-  // open with smooth animation (use explicit height to animate)
   function openList() {
     if (!listWrap.hidden) return;
     listWrap.hidden = false;
-    // set explicit small height first so transition has a start
+    
     listWrap.style.maxHeight = '0px';
-    // Allow browser to paint
     requestAnimationFrame(() => {
-      const full = list.scrollHeight + 24; // add small padding so content not clipped
+      const full = list.scrollHeight + 24;
       listWrap.style.transition = 'max-height 320ms ease, opacity 220ms ease';
       listWrap.style.maxHeight = full + 'px';
       listWrap.style.opacity = '1';
@@ -1483,24 +1426,19 @@ document.addEventListener("click", (e) => {
       btn.setAttribute('aria-expanded', 'true');
     });
 
-    // cleanup after transition to allow responsive height
     listWrap.addEventListener('transitionend', function handler(e) {
       if (e.propertyName === 'max-height') {
-        listWrap.style.maxHeight = 'none'; // allow natural height
+        listWrap.style.maxHeight = 'none';
         listWrap.style.transition = '';
         listWrap.removeEventListener('transitionend', handler);
       }
     });
   }
 
-  // close with smooth animation
   function closeList() {
     if (listWrap.hidden) return;
-    // from 'auto' height -> need to set explicit pixel height first
     const cur = listWrap.scrollHeight + 24;
     listWrap.style.maxHeight = cur + 'px';
-    // force reflow
-    // eslint-disable-next-line no-unused-expressions
     listWrap.offsetHeight;
 
     requestAnimationFrame(() => {
@@ -1526,13 +1464,11 @@ document.addEventListener("click", (e) => {
     if (listWrap.hidden) openList(); else closeList();
   }
 
-  // click handler
   btn.addEventListener('click', (e) => {
     e.preventDefault();
     toggleList();
   });
 
-  // keyboard: Enter/Space toggles, Escape closes
   btn.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
@@ -1543,27 +1479,24 @@ document.addEventListener("click", (e) => {
     }
   });
 
-  // click outside to close
   document.addEventListener('click', (e) => {
     if (!listWrap.hidden && !btn.contains(e.target) && !listWrap.contains(e.target)) {
       closeList();
     }
   });
 
-  // expose update function in case you want to change items dynamically
   window.updateSourcesList = function(items) {
     if (!Array.isArray(items)) return;
     const html = items.map(it => `<li>${it}</li>`).join('');
     list.innerHTML = html;
     updateNumber();
-    // close when updated to avoid awkward open heights
     closeList();
   };
 })();
 
 /***************************************/
 
-/******************* read more or less ******************/
+/******************* read more or less for categories ******************/
 
  (function() {
    if(document.getElementById('categoryText')){
@@ -1616,6 +1549,7 @@ document.addEventListener("click", (e) => {
      }
    });
 }else return })();
+/****************************************/
 
 /************* pwa install drawer ******************/
 
@@ -1957,7 +1891,6 @@ document.addEventListener("click", (e) => {
     }
   }
 
-
   function removeContainerIfExists() {
     if (!activeContainer) return;
     try {
@@ -2009,11 +1942,12 @@ document.addEventListener("click", (e) => {
   });
 })();
 
+/****************************************/
 
 /*********** Adsterra ads ********/
 function injectAdsterra() {
   try {
-    // ---- helper: create top-level script ad (body anchors) ----
+
     function createScriptAd(className, key, width, height) {
       const wrapper = document.createElement('div');
       wrapper.className = className;
@@ -2033,7 +1967,6 @@ function injectAdsterra() {
       return wrapper;
     }
     
-    // ---- helper: create isolated iframe ad (for multiple inline ads) ----
     function createIframeAd(className, key, width, height) {
       const wrapper = document.createElement('div');
       wrapper.className = className;
@@ -2068,7 +2001,6 @@ function injectAdsterra() {
       return wrapper;
     }
     
-    // ---- Insert global/body ads (only if not already present) ----
     if (!document.body.querySelector('.adsterra-anchor')) {
       const anchorAd = createScriptAd('adsterra-anchor', '7bb9e23e1f2a3af8def78984ec27c5b7', 320, 50);
       document.body.appendChild(anchorAd);
@@ -2079,45 +2011,39 @@ function injectAdsterra() {
       document.body.appendChild(fixedAd);
     }
     
-    // ---- Inline ads inside .description-txt ----
     const container = document.querySelector('.description-txt');
     if (!container) return;
     
-    // prevent re-running on same container
     if (container.dataset.adsInjected === '1') return;
     
-    // Take a static snapshot of child elements and exclude any existing ad elements
     const children = Array.from(container.children).filter(el => {
       return !el.classList.contains('adsterra-inline') &&
         !el.classList.contains('adsterra-anchor') &&
         !el.classList.contains('adsterra-anchor-fixed');
     });
     
-    // if not enough elements, skip
-    const elementsCountStep = Math.floor(Math.random() * 2) + 4; // random 2..4
+    const elementsCountStep = Math.floor(Math.random() * 2) + 4;
     if (children.length < elementsCountStep) {
       container.dataset.adsInjected = '1';
       return;
     }
     
-    // Walk the static list and insert inline iframe ads after every random step (2..4)
     let pos = 0;
     while (true) {
       
       pos += elementsCountStep;
       if (pos >= children.length) break;
       
-      const target = children[pos - 1]; // insert after the (pos)th element
+      const target = children[pos - 1];
       if (!target) break;
       
       const adInline = createIframeAd('adsterra-inline', 'f81dbf09c683afc118e38803230f52e9', 300, 250);
-      // only tiny vertical margin as requested
+      
       adInline.style.margin = '12px 0';
       adInline.classList = "adInLine";
       target.insertAdjacentElement('afterend', adInline);
     }
     
-    // mark as injected
     container.dataset.adsInjected = '1';
     
   } catch (err) {
@@ -2125,7 +2051,6 @@ function injectAdsterra() {
   }
 }
 
-// Run after full load
 window.addEventListener('load', injectAdsterra);
 /************* end Adsterra ads ***************/
 
@@ -2133,9 +2058,8 @@ window.addEventListener('load', injectAdsterra);
  currency handling 
 ****************************/
 
-
 const currencies = [
-  // --- North America ---
+  // North America
   { code: "USD", name: "United States Dollar", symbol: "$", sign: "US$" },
   { code: "CAD", name: "Canadian Dollar", symbol: "$", sign: "C$" },
   { code: "MXN", name: "Mexican Peso", symbol: "$", sign: "Mex$" },
@@ -2155,7 +2079,7 @@ const currencies = [
   { code: "HTG", name: "Haitian Gourde", symbol: "G", sign: "G" },
   { code: "KYD", name: "Cayman Islands Dollar", symbol: "$", sign: "CI$" },
   
-  // --- South America ---
+  // South America
   { code: "BRL", name: "Brazilian Real", symbol: "R$", sign: "R$" },
   { code: "ARS", name: "Argentine Peso", symbol: "$", sign: "AR$" },
   { code: "CLP", name: "Chilean Peso", symbol: "$", sign: "CL$" },
@@ -2167,7 +2091,7 @@ const currencies = [
   { code: "GYD", name: "Guyanese Dollar", symbol: "$", sign: "G$" },
   { code: "SRD", name: "Surinamese Dollar", symbol: "$", sign: "SRD$" },
   
-  // --- Europe ---
+  // Europe
   { code: "EUR", name: "Euro", symbol: "€", sign: "€" },
   { code: "GBP", name: "Pound Sterling", symbol: "£", sign: "£" },
   { code: "CHF", name: "Swiss Franc", symbol: "Fr", sign: "CHF" },
@@ -2190,7 +2114,7 @@ const currencies = [
   { code: "RUB", name: "Russian Ruble", symbol: "₽", sign: "₽" },
   { code: "GIP", name: "Gibraltar Pound", symbol: "£", sign: "£" },
   
-  // --- Middle East & Asia ---
+  // Middle East & Asia
   { code: "TRY", name: "Turkish Lira", symbol: "₺", sign: "₺" },
   { code: "IRR", name: "Iranian Rial", symbol: "﷼", sign: "IRR" },
   { code: "IQD", name: "Iraqi Dinar", symbol: "ع.د", sign: "IQD" },
@@ -2205,7 +2129,7 @@ const currencies = [
   { code: "BHD", name: "Bahraini Dinar", symbol: "ب.د", sign: "BHD" },
   { code: "OMR", name: "Omani Rial", symbol: "ر.ع.", sign: "OMR" },
   
-  // --- Asia & Pacific ---
+  // Asia & Pacific
   { code: "INR", name: "Indian Rupee", symbol: "₹", sign: "₹" },
   { code: "PKR", name: "Pakistani Rupee", symbol: "₨", sign: "₨" },
   { code: "BDT", name: "Bangladeshi Taka", symbol: "৳", sign: "৳" },
@@ -2223,7 +2147,7 @@ const currencies = [
   { code: "NZD", name: "New Zealand Dollar", symbol: "$", sign: "NZ$" },
   { code: "FJD", name: "Fijian Dollar", symbol: "$", sign: "FJ$" },
   
-  // --- Africa ---
+  // Africa
   { code: "NGN", name: "Nigerian Naira", symbol: "₦", sign: "₦" },
   { code: "GHS", name: "Ghanaian Cedi", symbol: "₵", sign: "GH₵" },
   { code: "ZAR", name: "South African Rand", symbol: "R", sign: "R" },
@@ -2234,7 +2158,7 @@ const currencies = [
   { code: "MAD", name: "Moroccan Dirham", symbol: "د.م.", sign: "MAD" },
   { code: "EGP", name: "Egyptian Pound", symbol: "£", sign: "E£" },
   
-/****** crypto currencies *******/
+// Crypto
 { code: "BTC", name: "Bitcoin", symbol: "₿", sign: "₿" },
   { code: "ETH", name: "Ethereum", symbol: "Ξ", sign: "ETH" },
   { code: "USDT", name: "Tether", symbol: "₮", sign: "USDT" },
@@ -2253,8 +2177,6 @@ const currencies = [
   { code: "LINK", name: "Chainlink", symbol: "LINK", sign: "LINK" },
   { code: "MNT", name: "Mantle", symbol: "MNT", sign: "MNT" },
 ];
-
-/* ---------- Popup and UI creation (kept your original structure) ---------- */
 
 function createCurrencyPopup() {
   if (document.getElementById("currencyPopup")) return;
@@ -2279,7 +2201,7 @@ function createCurrencyPopup() {
   currencies.forEach(c => {
     const li = document.createElement("li");
     li.innerHTML = `<span class="symbol">${c.symbol}</span> <span class="name">${c.name}</span>`;
-    // <- patched click handler: triggers atomic conversion + apply
+
     li.addEventListener("click", async () => {
       try {
         await selectCurrencyWithAtomicConversion(c);
@@ -2324,7 +2246,6 @@ function closeCurrencyPopup() {
   }
 }
 
-/* ---------- Helper: apply currency to UI (updates text + data attributes) ---------- */
 function applyCurrencyToUI(currency) {
   if (!currency || !currency.code) return;
 
@@ -2351,15 +2272,12 @@ function applyCurrencyToUI(currency) {
   });
 }
 
-/* ---------- CurrencyBeacon + conversion implementation ---------- */
-
 const CURRENCYBEACON_API_KEY = "9RguthE8FO8RDbBbnOYbH19Icd0U3z6Y";
 const CB_BASE = "https://api.currencybeacon.com/v1";
-const DEBUG_CB = true; // set to false to silence logs
+const DEBUG_CB = true;
 
 function _cbLog(...args) { if (DEBUG_CB) console.debug("[CB]", ...args); }
 
-/* Daily cache helpers: cache key includes date so it expires at midnight local time */
 function _todayDateString() {
   const d = new Date();
   const y = d.getFullYear();
@@ -2392,12 +2310,10 @@ function _setCachedRates(base, ratesObj) {
   }
 }
 
-/* Fetch /latest and normalize response shapes into { CODE: rate } */
 async function _fetchLatestRates(base, symbols = []) {
   base = (base || "").toUpperCase();
   if (!base) return { ok: false, reason: "no_base" };
 
-  // Try daily cache first
   const cached = _getCachedRates(base);
   if (cached) {
     _cbLog("Using daily cache for", base);
@@ -2432,7 +2348,6 @@ async function _fetchLatestRates(base, symbols = []) {
     const json = await res.json();
     _cbLog("latest response for base", base, json);
 
-    // Normalize many possible shapes
     let rates = {};
     if (json.rates && typeof json.rates === "object") {
       Object.keys(json.rates).forEach(k => { rates[k.toUpperCase()] = Number(json.rates[k]); });
@@ -2462,7 +2377,6 @@ async function _fetchLatestRates(base, symbols = []) {
   }
 }
 
-/* Fallback: /convert endpoint for single-pair conversion */
 async function _fetchConvertPair(from, to, amount = 1) {
   const url = new URL(`${CB_BASE}/convert`);
   url.searchParams.set("from", from);
@@ -2496,21 +2410,18 @@ async function _fetchConvertPair(from, to, amount = 1) {
   }
 }
 
-/* Resolve rate FROM -> TO. Try (1) latest base=FROM, (2) latest base=TO and invert, (3) convert endpoint */
 async function resolveRate(from, to) {
   from = (from || "").toUpperCase();
   to = (to || "").toUpperCase();
   if (!from || !to) return null;
   if (from === to) return 1;
 
-  // 1) base = from
   const a = await _fetchLatestRates(from, [to]);
   if (a.ok && a.rates && typeof a.rates[to] === "number") {
     _cbLog(`Rate ${from}->${to} via base ${from}`, a.rates[to]);
     return Number(a.rates[to]);
   }
 
-  // 2) base = to, invert
   const b = await _fetchLatestRates(to, [from]);
   if (b.ok && b.rates && typeof b.rates[from] === "number" && b.rates[from] !== 0) {
     const inv = 1 / Number(b.rates[from]);
@@ -2518,7 +2429,6 @@ async function resolveRate(from, to) {
     return inv;
   }
 
-  // 3) fallback convert endpoint
   const c = await _fetchConvertPair(from, to, 1);
   if (c.ok && typeof c.value === "number") {
     _cbLog(`Rate ${from}->${to} via convert`, c.value);
@@ -2529,7 +2439,6 @@ async function resolveRate(from, to) {
   return null;
 }
 
-/* ---------- Helper: infer currency code from symbol if possible ---------- */
 function inferCurrencyCodeFromSymbol(symbol) {
   if (!symbol) return null;
   if (!inferCurrencyCodeFromSymbol._map) {
@@ -2546,12 +2455,10 @@ function inferCurrencyCodeFromSymbol(symbol) {
   return arr.length === 1 ? arr[0] : null;
 }
 
-/* ---------- convertCapturedItemsToTargetCurrency (used by selectCurrency) ---------- */
 async function convertCapturedItemsToTargetCurrency(targetCurrency, items) {
   if (!targetCurrency || !targetCurrency.code) return { success: false, reason: "no_target" };
   const targetCode = targetCurrency.code.toUpperCase();
 
-  // Group items by source code
   const groups = {};
   for (const it of items) {
     const src = (it.srcCode || "").toUpperCase() || null;
@@ -2562,7 +2469,6 @@ async function convertCapturedItemsToTargetCurrency(targetCurrency, items) {
 
   if (Object.keys(groups).length === 0) return { success: true, converted: 0 };
 
-  // Resolve rates once per source
   const resolved = {};
   for (const src of Object.keys(groups)) {
     const rate = await resolveRate(src, targetCode);
@@ -2572,7 +2478,6 @@ async function convertCapturedItemsToTargetCurrency(targetCurrency, items) {
     resolved[src] = rate;
   }
 
-  // Apply conversions
   let convertedCount = 0;
   for (const src of Object.keys(groups)) {
     const rate = resolved[src];
@@ -2587,16 +2492,13 @@ async function convertCapturedItemsToTargetCurrency(targetCurrency, items) {
   return { success: true, converted: convertedCount };
 }
 
-/* ---------- convertAllInputsToTargetCurrency (backwards-compatible bulk converter) ---------- */
 async function convertAllInputsToTargetCurrency(targetCurrency) {
-  // This function inspects DOM, captures source codes & numeric amounts,
-  // then delegates to convertCapturedItemsToTargetCurrency
+
   if (!targetCurrency || !targetCurrency.code) return { success: false, reason: "no_target" };
 
   const wrappers = Array.from(document.querySelectorAll(".currency-or-unit-input"));
   const captured = [];
 
-  // fallback saved selected code
   let savedSelectedCode = null;
   try {
     const saved = localStorage.getItem("selectedCurrency");
@@ -2626,7 +2528,6 @@ async function convertAllInputsToTargetCurrency(targetCurrency) {
     }
   }
 
-  // items to actually convert:
   const itemsToConvert = captured
     .filter(it => it.shouldConvert && it.amount !== null)
     .map(it => ({ span: it.span, input: it.input, srcCode: it.srcCode, amount: it.amount }));
@@ -2636,15 +2537,14 @@ async function convertAllInputsToTargetCurrency(targetCurrency) {
   return convertCapturedItemsToTargetCurrency(targetCurrency, itemsToConvert);
 }
 
-/* ---------- Replacement selectCurrencyWithAtomicConversion (stable) ---------- */
 async function selectCurrencyWithAtomicConversion(currency) {
   if (!currency || !currency.code) return;
 
   const targetCode = currency.code.toUpperCase();
 
-  // collect wrappers and capture source codes/amounts BEFORE changing UI
   const wrappers = Array.from(document.querySelectorAll(".currency-or-unit-input"));
-  const capturedItems = []; // { span, input, srcCode, amount, shouldConvert }
+  const capturedItems = [];
+  
   let savedSelectedCode = null;
   try {
     const saved = localStorage.getItem("selectedCurrency");
@@ -2672,26 +2572,22 @@ async function selectCurrencyWithAtomicConversion(currency) {
     }
   }
 
-  // Start visual flash (opacity animation) on spans
   const spans = document.querySelectorAll(
     ".symbol,.currency-or-unit-display, .naira-to-selected-currency-car-custom-duty, .currency-display-for-expanded-results, .currency-display-for-tooltip"
   );
   spans.forEach(s => s.classList.add("currency-flash"));
 
-  // Immediately update UI and persist selection
   applyCurrencyToUI(currency);
   try { localStorage.setItem("selectedCurrency", JSON.stringify(currency)); } catch (e) { console.warn("save fail", e); }
 
   document.body.classList.add("converting");
 
   try {
-    // Prepare items needing conversion
     const itemsToConvert = capturedItems
       .filter(it => it.shouldConvert && it.amount !== null)
       .map(it => ({ span: it.span, input: it.input, srcCode: it.srcCode, amount: it.amount }));
 
     if (itemsToConvert.length === 0) {
-      // nothing to convert; succeed fast
       return;
     }
 
@@ -2700,11 +2596,9 @@ async function selectCurrencyWithAtomicConversion(currency) {
     if (!convResult.success) {
       console.warn("Conversion aborted:", convResult);
       showMessage("Currency conversion failed")
-      //alert("Currency conversion failed");
       return;
     }
 
-    // success: converted inputs already applied
   } catch (err) {
     console.error("Conversion error:", err);
     alert("Currency conversion failed");
@@ -2716,7 +2610,6 @@ async function selectCurrencyWithAtomicConversion(currency) {
   }
 }
 
-/* ---------- loadSavedCurrency (set UI and data attributes on load) ---------- */
 function loadSavedCurrency() {
   const saved = localStorage.getItem("selectedCurrency");
   if (saved) {
@@ -2729,7 +2622,6 @@ function loadSavedCurrency() {
     }
   }
 
-  // If no saved currency, try to seed dataset currency codes where unique
   const allSymbols = {};
   currencies.forEach(c => {
     if (!allSymbols[c.symbol]) allSymbols[c.symbol] = [];
@@ -2743,7 +2635,6 @@ function loadSavedCurrency() {
   });
 }
 
-/* ---------- DOM Ready wiring (keeps your tooltip behavior) ---------- */
 document.addEventListener("DOMContentLoaded", () => {
   loadSavedCurrency();
   document.querySelectorAll(".currency-select-svg").forEach(svg => {
@@ -2771,7 +2662,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-/* ---------- Expose helpers for debugging in console if needed ---------- */
 window._cbResolveRate = resolveRate;
 window._cbConvertAll = convertAllInputsToTargetCurrency;
 window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;

@@ -599,14 +599,14 @@ Everyday Life
 
 <script defer crossorigin="anonymous">
  (function () {
-  // CONFIG: toggle which inputs are allowed to be reverse-calculated
+  
   const config = {
     reversible: {
-      dosage: true,           // default: true
-      waterVolume: false,     // default: false (change to true if you want it reversible)
-      sprayerCapacity: true   // default: true
+      dosage: true, 
+      waterVolume: false,   
+      sprayerCapacity: true
     },
-    // priority order used when multiple reversible candidates exist (higher index -> lower priority)
+
     priority: ['dosage', 'sprayerCapacity', 'waterVolume']
   };
 
@@ -637,7 +637,6 @@ Everyday Life
     return isNaN(n) ? null : n;
   }
 
-  // Formula: H = 10 * D * S / W
   function computeH(D, W, S) {
     if (!W || W === 0) return null;
     return (10 * D * S) / W;
@@ -660,7 +659,6 @@ Everyday Life
     return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  // returns array of reversible input ids in config priority order
   function reversibleInPriority() {
     return config.priority.filter(id => id !== 'volumeOfHerbicide' && !!config.reversible[id]);
   }
@@ -677,7 +675,6 @@ Everyday Life
       return;
     }
 
-    // normal mode: if user last edited anything other than H -> try to compute H if we have D,W,S
     if (lastEditedId !== 'volumeOfHerbicide') {
       if (D !== null && W !== null && S !== null) {
         const newH = computeH(D, W, S);
@@ -685,7 +682,6 @@ Everyday Life
         inputs.volumeOfHerbicide.value = formatNumber(newH);
         programmaticUpdate = false;
       } else {
-        // incomplete -> clear H so primary output isn't misleading
         programmaticUpdate = true;
         inputs.volumeOfHerbicide.value = '';
         programmaticUpdate = false;
@@ -693,15 +689,11 @@ Everyday Life
       return;
     }
 
-    // If user edited H directly -> back-calc a reversible input that is missing or to re-sync inconsistent values.
-    // Candidate reversible inputs in priority order
     const candidates = reversibleInPriority();
     const vals = { dosage: D, waterVolume: W, sprayerCapacity: S, volumeOfHerbicide: H };
 
-    // If exactly two of D/W/S are present and the third is missing AND that missing field is reversible -> compute it
     const presentCount = ['dosage','waterVolume','sprayerCapacity'].map(k => vals[k] !== null).filter(Boolean).length;
     if (presentCount === 2 && H !== null) {
-      // find the missing field
       const missing = ['dosage','waterVolume','sprayerCapacity'].find(k => vals[k] === null);
       if (missing && config.reversible[missing]) {
         let computed = null;
@@ -720,17 +712,12 @@ Everyday Life
       return;
     }
 
-    // If all three D/W/S present (or more than two present) -> check consistency.
-    // If inconsistent, recompute the oldest reversible input (least recently edited) among the three,
-    // but only if that oldest input is configured reversible. This mirrors Omni’s behavior of picking fields that “need” recalculation.
     if (D !== null && W !== null && S !== null && H !== null) {
-      // compute what H should be from D/W/S
       const expectedH = computeH(D, W, S);
       const epsilon = 1e-6;
       if (expectedH !== null && Math.abs(expectedH - H) / Math.max(1, Math.abs(expectedH)) > epsilon) {
-        // inconsistent -> find oldest reversible field
         const reversibleFields = ['dosage','waterVolume','sprayerCapacity'].filter(f => config.reversible[f]);
-        // sort those by lastEditedAt ascending (oldest first)
+        
         reversibleFields.sort((a,b) => (lastEditedAt[a] || 0) - (lastEditedAt[b] || 0));
         const toRecalc = reversibleFields.find(Boolean);
         if (toRecalc) {
@@ -751,11 +738,8 @@ Everyday Life
       return;
     }
 
-    // If user edited H but there is insufficient data (less than two of D/W/S present) -> do nothing but not clear fields.
-    // This avoids surprising the user by overwriting measured inputs.
   }
 
-  // event wiring
   ids.forEach(id => {
     const el = inputs[id];
     if (!el) return;
@@ -773,7 +757,6 @@ Everyday Life
     });
   });
 
-  // initial calculate on load
   window.addEventListener('load', calculateResults);
 })(); 
 </script>
