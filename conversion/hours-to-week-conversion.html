@@ -541,13 +541,7 @@ document.addEventListener("DOMContentLoaded", function () {
     minutesResult.value = formatNumber(minutes);
     secondsResult.value = formatNumber(seconds);
   }
-
-  function markAsResult(elements) {
-    elements.forEach(el => {
-      el.classList.add("result");
-    });
-  }
-
+  
   hoursInput.addEventListener("input", function () {
     if (this.value.trim() === "") {
       weeksInput.value = "";

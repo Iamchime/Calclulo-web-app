@@ -2447,3 +2447,7 @@ window._cbConvertAll = convertAllInputsToTargetCurrency;
 window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
 
 /**********************************************************/
+
+/************************************** output group function *********/
+
+/**********************************************************/

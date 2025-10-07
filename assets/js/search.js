@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
       item.tool.toLowerCase().includes(query) ||
       item.category.toLowerCase().includes(query) ||
       item.relatedKeywords.some(k => k.toLowerCase().includes(query))
-    ).slice(0, 8);
+    ).slice(0, 11);
     if (matches.length === 0) {
       resultsDiv.innerHTML = `<p id="no-results-found-p">No results found</p>`;
       return;

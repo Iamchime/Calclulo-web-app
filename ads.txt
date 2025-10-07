@@ -1,3 +1,1 @@
 google.com, pub-2591132603322349, DIRECT, f08c47fec0942fa0
-
-ezoic.com, <your_ezoic_publisher_account_id>, DIRECT, f08c47fec0942fa0

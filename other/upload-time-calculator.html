@@ -12,14 +12,14 @@
 
 <link rel="stylesheet" href="/assets/css/calculators-styles-global.css" />
 
-<meta name="description" content="">
+<meta name="description" content="Calculate how long your file upload will take.">
 
 <link rel="canonical" href="https://calclulo.com/other/upload-time-calculator">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://calclulo.com/other/upload-time-calculator">
 <meta property="og:title" content="Upload Time Calculator">
-<meta property="og:description" content="">
+<meta property="og:description" content="Calculate how long your file upload will take.">
 <meta property="og:image" content="https://calclulo.com/assets/images/thumbnail-global.png">
 
 <link href="/favicons/favicon.png" rel="icon" sizes="48x48"> <link href="/favicons/favicon-128.png" rel="icon" sizes="128x128"> <link href="/favicons/favicon-192.png" rel="icon" sizes="192x192">
@@ -30,7 +30,7 @@
     "@type": "WebPage",
     "name": "upload Time Calculator",
     "url": "https://calclulo.com/upload-time-calculator",
-    "description": "",
+    "description": "Calculate how long your file upload will take.",
     "inLanguage": "en",
     "publisher": {
       "@type": "Organization",
@@ -241,7 +241,8 @@ Everyday Life
 <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
     
     </label>
-    <input   inputmode="numeric" pattern="[0-9]*" type="text" id="uploadSpeed">
+    <div class="input-select-wrap">
+    <input inputmode="numeric" pattern="[0-9]*" type="text" id="uploadSpeed">
     <select  id="speedUnit">
       <option value="bps">bps</option>
       <option value="Kbps">Kbps</option>
@@ -256,6 +257,7 @@ Everyday Life
       <option value="min">per minute</option>
       <option value="hr">per hour</option>
     </select>
+    </div>
     <span class="input-tips">Supports flexible speed units like Mbps, Kbps, Kibps with time options (sec, min, hr)</span>
     <div class="input-options">
    <div class="input-options-item">
@@ -379,7 +381,7 @@ Clear all changes
 <article class="description-txt">
    <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">tool</span></h2>
    <p>
-
+Our upload time calculator lets you estimate how long your file upload will take.
    </p>
  </article>
   </section>
@@ -510,21 +512,24 @@ Everyday Life
   const speedInput = document.getElementById("uploadSpeed");
   const speedUnitInput = document.getElementById("speedUnit");
   const timeUnitInput = document.getElementById("timeUnit");
-  ;
+
+  function parseNumber(value) {
+    if (!value) return NaN;
+    // Remove commas and spaces, then parse as float
+    return parseFloat(value.replace(/,/g, '').trim());
+  }
 
   function calculateResults() {
-    const fileSize = parseFloat(fileSizeInput.value);
+    const fileSize = parseNumber(fileSizeInput.value);
     const fileUnit = fileUnitInput.value;
-    const speed = parseFloat(speedInput.value);
+    const speed = parseNumber(speedInput.value);
     const speedUnit = speedUnitInput.value;
     const timeUnit = timeUnitInput.value;
 
-    
     if (isNaN(fileSize) || fileSize <= 0 || isNaN(speed) || speed <= 0) {
-     
-     document.getElementById("hoursResult").value = "";
-  document.getElementById("minutesResult").value = "";
-  document.getElementById("secondsResult").value = "";
+      document.getElementById("hoursResult").value = "";
+      document.getElementById("minutesResult").value = "";
+      document.getElementById("secondsResult").value = "";
       return;
     }
 
@@ -536,19 +541,18 @@ Everyday Life
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = (totalSeconds % 60).toFixed(2);
 
-    
     document.getElementById("hoursResult").value = hours.toLocaleString(undefined, {
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0
-});
-document.getElementById("minutesResult").value = minutes.toLocaleString(undefined, {
-  minimumFractionDigits: 0,
-  maximumFractionDigits: 0
-});
-document.getElementById("secondsResult").value = seconds.toLocaleString(undefined, {
-  minimumFractionDigits: 2,
-  maximumFractionDigits: 2
-});
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+    document.getElementById("minutesResult").value = minutes.toLocaleString(undefined, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+    document.getElementById("secondsResult").value = seconds.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   }
 
   function fileSizeUnitToBits(unit) {
@@ -588,14 +592,12 @@ document.getElementById("secondsResult").value = seconds.toLocaleString(undefine
     return bps;
   }
 
-  
   [fileSizeInput, fileUnitInput, speedInput, speedUnitInput, timeUnitInput].forEach(el => {
     el.addEventListener("input", calculateResults);
-    el.addEventListener("change", calculateResults); 
+    el.addEventListener("change", calculateResults);
   });
-  window.addEventListener("load", () => {
-  calculateResults();
-});
+
+  window.addEventListener("load", calculateResults);
 });
 </script>
 
