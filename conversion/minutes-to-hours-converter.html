@@ -552,72 +552,82 @@ Everyday Life
 
 <script defer crossorigin="anonymous">
   
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function() {
   const minutesEl = document.getElementById("Minutes");
   const hoursEl = document.getElementById("Hours");
   const secondsEl = document.getElementById("Seconds");
-
+  
   const hoursResult = document.getElementById("hoursResult");
   const minutesResult = document.getElementById("minutesResult");
   const secondsResult = document.getElementById("secondsResult");
-
+  
   function cleanNumber(value) {
     return parseFloat(value.replace(/,/g, "")) || 0;
   }
-
+  
   function formatNumber(num, minFraction = 0, maxFraction = 4) {
     return Number(num).toLocaleString("en-US", {
       minimumFractionDigits: minFraction,
       maximumFractionDigits: maxFraction
     });
   }
-
+  
   function resetResultClasses() {
     [hoursResult, minutesResult, secondsResult, hoursEl, minutesEl, secondsEl].forEach(el => {
       el.classList.remove("result");
     });
   }
-
+  
   function fromMinutes() {
     const minutes = cleanNumber(minutesEl.value);
     const hours = minutes / 60;
+    const seconds = minutes * 60;
     const hrs = Math.floor(minutes / 60);
     const mins = Math.floor(minutes % 60);
-
+    const secs = Math.floor((minutes * 60) % 60);
+    
     resetResultClasses();
-
+    
     hoursEl.value = formatNumber(hours, 2, 2);
+    secondsEl.value = formatNumber(seconds, 2, 2);
+    
     hoursEl.classList.add("result");
-
+    secondsEl.classList.add("result");
+    
     hoursResult.value = formatNumber(hrs);
     minutesResult.value = formatNumber(mins);
-    secondsResult.value = "0";
-
+    secondsResult.value = formatNumber(secs);
+    
     hoursResult.classList.add("result");
     minutesResult.classList.add("result");
     secondsResult.classList.add("result");
   }
-
+  
   function fromHours() {
     const hours = cleanNumber(hoursEl.value);
     const minutes = hours * 60;
+    const seconds = hours * 3600;
     const hrs = Math.floor(hours);
     const mins = Math.floor((hours * 60) % 60);
-
+    const secs = Math.floor((hours * 3600) % 60);
+    
     resetResultClasses();
-
+    
     minutesEl.value = formatNumber(minutes, 2, 2);
+    secondsEl.value = formatNumber(seconds, 2, 2);
+    
     minutesEl.classList.add("result");
-
+    secondsEl.classList.add("result");
+    
     hoursResult.value = formatNumber(hrs);
     minutesResult.value = formatNumber(mins);
-    secondsResult.value = "0";
-
+    secondsResult.value = formatNumber(secs);
+    
     hoursResult.classList.add("result");
     minutesResult.classList.add("result");
     secondsResult.classList.add("result");
   }
-
+  
   function fromSeconds() {
     const totalSeconds = cleanNumber(secondsEl.value);
     const hrs = Math.floor(totalSeconds / 3600);
@@ -625,24 +635,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const secs = Math.floor(totalSeconds % 60);
     const minutes = totalSeconds / 60;
     const hours = totalSeconds / 3600;
-
+    
     resetResultClasses();
-
+    
     minutesEl.value = formatNumber(minutes, 2, 2);
     hoursEl.value = formatNumber(hours, 2, 2);
-
+    
     minutesEl.classList.add("result");
     hoursEl.classList.add("result");
-
+    
     hoursResult.value = formatNumber(hrs);
     minutesResult.value = formatNumber(mins);
     secondsResult.value = formatNumber(secs);
-
+    
     hoursResult.classList.add("result");
     minutesResult.classList.add("result");
     secondsResult.classList.add("result");
   }
-
+  
   minutesEl.addEventListener("input", fromMinutes);
   hoursEl.addEventListener("input", fromHours);
   secondsEl.addEventListener("input", fromSeconds);
