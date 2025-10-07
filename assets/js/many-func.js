@@ -992,8 +992,338 @@ document.addEventListener("DOMContentLoaded", () => {
   
   });  
 });
+/***************************************/
 
+/******************** animating output ******************/
+/**
+ * Robust programmatic-change monitor (handles formatter functions)
+ *
+ * - Waits until window.load.
+ * - Normalizes formatted numeric strings (commas, spaces, currency symbols,
+ *   ArabicIndic digits, NBSP, thin spaces, parentheses negative, percent, exponent).
+ * - Compares numbers with epsilon.
+ * - Runs scan after microtask + rAF to allow synchronous formatters to finish.
+ * - Only clears "result" highlights from other fields if at least one programmatic
+ *   change occurred this round.
+ *
+ * Usage: include as-is. To scope to your calculator container:
+ *   startMonitor(document.querySelector('.calculator'));
+ */
 
+(function () {
+  // ---------- CONFIG ----------
+  const RESULT_CLASS = "result";
+  const FLASH_CLASS = "result-flash";
+  const FLASH_MS = 160;
+  const USER_INTERACTION_WINDOW_MS = 800;
+  const NUM_EPSILON = 1e-9;
+
+  // ---------- Helpers ----------
+  const isControl = (el) => el && el.tagName && ["INPUT", "SELECT", "TEXTAREA"].includes(el.tagName);
+
+  // Convert Arabic-Indic / Persian digits to ASCII
+  const digitMap = (() => {
+    const map = Object.create(null);
+    // Arabic-Indic ٠١٢٣٤٥٦٧٨٩ U+0660..U+0669
+    for (let i = 0; i <= 9; i++) map[String.fromCharCode(0x0660 + i)] = String(i);
+    // Extended Arabic-Indic (Persian) ۰۱۲۳۴۵۶۷۸۹ U+06F0..U+06F9
+    for (let i = 0; i <= 9; i++) map[String.fromCharCode(0x06F0 + i)] = String(i);
+    return map;
+  })();
+
+  function mapDigits(s) {
+    if (!s || !s.split) return s;
+    let out = "";
+    for (let ch of s) out += (ch in digitMap ? digitMap[ch] : ch);
+    return out;
+  }
+
+  // Try parse a formatted string into a Number (or return null)
+  function tryParseNumericString(raw) {
+    if (raw == null) return null;
+    let s = String(raw).trim();
+    if (s === "") return null;
+
+    // Map exotic digits first
+    s = mapDigits(s);
+
+    // Replace common minus char variants with ASCII minus
+    s = s.replace(/\u2212/g, "-"); // unicode minus
+
+    // Remove common whitespace (NBSP U+00A0, narrow NBSP U+202F, thin U+2009, regular \s)
+    s = s.replace(/[\u00A0\u202F\u2009\u2007\u2008]/g, "").replace(/\s+/g, "");
+
+    // handle parentheses negative e.g. (123.45)
+    let negative = false;
+    if (/^\(.+\)$/.test(s)) {
+      negative = true;
+      s = s.slice(1, -1).trim();
+    }
+
+    // percentage
+    let isPercent = false;
+    if (s.endsWith("%")) {
+      isPercent = true;
+      s = s.slice(0, -1).trim();
+    }
+
+    // Remove any currency symbols/letters except digits, dot, comma, sign, exponent letter e/E, parentheses, +,-
+    // Keep only characters useful for numeric parsing
+    // Allow: digits 0-9, '.', ',', '+', '-', 'e', 'E'
+    s = s.replace(/[^0-9\.\,\+\-eE]/g, "");
+
+    if (s === "" || s === "+" || s === "-" || s === "." || s === "," ) return null;
+
+    // If both '.' and ',' are present decide which is decimal by last occurrence
+    if (s.includes(".") && s.includes(",")) {
+      if (s.lastIndexOf(",") > s.lastIndexOf(".")) {
+        // comma is decimal -> remove dots (thousands), replace comma with dot
+        s = s.replace(/\./g, "").replace(/,/g, ".");
+      } else {
+        // dot is decimal -> remove commas
+        s = s.replace(/,/g, "");
+      }
+    } else if (s.includes(",") && !s.includes(".")) {
+      // one comma only: guess decimal if fractional part length reasonable (<= 3), otherwise remove commas (thousands)
+      const parts = s.split(",");
+      if (parts.length === 2 && parts[1].length <= 3) {
+        s = parts[0] + "." + parts[1];
+      } else {
+        s = s.replace(/,/g, "");
+      }
+    } // else only dots or neither -> ok
+
+    // Final simple numeric pattern allowed (with exponent)
+    if (!/^[-+]?\d+(\.\d+)?([eE][-+]?\d+)?$/.test(s)) return null;
+
+    const n = Number(s);
+    if (!isFinite(n) || Number.isNaN(n)) return null;
+    let final = n;
+    if (negative) final = -final;
+    if (isPercent) final = final / 100;
+    return final;
+  }
+
+  // canonical comparable object for an element's value:
+  // { k: 'num', v: Number } or { k: 'str', v: String } or { k: 'other', v: String }
+  function toComparable(el) {
+    if (!el) return { k: "str", v: "" };
+    const tag = el.tagName && el.tagName.toLowerCase();
+    const type = (el.type || "").toLowerCase();
+
+    if (type === "checkbox") return { k: "other", v: `checkbox:${el.checked ? "1" : "0"}` };
+    if (type === "radio") return { k: "other", v: `radio:${el.checked ? "1" : "0"}|${el.name || ""}|${el.value || ""}` };
+    if (tag === "select" && el.multiple) {
+      return { k: "other", v: Array.from(el.options).filter(o => o.selected).map(o => o.value).join("|") };
+    }
+    if (tag === "select") return { k: "other", v: `select:${el.value ?? ""}` };
+    if (type === "file") return { k: "other", v: `files:${el.files ? el.files.length : 0}` };
+
+    // attempt numeric parse first
+    const raw = String(el.value ?? "");
+    const num = tryParseNumericString(raw);
+    if (num !== null) return { k: "num", v: num };
+    // fallback to trimmed string
+    return { k: "str", v: raw.trim() };
+  }
+
+  // Compare two comparable objects for equality (numbers with epsilon)
+  function compsEqual(a, b) {
+    if (!a || !b) return false;
+    if (a.k === "num" && b.k === "num") {
+      const na = a.v, nb = b.v;
+      if (Object.is(na, nb)) return true;
+      const diff = Math.abs(na - nb);
+      const tol = NUM_EPSILON * Math.max(1, Math.abs(na), Math.abs(nb));
+      return diff <= tol;
+    }
+    if (a.k === "num" && b.k === "str") {
+      const p = tryParseNumericString(b.v);
+      return p === null ? false : compsEqual(a, { k: "num", v: p });
+    }
+    if (a.k === "str" && b.k === "num") {
+      const p = tryParseNumericString(a.v);
+      return p === null ? false : compsEqual({ k: "num", v: p }, b);
+    }
+    // otherwise string/other exact compare
+    return a.k === b.k && String(a.v) === String(b.v);
+  }
+
+  const collect = (root = document) => Array.from(root.querySelectorAll("input, select, textarea"));
+  const now = () => Date.now();
+
+  // ---------- State ----------
+  const lastValues = new WeakMap();           // el -> comparable
+  const lastUserInteraction = new WeakMap();  // el -> timestamp
+  const flashTimers = new WeakMap();          // el -> timer id
+  const flaggedValue = new WeakMap();         // el -> comparable when flagged
+  let scanScheduled = false;
+  let pendingEventTargets = new Set();        // set of event targets that caused scheduleScan
+
+  // Mark user interaction on an element
+  function markUser(el) {
+    if (!isControl(el)) return;
+    lastUserInteraction.set(el, now());
+  }
+  function isRecentUserInteraction(el) {
+    const t = lastUserInteraction.get(el) || 0;
+    return (now() - t) <= USER_INTERACTION_WINDOW_MS;
+  }
+
+  // Flash then persistent flag
+  function flashThenFlag(el, compObj) {
+    const prevTimer = flashTimers.get(el);
+    if (prevTimer) {
+      clearTimeout(prevTimer);
+      flashTimers.delete(el);
+    }
+    el.classList.add(FLASH_CLASS);
+    el.classList.remove(RESULT_CLASS);
+    const t = setTimeout(() => {
+      el.classList.remove(FLASH_CLASS);
+      el.classList.add(RESULT_CLASS);
+      flashTimers.delete(el);
+    }, FLASH_MS);
+    flashTimers.set(el, t);
+    flaggedValue.set(el, compObj);
+  }
+
+  function clearHighlight(el) {
+    if (!isControl(el)) return;
+    el.classList.remove(RESULT_CLASS, FLASH_CLASS);
+    const t = flashTimers.get(el);
+    if (t) { clearTimeout(t); flashTimers.delete(el); }
+    flaggedValue.delete(el);
+    lastValues.set(el, toComparable(el));
+  }
+
+  // ---------- Core scan ----------
+  function scanAndUpdate(root = document) {
+    scanScheduled = false;
+    const els = collect(root);
+
+    // 1) find which elements actually changed (using compsEqual)
+    const changedThisRound = new Set();
+    els.forEach(el => {
+      const prev = lastValues.has(el) ? lastValues.get(el) : toComparable(el);
+      const cur = toComparable(el);
+      if (!compsEqual(prev, cur)) changedThisRound.add(el);
+    });
+
+    // 2) if nothing changed, do nothing (avoid clears on mere focus/blur)
+    if (changedThisRound.size === 0) {
+      els.forEach(el => lastValues.set(el, toComparable(el)));
+      pendingEventTargets.clear();
+      return;
+    }
+
+    // 3) detect if there is at least one programmatic change this round
+    const hasProgrammaticChange = Array.from(changedThisRound).some(el => !isRecentUserInteraction(el));
+
+    // 4) apply logic
+    els.forEach(el => {
+      const prev = lastValues.has(el) ? lastValues.get(el) : toComparable(el);
+      const cur = toComparable(el);
+
+      if (changedThisRound.has(el)) {
+        // this element changed value this round
+        if (isRecentUserInteraction(el) && !hasProgrammaticChange) {
+          // user changed it and no programmatic changes elsewhere -> user owns it: clear its highlight only
+          if (el.classList.contains(RESULT_CLASS) || el.classList.contains(FLASH_CLASS)) {
+            clearHighlight(el);
+          }
+        } else if (!isRecentUserInteraction(el)) {
+          // programmatic change -> flash & flag (re-flash if already flagged)
+          flashThenFlag(el, cur);
+        } else {
+          // mixed case: user changed this element but there are also programmatic changes elsewhere.
+          // user owned element -> clear its highlight (user intent)
+          if (el.classList.contains(RESULT_CLASS) || el.classList.contains(FLASH_CLASS)) {
+            clearHighlight(el);
+          }
+        }
+      } else {
+        // element did NOT change this round
+        // Only remove highlights from these elements if there was at least one programmatic change somewhere.
+        if (hasProgrammaticChange) {
+          if (el.classList.contains(RESULT_CLASS) || el.classList.contains(FLASH_CLASS)) {
+            clearHighlight(el);
+          }
+        } else {
+          // no programmatic changes -> preserve highlights (user-only changes shouldn't wipe others)
+        }
+      }
+    });
+
+    // 5) update snapshot
+    els.forEach(el => lastValues.set(el, toComparable(el)));
+    pendingEventTargets.clear();
+  }
+
+  // schedule scan: wait until microtask + next animation frame so synchronous formatters can finish.
+  function scheduleScan(root = document, sourceEl = null) {
+    if (sourceEl && isControl(sourceEl)) pendingEventTargets.add(sourceEl);
+
+    if (scanScheduled) return;
+    scanScheduled = true;
+
+    // microtask -> rAF -> run scan; this is fast but lets synchronous/rAF formatters complete
+    Promise.resolve().then(() => {
+      requestAnimationFrame(() => {
+        scanAndUpdate(root);
+      });
+    });
+  }
+
+  // ---------- Event listeners ----------
+  function installUserInteractionListeners(root = document) {
+    const userEvents = ["keydown", "keypress", "input", "paste", "pointerdown", "mousedown", "touchstart"];
+    userEvents.forEach(ev => {
+      root.addEventListener(ev, (e) => {
+        const t = e.target;
+        if (isControl(t)) markUser(t);
+      }, { capture: true, passive: true });
+    });
+  }
+
+  function installChangeListeners(root = document) {
+    const changeEvents = ["input", "change"];
+    changeEvents.forEach(ev => {
+      root.addEventListener(ev, (e) => {
+        const t = e.target;
+        if (isControl(t)) markUser(t);
+        scheduleScan(root, t);
+      }, true);
+    });
+    // helpful: if your formatter runs asynchronously and you can edit it, dispatch 'valuechange' after formatting
+    root.addEventListener("valuechange", (e) => scheduleScan(root, e && e.target), true);
+  }
+
+  function onFocus(e) {
+    const el = e.target;
+    if (!isControl(el)) return;
+    if (el.classList.contains(RESULT_CLASS) || el.classList.contains(FLASH_CLASS)) {
+      clearHighlight(el);
+    }
+    markUser(el);
+  }
+
+  function startMonitor(root = document) {
+    // initial snapshot
+    collect(root).forEach(el => lastValues.set(el, toComparable(el)));
+    installUserInteractionListeners(root);
+    installChangeListeners(root);
+    document.addEventListener("focus", onFocus, true);
+  }
+
+  // ---------- boot ----------
+  window.addEventListener("load", () => {
+    // For performance you can scope this to your calculator container:
+    // startMonitor(document.querySelector('.calculator'));
+    startMonitor(document);
+  });
+})();
+/***********************************/
 
 /*************************************** long press to copy  tooltip *******************************/
  

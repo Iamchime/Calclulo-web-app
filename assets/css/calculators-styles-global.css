@@ -619,11 +619,6 @@ padding: 5px;
   outline: none;
   width: 100%;
   font-family: zalando;
-}
-.input-group input.result,
-.input-group select.result,
-.input-group textarea.result {
-  color: #464BFF;
   transition: .3s;
 }
 .input-group input[type="date"] {
@@ -842,6 +837,21 @@ border: none;
   display: flex;
   gap: .5em;
   flex-basis: 50%;
+}
+.input-group input.result,
+.input-group select.result,
+.input-group textarea.result {
+  color: #464BFF!important;
+}
+/* Flash animation — short pop */
+.result-flash {
+  animation: popFlash 160ms ease-out;
+}
+
+@keyframes popFlash {
+  0%   { transform: scale(0.98);  }
+  40%  { transform: scale(1.02);  }
+  100% { transform: scale(1);}
 }
 /******************************/
 
