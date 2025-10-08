@@ -8,8 +8,8 @@ let isNavOpen = false;
 let isAnimating = false;
 
 function openNav() {
-  if (isNavOpen || isAnimating) return; // Prevent if already open or animating
-
+  if (isNavOpen || isAnimating) return;
+  
   isAnimating = true;
   nav.classList.add("active");
   document.body.classList.add("no-scroll");
@@ -19,18 +19,15 @@ function openNav() {
     overlay.classList.add("overlay");
     document.body.appendChild(overlay);
 
-    // Click outside closes nav
     overlay.addEventListener("click", closeNav);
   }
 
-  // Use requestAnimationFrame for fade-in
   requestAnimationFrame(() => {
     overlay.classList.add("visible");
   });
 
   isNavOpen = true;
 
-  // Wait for fade-in transition to complete before allowing another toggle
   overlay.addEventListener(
     "transitionend",
     () => {
@@ -41,7 +38,7 @@ function openNav() {
 }
 
 function closeNav() {
-  if (!isNavOpen || isAnimating) return; // Prevent if already closed or animating
+  if (!isNavOpen || isAnimating) return;
 
   isAnimating = true;
   nav.classList.remove("active");
@@ -50,7 +47,6 @@ function closeNav() {
   if (overlay) {
     overlay.classList.remove("visible");
 
-    // Remove overlay after fade-out transition
     overlay.addEventListener(
       "transitionend",
       () => {
@@ -78,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const clearBtn = document.querySelector(".clear-search-index");
   let toolsData = [];
   
-  // Fetch keywords.json
   fetch("/assets/keywords.json")
     .then(res => res.json())
     .then(data => {
@@ -86,13 +81,11 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => console.error("Error fetching JSON:", err));
   
-  // Highlight matching text
   const highlightMatch = (text, query) => {
     const regex = new RegExp(`(${query})`, "gi");
     return text.replace(regex, `<mark class="search-highlighted">$1</mark>`);
   };
   
-  // Search Function
   const performSearch = (query) => {
     query = query.trim().toLowerCase();
     searchResults.innerHTML = "";
@@ -102,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
     
-    // Filter tools by tool name, category, or related keywords
     const filtered = toolsData.filter(toolObj => {
       const toolName = toolObj.tool.toLowerCase();
       const category = toolObj.category.toLowerCase();
@@ -137,16 +129,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
     
-    // Show results container
     searchResults.classList.add("active");
   };
   
-  // Input Event
   searchInput.addEventListener("input", (e) => {
     performSearch(e.target.value);
   });
   
-  // Clear Search
   clearBtn.addEventListener("click", () => {
     searchInput.value = "";
     searchResults.innerHTML = "";
@@ -154,7 +143,6 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.focus();
   });
   
-  // Close results on outside click
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".search-wrapper-index") && !e.target.closest(".search-results-index")) {
       searchResults.classList.remove("active");

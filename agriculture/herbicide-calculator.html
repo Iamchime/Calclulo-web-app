@@ -669,7 +669,6 @@ Everyday Life
     const S = parseVal(inputs.sprayerCapacity);
     const H = parseVal(inputs.volumeOfHerbicide);
 
-    // quick validation edgecases
     if ((D !== null && isNaN(D)) || (W !== null && isNaN(W)) || (S !== null && isNaN(S)) || (H !== null && isNaN(H))) {
       showError('Please enter valid numeric values.');
       return;

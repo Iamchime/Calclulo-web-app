@@ -12,7 +12,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const clearBtn = document.querySelector(".clear-search-index");
   let toolsData = [];
   
-  // Fetch keywords.json
   fetch("/assets/keywords.json")
     .then(res => res.json())
     .then(data => {
@@ -20,13 +19,11 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .catch(err => console.error("Error fetching JSON:", err));
   
-  // Highlight matching text
   const highlightMatch = (text, query) => {
     const regex = new RegExp(`(${query})`, "gi");
     return text.replace(regex, `<mark class="search-highlighted">$1</mark>`);
   };
   
-  // Search Function
   const performSearch = (query) => {
     query = query.trim().toLowerCase();
     searchResults.innerHTML = "";
@@ -35,8 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
       searchResults.classList.remove("active");
       return;
     }
-    
-    // Filter tools by tool name, category, or related keywords
+  
     const filtered = toolsData.filter(toolObj => {
       const toolName = toolObj.tool.toLowerCase();
       const category = toolObj.category.toLowerCase();
@@ -71,16 +67,13 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
     
-    // Show results container
     searchResults.classList.add("active");
   };
   
-  // Input Event
   searchInput.addEventListener("input", (e) => {
     performSearch(e.target.value);
   });
   
-  // Clear Search
   clearBtn.addEventListener("click", () => {
     searchInput.value = "";
     searchResults.innerHTML = "";
@@ -88,7 +81,6 @@ document.addEventListener("DOMContentLoaded", () => {
     searchInput.focus();
   });
   
-  // Close results on outside click
   document.addEventListener("click", (e) => {
     if (!e.target.closest(".search-wrapper-index") && !e.target.closest(".search-results-index")) {
       searchResults.classList.remove("active");
@@ -98,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-/*****************/
+/****************************/
 
   fetch('/assets/keywords.json')
     .then(res => res.json())
@@ -110,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log(`#${index + 1}: ${toolObj.tool}`);
       });
     })
-    .catch(err => console.error("❌ Error loading JSON:", err));
+    .catch(err => console.error(" Error loading JSON:", err));
 
 /***************************** cookie management 
  **************************/

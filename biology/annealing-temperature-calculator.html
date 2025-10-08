@@ -541,7 +541,7 @@ Everyday Life
 
 <script defer crossorigin="anonymous">
   (function () {
-  // Elements (defensive)
+  
   const primerInput = document.getElementById("PrimerMeltingTemperature");
   const primerUnit = document.getElementById("PrimerMeltingtemperatureUnit");
 
@@ -556,21 +556,19 @@ Everyday Life
     return;
   }
 
-  // --- CONFIG (Omni-like) ---
   const reverseConfig = {
     reversible: { primer: true, target: true },
-    boundsC: { min: -50, max: 150 },    // sanity bounds in Celsius
-    strategy: "top-to-bottom",          // 'top-to-bottom' | 'bottom-to-top' | 'nearest' (we use top-to-bottom to match Omni)
+    boundsC: { min: -50, max: 150 },
+    strategy: "top-to-bottom",
+    
     relativeTolerance: 1e-6
   };
 
-  // --- State ---
   let programmatic = false;
-  let transactionLock = false;   // prevents concurrent write transactions
-  let lastEditedId = null;       // 'primer' | 'target' | 'anneal'
+  let transactionLock = false;
+  let lastEditedId = null;       
   let rafScheduled = false;
 
-  // UI hooks (optional): .calc-hint / .calc-error elements will display messages if present
   function showHint(msg) {
     const el = document.querySelector(".calc-hint");
     if (el) { el.textContent = msg; el.style.display = msg ? "block" : "none"; }
@@ -582,7 +580,6 @@ Everyday Life
     else if (msg) console.warn("Error:", msg);
   }
 
-  // --- Numeric & unit helpers ---
   function parseNumber(s) {
     if (s === null || s === undefined) return null;
     const t = String(s).replace(/[,\s]/g, "").trim();
@@ -620,7 +617,6 @@ Everyday Life
     }
   }
 
-  // safe write (does not mark as user edit)
   function safeSetValue(inputEl, numericValue) {
     if (!inputEl) return;
     programmatic = true;
@@ -634,19 +630,16 @@ Everyday Life
     return (valC < min || valC > max) ? null : valC;
   }
 
-  // forward formula
   function computeAnnealFrom(primerC, targetC) {
     return 0.3 * primerC + 0.7 * targetC - 14.9;
   }
 
-  // schedule forward calc via rAF to avoid thrash while typing
   function scheduleCalc() {
     if (rafScheduled) return;
     rafScheduled = true;
     requestAnimationFrame(() => { rafScheduled = false; calculateAnnealingTemperature(); });
   }
 
-  // --- FORWARD calc ---
   function calculateAnnealingTemperature() {
     showError(""); showHint("");
     if (!primerInput || !targetInput || !annealInput) return;
@@ -666,16 +659,14 @@ Everyday Life
     safeSetValue(annealInput, fromCelsius(aC, annealUnit ? annealUnit.value : "Celsius"));
   }
 
-  // --- Helper: pick a single candidate when both primer & target exist ---
   function chooseCandidateWhenBoth(primerEl, targetEl, annealEl) {
     const candidates = [];
     if (reverseConfig.reversible.primer && primerEl) candidates.push({ id: 'primer', el: primerEl });
     if (reverseConfig.reversible.target && targetEl) candidates.push({ id: 'target', el: targetEl });
     if (candidates.length === 0) return null;
 
-    // Use DOM order top-to-bottom or bottom-to-top as configured.
     function isBefore(a, b) {
-      // true if 'a' comes before 'b' in document order
+    
       return !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
     }
 
@@ -684,19 +675,16 @@ Everyday Life
     } else if (reverseConfig.strategy === "bottom-to-top") {
       candidates.sort((A, B) => isBefore(A.el, B.el) ? 1 : -1);
     } else {
-      // fallback: top-to-bottom
+      
       candidates.sort((A, B) => isBefore(A.el, B.el) ? -1 : 1);
     }
 
-    // preserve recent user intent: if the winner is the field the user last edited,
-    // prefer the other candidate if available.
     if (candidates.length > 1 && lastEditedId) {
       if (candidates[0].id === lastEditedId && candidates[1]) return candidates[1].id;
     }
     return candidates[0].id;
   }
 
-  // --- BACKSOLVE: single-field transaction, Omni-style ---
   function backsolveFromAnneal() {
     showError(""); showHint("");
     if (!annealInput) return;
@@ -710,38 +698,36 @@ Everyday Life
     const pRaw = primerInput ? parseNumber(primerInput.value) : null;
     const tRaw = targetInput ? parseNumber(targetInput.value) : null;
 
-    // Both present -> check consistency; if conflict, pick a single candidate by DOM order + lastEdit-preserve
     if (pRaw !== null && tRaw !== null) {
       const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : "Celsius");
       const tC = toCelsius(tRaw, targetUnit ? targetUnit.value : "Celsius");
       const expectedA = computeAnnealFrom(pC, tC);
       const relDiff = Math.abs(expectedA - aC) / Math.max(1, Math.abs(expectedA));
-      if (relDiff < reverseConfig.relativeTolerance) return; // already consistent
+      if (relDiff < reverseConfig.relativeTolerance) return;
 
       const candidate = chooseCandidateWhenBoth(primerInput, targetInput, annealInput);
       if (!candidate) { showHint("Inconsistent values but no reversible input enabled."); return; }
 
       transactionLock = true;
       if (candidate === 'primer') {
-        // primerC = (annealC + 14.9 - 0.7*targetC)/0.3
+        
         const newPrimerC = (aC + 14.9 - 0.7 * tC) / 0.3;
         const clamped = clampCelsius(newPrimerC);
         if (clamped === null) { transactionLock = false; showError("Calculated primer Tm outside allowed range; not applied."); return; }
         safeSetValue(primerInput, fromCelsius(clamped, primerUnit ? primerUnit.value : "Celsius"));
       } else {
-        // targetC = (annealC + 14.9 - 0.3*primerC)/0.7
+        
         const newTargetC = (aC + 14.9 - 0.3 * pC) / 0.7;
         const clamped = clampCelsius(newTargetC);
         if (clamped === null) { transactionLock = false; showError("Calculated target Tm outside allowed range; not applied."); return; }
         safeSetValue(targetInput, fromCelsius(clamped, targetUnit ? targetUnit.value : "Celsius"));
       }
       transactionLock = false;
-      // re-run forward calc (programmatic writes do not retrigger backsolve)
+      
       calculateAnnealingTemperature();
       return;
     }
 
-    // Exactly one present -> compute the missing one if allowed
     if (pRaw !== null && tRaw === null) {
       if (!reverseConfig.reversible.target) { showHint("Target auto-calc disabled. Enable it in settings."); return; }
       const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : "Celsius");
@@ -771,7 +757,6 @@ Everyday Life
     showHint("Provide at least one primer or target Tm to back-calculate the other.");
   }
 
-  // --- Units: remember prev unit robustly and convert values on unit change ---
   [primerUnit, targetUnit, annealUnit].forEach(sel => {
     if (!sel) return;
     sel.dataset.prevUnit = sel.value;
@@ -791,7 +776,6 @@ Everyday Life
   if (targetUnit) targetUnit.addEventListener("change", () => { const prev = targetUnit.dataset.prevUnit || targetUnit.value; programmatic = true; convertField(targetInput, prev, targetUnit.value); programmatic = false; targetUnit.dataset.prevUnit = targetUnit.value; scheduleCalc(); });
   if (annealUnit) annealUnit.addEventListener("change", () => { const prev = annealUnit.dataset.prevUnit || annealUnit.value; programmatic = true; convertField(annealInput, prev, annealUnit.value); programmatic = false; annealUnit.dataset.prevUnit = annealUnit.value; backsolveFromAnneal(); });
 
-  // --- Wire inputs and mark user-edit timestamps ---
   function wireInput(el, idName) {
     if (!el) return;
     el.removeAttribute && el.removeAttribute("readonly");
@@ -816,7 +800,6 @@ Everyday Life
   wireInput(targetInput, 'target');
   wireInput(annealInput, 'anneal');
 
-  // --- init ---
   document.addEventListener("DOMContentLoaded", () => {
     const hintEl = document.querySelector(".calc-hint"); if (hintEl) hintEl.style.display = "none";
     const errEl = document.querySelector(".calc-error"); if (errEl) errEl.style.display = "none";

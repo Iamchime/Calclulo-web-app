@@ -549,7 +549,7 @@ width: 90%;
     input.addEventListener("change", calculateResults);
   });
   
-  calculateResults(); // initial calculation
+  calculateResults();
 });
 
 function calculateResults() {
@@ -563,7 +563,6 @@ function calculateResults() {
   removeErrorBox();
   resultBox.innerHTML = "";
   
-  // Validation
   if (isNaN(scrInput) || isNaN(age) || scrInput <= 0 || age <= 0) {
     showErrorGFR("Please enter valid Serum Creatinine and Age.");
     return;
@@ -574,16 +573,13 @@ function calculateResults() {
     return;
   }
   
-  // Convert micromole/L to mg/dL
   const scr = (scrUnit === 'micromole/L') ? scrInput / 88.4 : scrInput;
   
-  // Constants for CKD-EPI
   const k = (gender === 'female') ? 0.7 : 0.9;
   const alpha = (scr > k) ? -1.209 : (gender === 'female' ? -0.329 : -0.411);
   const sexFactor = (gender === 'female') ? 1.018 : 1;
   const raceFactor = (race === 'black') ? 1.159 : 1;
   
-  // CKD-EPI Formula
   const ckdepi = 141 *
     Math.pow(Math.min(scr / k, 1), alpha) *
     Math.pow(Math.max(scr / k, 1), -1.209) *
@@ -591,19 +587,16 @@ function calculateResults() {
     sexFactor *
     raceFactor;
   
-  // MDRD Formula
   let mdrd = 175 * Math.pow(scr, -1.154) * Math.pow(age, -0.203);
   if (gender === 'female') mdrd *= 0.742;
   if (race === 'black') mdrd *= 1.212;
   
-  // Mayo Quadratic Formula
   let mayo = (scr < 0.8) ?
     107.3 / (scr / 0.7) :
     107.3 / Math.pow(scr / 0.7, 1.5);
   mayo *= Math.pow(0.996, age);
   if (gender === 'female') mayo *= 0.762;
   
-  // Display Results
   resultBox.innerHTML = `
     <h3>GFR Calculation Results</h3>
     <div class="resultLine"><strong>MDRD 4-Variable Equation:</strong> ${mdrd.toFixed(1)} mL/min/1.73 m²</div>

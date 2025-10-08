@@ -97,7 +97,7 @@ let isNavOpen = false;
 let isAnimating = false;
 
 function openNav() {
-  if (isNavOpen || isAnimating) return; // Prevent if already open or animating
+  if (isNavOpen || isAnimating) return;
 
   isAnimating = true;
   nav.classList.add("active");
@@ -108,18 +108,15 @@ function openNav() {
     overlay.classList.add("overlay");
     document.body.appendChild(overlay);
 
-    // Click outside closes nav
     overlay.addEventListener("click", closeNav);
   }
 
-  // Use requestAnimationFrame for fade-in
   requestAnimationFrame(() => {
     overlay.classList.add("visible");
   });
 
   isNavOpen = true;
 
-  // Wait for fade-in transition to complete before allowing another toggle
   overlay.addEventListener(
     "transitionend",
     () => {
@@ -130,7 +127,7 @@ function openNav() {
 }
 
 function closeNav() {
-  if (!isNavOpen || isAnimating) return; // Prevent if already closed or animating
+  if (!isNavOpen || isAnimating) return;
 
   isAnimating = true;
   nav.classList.remove("active");
@@ -139,7 +136,6 @@ function closeNav() {
   if (overlay) {
     overlay.classList.remove("visible");
 
-    // Remove overlay after fade-out transition
     overlay.addEventListener(
       "transitionend",
       () => {
