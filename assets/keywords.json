@@ -1087,6 +1087,14 @@
   ],
   "category": "Math Calculators",
   "link": "/math/absolute-value-calculator"
+},
+{
+  "tool": "World Cup Countdown",
+  "relatedKeywords": [
+    "next world cup"
+  ],
+  "category": "Sports Calculators",
+  "link": "/sports/world-cup-countdown"
 }
   ]
 }
