@@ -1095,6 +1095,30 @@
   ],
   "category": "Sports Calculators",
   "link": "/sports/world-cup-countdown"
+},
+{
+  "tool": "Boyfriend's day Countdown",
+  "relatedKeywords": [
+    "boyfriend"
+  ],
+  "category": "Everyday life Calculators",
+  "link": "/everyday-life/boyfriend-day"
+},
+{
+  "tool": "Friendship day Countdown",
+  "relatedKeywords": [
+    "friendship"
+  ],
+  "category": "Everyday life Calculators",
+  "link": "/everyday-life/friendship-day-countdown"
+},
+{
+  "tool": "Girlfriend day Countdown",
+  "relatedKeywords": [
+    "girlfriend"
+  ],
+  "category": "Everyday life Calculators",
+  "link": "/everyday-life/girlfriend-day"
 }
   ]
 }
