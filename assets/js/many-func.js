@@ -1917,7 +1917,7 @@ document.addEventListener("click", (e) => {
 /****************************************/
 
 /*********** Adsterra ads ********/
-function injectAdsterra() {
+/*function injectAdsterra() {
   try {
 
     function createScriptAd(className, key, width, height) {
@@ -2023,7 +2023,7 @@ function injectAdsterra() {
   }
 }
 
-window.addEventListener('load', injectAdsterra);
+window.addEventListener('load', injectAdsterra);*/
 /************* end Adsterra ads ***************/
 
 /*********************************************
