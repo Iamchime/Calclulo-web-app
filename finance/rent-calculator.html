@@ -678,7 +678,7 @@ function calculateResults() {
   const maxAffordable = (monthlyIncome * ratio) - debt - utilities;
   const recommendedAffordable = (monthlyIncome * 0.25) - debt - utilities;
   
-  const outputDiv = document.getElementById('rent-output');
+  const outputDiv = document.querySelector('.output-group');
   
   if (maxAffordable > 0) {
     const formattedMaxAffordable = maxAffordable.toLocaleString(undefined, { maximumFractionDigits: 0 });
