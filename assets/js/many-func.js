@@ -527,30 +527,36 @@ function setupSmartInputs(options = {}) {
 
 /*************************** formatting input ***********************/
 
+let enableFormatting = true;
+
+function setNumberFormatting(state) {
+  enableFormatting = state;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const inputs = document.querySelectorAll("input");
-
   const formatter = new Intl.NumberFormat("en-US");
-
+  
   inputs.forEach(input => {
     let timeout;
     let isFormatted = false;
-
+    
     function unformatNumber(val) {
       return val.replace(/,/g, "");
     }
-
+    
     function formatIfValid(val) {
       const raw = unformatNumber(val);
       return !isNaN(raw) && raw.trim() !== "" ? formatter.format(raw) : val;
     }
-
+    
     function handleFormat() {
+      if (!enableFormatting) return;
       const formatted = formatIfValid(input.value);
       input.value = formatted;
       isFormatted = true;
     }
-
+    
     input.addEventListener("input", () => {
       clearTimeout(timeout);
       if (isFormatted) {
@@ -559,14 +565,14 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       timeout = setTimeout(handleFormat, 500);
     });
-
+    
     input.addEventListener("focus", () => {
       if (isFormatted) {
         input.value = unformatNumber(input.value);
         isFormatted = false;
       }
     });
-
+    
     input.addEventListener("blur", handleFormat);
   });
 });

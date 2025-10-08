@@ -630,6 +630,13 @@ padding: 5px;
   font-family: alanSans;
 font-weight: 600;
 }
+.input-group select:disabled,
+.input-group input[type="text"]:disabled,
+.input-group input[type="number"]:disabled,
+.input-group input[type="date"]:disabled{
+  background: #2327BE0F;
+}
+
 .input-group select {
   appearance: none;
   -webkit-appearance: none;
