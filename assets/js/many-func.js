@@ -929,11 +929,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;  
               }  
             });  
-  
-            localStorage.removeItem(`value-${inputId}`);  
-            saveToggle.checked = false;  
-            localStorage.setItem(`save-${inputId}`, "0");  
-            updateLabelIndicator();  
             break;  
   
           case "rename":  
