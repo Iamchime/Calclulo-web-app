@@ -13,14 +13,14 @@
 
 <link rel="stylesheet" href="/assets/css/calculators-styles-global.css" />
 
-<meta name="description" content="Calculate the actual interest earned on an investment over a year.">
+<meta name="description" content="Find out which bikini type best suits you based on your body shape.">
 
 <link rel="canonical" href="https://calclulo.com/everyday-life/bikini-calculator">
 
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://calclulo.com/everyday-life/bikini-calculator">
 <meta property="og:title" content="Bikini Calculator">
-<meta property="og:description" content="Calculate the actual interest earned on an investment over a year.">
+<meta property="og:description" content="Find out which bikini type best suits you based on your body shape.">
 <meta property="og:image" content="https://calclulo.com/assets/images/bikini-calculator-thumbnail.png">
 
 <link href="/favicons/favicon.png" rel="icon" sizes="48x48"> <link href="/favicons/favicon-128.png" rel="icon" sizes="128x128"> <link href="/favicons/favicon-192.png" rel="icon" sizes="192x192">
@@ -31,7 +31,7 @@
     "@type": "WebPage",
     "name": "Bikini Calculator",
     "url": "https://calclulo.com/everyday-life/bikini-calculator",
-    "description": "Calculate the actual interest earned on an investment over a year.",
+    "description": "Find out which bikini type best suits you based on your body shape.",
     "inLanguage": "en",
     "publisher": {
       "@type": "Organization",
@@ -432,7 +432,7 @@ International Journal of Clothing Science and Technology, 19(5), 374–391.</li>
 <article class="description-txt">
    <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
    <p>
-     
+     With our bikini calculator, you'll quickly find out which bikini type best suits you based on your body shape.
    </p>
 
  </article>
@@ -564,7 +564,389 @@ Everyday Life
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 <script defer crossorigin="anonymous">
-  
+  // Bikini calculator — lightweight + safe + heuristic unit disambiguation
+(function () {
+  // --- Config ---
+  const unitToCm = {
+    centimetres: 1,
+    meters: 100,
+    inches: 2.54,
+    feet: 30.48,
+  };
+
+  const idPairs = [
+    { input: "Bust", unit: "BustUnit" },
+    { input: "Waist", unit: "WaistUnit" },
+    { input: "HighHip", unit: "HighHipUnit" },
+    { input: "Hips", unit: "HipsUnit" },
+  ];
+  const outputSelector = ".output-group";
+
+  // --- Lightweight parsing ---
+  function parseFlexibleNumber(str) {
+    if (typeof str !== "string") str = String(str ?? "");
+    str = str.trim();
+    if (str === "") return NaN;
+    if (str.indexOf(",") !== -1 && str.indexOf(".") !== -1) {
+      str = str.replace(/,/g, "");
+      return Number(str);
+    }
+    if (str.indexOf(",") !== -1 && str.indexOf(".") === -1) {
+      str = str.replace(/,/g, ".");
+      return Number(str);
+    }
+    str = str.replace(/[^\d.\-+eE]/g, "");
+    return Number(str);
+  }
+  function detectDecimalSeparator(str) {
+    if (typeof str !== "string") return ".";
+    if (str.indexOf(",") !== -1 && str.indexOf(".") === -1) return ",";
+    return ".";
+  }
+  function numIsValid(n) { return isFinite(n) && !Number.isNaN(n); }
+
+  // --- Conversions ---
+  function toCm(value, unit) {
+    return value * (unitToCm[unit] ?? NaN);
+  }
+  function fromCm(cmValue, unit) {
+    const factor = unitToCm[unit];
+    if (!factor) return NaN;
+    return cmValue / factor;
+  }
+  function cmToInches(cm) { return cm / 2.54; }
+  function toInches(value, unit) { return cmToInches(toCm(value, unit)); }
+
+  // --- Formatting helpers ---
+  function formatForInput(n, decimals = 2, sep = ".") {
+    if (!numIsValid(n)) return "";
+    const pow = Math.pow(10, decimals);
+    let v = Math.round((Number(n) + Number.EPSILON) * pow) / pow;
+    let s = v.toFixed(decimals).replace(/\.?0+$/, "");
+    if (sep === ",") s = s.replace(".", ",");
+    return s;
+  }
+
+  // --- Basic validation (permissive) ---
+  function readRawInputs() {
+    const out = {};
+    for (const p of idPairs) {
+      const el = document.getElementById(p.input);
+      const unitEl = document.getElementById(p.unit);
+      if (!el || !unitEl) return null;
+      const raw = el.value ?? "";
+      const parsed = parseFlexibleNumber(raw);
+      const sep = detectDecimalSeparator(raw);
+      out[p.input] = { raw, parsed, unit: unitEl.value, sep, el, unitEl };
+    }
+    return out;
+  }
+
+  function validatePresence(rawInputs) {
+    if (!rawInputs) return { ok: false, code: "missing", message: "Inputs missing from DOM" };
+    for (const k of ["Bust", "Waist", "HighHip", "Hips"]) {
+      if (!rawInputs[k] || rawInputs[k].raw === "" || rawInputs[k].raw == null) return { ok: false, code: "incomplete", message: "Please enter all measurements" };
+      if (!numIsValid(rawInputs[k].parsed) || rawInputs[k].parsed <= 0) return { ok: false, code: "nan", message: `${k} must be a valid positive number` };
+    }
+    return { ok: true };
+  }
+
+  // --- Omni-style inch-based classifier (keeps order & thresholds similar to Omni) ---
+  function classifyByInches(bIn, wIn, hhIn, hIn) {
+    // safe-guards
+    if (![bIn, wIn, hhIn, hIn].every(numIsValid)) return { code: "invalid", label: "Invalid measurements" };
+
+    const bustMinusHips = bIn - hIn;
+    const hipsMinusBust = hIn - bIn;
+    const bustMinusWaist = bIn - wIn;
+    const hipsMinusWaist = hIn - wIn;
+    const highHipOverWaist = hhIn / wIn;
+
+    // Hourglass (Omni): bust ≈ hips (small difference) AND waist much smaller
+    if (Math.abs(bustMinusHips) <= 1.5 || Math.abs(bIn - hIn) / Math.max(bIn, hIn) <= 0.03) {
+      if (bustMinusWaist >= 8.5 || hipsMinusWaist >= 8.5) {
+        return { code: "hourglass", label: "hourglass" };
+      }
+    }
+
+    // Bottom hourglass / pear
+    if (hipsMinusBust >= 3.6 && hipsMinusWaist >= 9 && highHipOverWaist < 1.193) {
+      return { code: "bottom-hourglass", label: "bottom hourglass" };
+    }
+
+    // Top hourglass
+    if (bustMinusHips >= 3.6 && bustMinusWaist >= 9) {
+      return { code: "top-hourglass", label: "top hourglass" };
+    }
+
+    // Spoon
+    if (hipsMinusBust > 2 && hipsMinusWaist >= 7 && highHipOverWaist >= 1.193) {
+      return { code: "spoon", label: "spoon" };
+    }
+
+    // Triangle / Pear (hips bigger)
+    if (hipsMinusBust >= 3.6 && hipsMinusWaist < 9) {
+      return { code: "triangle", label: "triangle" };
+    }
+
+    // Inverted triangle
+    if (bustMinusHips >= 3.6 && bustMinusWaist < 9) {
+      return { code: "inverted-triangle", label: "inverted triangle" };
+    }
+
+    // Rectangle fallback
+    if (Math.abs(bIn - hIn) / Math.max(bIn, hIn) <= 0.06 && bustMinusWaist < 9 && hipsMinusWaist < 9) {
+      return { code: "rectangle", label: "rectangle" };
+    }
+
+    // Fallback based on hips >= bust
+    if (hIn >= bIn) return { code: "triangle", label: "triangle" };
+    return { code: "inverted-triangle", label: "inverted triangle" };
+  }
+
+  // --- Unit-disambiguation heuristic (tries alternative unit interpretations when magnitudes disagree)
+  // We'll only run the heuristic when the current converted values are wildly different in scale.
+  function disambiguateUnitsIfNeeded(rawInputs) {
+    // Build current converted-inch values using the user's selects
+    const currentInches = {};
+    for (const k of ["Bust", "Waist", "HighHip", "Hips"]) {
+      const r = rawInputs[k];
+      currentInches[k] = numIsValid(r.parsed) ? toInchesUsingUnit(r.parsed, r.unit) : NaN;
+    }
+
+    // quick guard: if all values same order of magnitude -> no disambiguation needed
+    const vals = Object.values(currentInches).filter(numIsValid);
+    if (vals.length < 4) return { chosen: null, inches: currentInches }; // validation will handle later
+    const maxv = Math.max(...vals);
+    const minv = Math.min(...vals);
+    if (maxv / Math.max(minv, 1) <= 50) {
+      // within 50x scale -> assume user intent correct
+      return { chosen: null, inches: currentInches };
+    }
+
+    // Candidate units to try for each input (we will try all combos if needed)
+    const unitKeys = Object.keys(unitToCm);
+
+    // Convert typed numeric value v assuming unit U -> inches
+    function convertCandidate(v, U) {
+      const cm = toCm(v, U);
+      return numIsValid(cm) ? cmToInches(cm) : NaN;
+    }
+
+    // Brute-force small search over unit assignments (4^4 = 256 combos)
+    // Score each assignment by log-range (smaller is better) and prefer assignments that keep each value
+    // in a human-friendly mean range (10"-300") if possible.
+    const inputs = ["Bust", "Waist", "HighHip", "Hips"];
+    let best = { score: Infinity, assign: null, inches: null };
+
+    // Precompute parsed numbers
+    const parsedVals = {};
+    for (const k of inputs) parsedVals[k] = rawInputs[k].parsed;
+
+    // generate combos iteratively to avoid recursion overhead
+    const combos = [[]];
+    for (let i = 0; i < inputs.length; i++) {
+      const newCombos = [];
+      for (const c of combos) {
+        for (const u of unitKeys) newCombos.push(c.concat(u));
+      }
+      combos.length = 0;
+      combos.push(...newCombos);
+    }
+
+    for (const combo of combos) {
+      const inchesMap = {};
+      let ok = true;
+      for (let i = 0; i < inputs.length; i++) {
+        const key = inputs[i];
+        const unitTry = combo[i];
+        const v = parsedVals[key];
+        const inches = convertCandidate(v, unitTry);
+        if (!numIsValid(inches) || !isFinite(inches) || inches <= 0) { ok = false; break; }
+        inchesMap[key] = inches;
+      }
+      if (!ok) continue;
+
+      const arr = Object.values(inchesMap);
+      const mx = Math.max(...arr);
+      const mn = Math.min(...arr);
+      const mean = arr.reduce((a,b)=>a+b,0)/arr.length;
+      // score: log-range penalized and distance of mean from 60" (typical adult scale)
+      const logRange = Math.log10(mx / Math.max(mn, 1));
+      const meanPenalty = Math.abs(Math.log10(Math.max(mean,1) / 60)); // prefer mean near 60 inches
+      const score = logRange + meanPenalty * 0.5;
+
+      if (score < best.score) {
+        best = { score, assign: combo.slice(), inches: inchesMap };
+      }
+    }
+
+    // If best assignment significantly reduces scale mismatch vs current, pick it
+    if (best.assign) {
+      // compute current log-range
+      const currVals = vals;
+      const currLogRange = Math.log10(Math.max(...currVals) / Math.max(Math.min(...currVals),1));
+      const bestArr = Object.values(best.inches);
+      const bestLogRange = Math.log10(Math.max(...bestArr) / Math.max(Math.min(...bestArr),1));
+      // choose best only if it reduces log-range by at least 0.8 (≈ 6x improvement) OR produces a mean within plausible range
+      const bestMean = bestArr.reduce((a,b)=>a+b,0)/bestArr.length;
+      if (bestLogRange + 0.001 < currLogRange - 0.2 || (bestMean >= 20 && bestMean <= 200)) {
+        // return chosen interpretation (note: we do not change the selects visually)
+        return { chosen: best.assign, inches: best.inches };
+      }
+    }
+
+    // default: keep current
+    return { chosen: null, inches: currentInches };
+
+    // helper
+    function toInchesUsingUnit(v, u) {
+      const cm = toCm(v, u);
+      return numIsValid(cm) ? cmToInches(cm) : NaN;
+    }
+  }
+
+  // --- Render concise result (no measurements trace/summary) ---
+  const adviceText = {
+    hourglass: "Your silhouette is very proportional, and we recommend wearing bikinis that accentuate your beautiful, clearly defined waist.",
+    "top-hourglass": "Your upper body is more pronounced. Balance the silhouette with bottoms that add volume—ruffled or patterned bottoms and low-cut hipsters are great.",
+    "bottom-hourglass": "Your hips are more pronounced. Add visual interest to the top—padded or detailed tops—and choose simpler bottoms to highlight the waist.",
+    pear: "Your upper body is slim while hips are fuller. We recommend bikinis that add volume to the upper body and show off the waist—tops with ruffles, halter necks and bright patterns.",
+    spoon: "Hips are fuller and the waist is less defined. Bring emphasis upward—choose detailed tops, darker or simpler bottoms, and waist-accentuating styles.",
+    rectangle: "Your silhouette is proportional but the waist is not clearly defined. Use bikinis that create curves and define the waist—ruffles, belts, high-cut bottoms and patterns help.",
+    "inverted-triangle": "Your bust/shoulders are broader than your hips. Choose bottoms with details (ruffles, patterns, colors) to balance the silhouette and simpler tops.",
+  };
+
+  function renderResult(shape) {
+    const out = document.querySelector(outputSelector);
+    if (!out) { showMessage("Output element not found", "error"); return; }
+    if (!shape || shape.code === "invalid") {
+      out.innerHTML = `<div class="calc-empty">Please enter valid positive measurements in each field.</div>`;
+      return;
+    }
+    const adv = adviceText[shape.code] || "";
+    // concise Omni-style text
+    out.innerHTML = `
+      <div class="result-card">
+        <h3>Congratulations, you are a <strong>${escapeHtml(shape.label)}</strong>! 👙</h3>
+        <p class="result-advice">${escapeHtml(adv)}</p>
+      </div>
+    `;
+    showMessage(`Detected shape: ${shape.label}`, "success");
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+
+  // --- Main calculation flow ---
+  function calculateAndRender(userTriggered = false) {
+    try {
+      const rawInputs = readRawInputs();
+      if (!rawInputs) { showMessage("Calculator inputs not found", "error"); return; }
+
+      const pres = validatePresence(rawInputs);
+      if (!pres.ok) {
+        // if incomplete show info quietly
+        const out = document.querySelector(outputSelector); if (out) out.innerHTML = "";
+        if (pres.code === "incomplete") {
+          showMessage("Enter measurements to see your bikini body shape", "info");
+        } else {
+          showMessage(pres.message, "error");
+        }
+        return;
+      }
+
+      // Disambiguate if needed — returns an inches map for classification
+      const disamb = disambiguateUnitsIfNeeded(rawInputs);
+      const inchesMap = disamb.inches;
+
+      // pull inches for classifier
+      const bIn = inchesMap.Bust;
+      const wIn = inchesMap.Waist;
+      const hhIn = inchesMap.HighHip;
+      const hIn = inchesMap.Hips;
+
+      // classify
+      const shape = classifyByInches(bIn, wIn, hhIn, hIn);
+      renderResult(shape);
+    } catch (err) {
+      console.error("Calculation error:", err);
+      showMessage("An unexpected error occurred while calculating", "error");
+    }
+  }
+
+  // --- Convert input numeric when unit changes (preserve decimal sep) ---
+  function convertOnUnitChange(inputId, prevUnit, newUnit) {
+    const el = document.getElementById(inputId); if (!el) return;
+    const raw = el.value ?? ""; if (String(raw).trim() === "") return;
+    const decimalSep = detectDecimalSeparator(raw);
+    const parsed = parseFlexibleNumber(raw);
+    if (!numIsValid(parsed)) { showMessage(`${inputId} contains an invalid number and couldn't be converted`, "error"); return; }
+    const cm = toCm(parsed, prevUnit); if (!numIsValid(cm)) { showMessage(`Unit conversion failed for ${inputId}`, "error"); return; }
+    const newNumeric = fromCm(cm, newUnit);
+    el.value = formatForInput(newNumeric, 2, decimalSep);
+  }
+
+  // --- Attach listeners idempotently (avoid duplicates) ---
+  function attachListeners() {
+    for (const p of idPairs) {
+      const el = document.getElementById(p.input);
+      const sel = document.getElementById(p.unit);
+      if (!el || !sel) continue;
+      // mark attached via dataset to prevent double-attaching
+      if (!el.dataset.bikiniAttached) {
+        const onUserInput = () => debouncedCalc(true);
+        el.addEventListener("input", onUserInput);
+        el.addEventListener("change", onUserInput);
+        el.addEventListener("blur", onUserInput);
+        el.addEventListener("paste", () => setTimeout(() => debouncedCalc(true), 40));
+        el.dataset.bikiniAttached = "1";
+      }
+      if (!sel.dataset.bikiniAttached) {
+        if (!sel.dataset.prevUnit) sel.dataset.prevUnit = sel.value;
+        sel.addEventListener("change", () => {
+          const prev = sel.dataset.prevUnit || sel.value;
+          const current = sel.value;
+          if (prev !== current) {
+            convertOnUnitChange(p.input, prev, current);
+            sel.dataset.prevUnit = current;
+          }
+          debouncedCalc(true);
+        });
+        sel.dataset.bikiniAttached = "1";
+      }
+    }
+  }
+
+  // --- Small debounce to avoid thrash ---
+  function debounce(fn, t = 160) {
+    let timer;
+    return (...args) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(...args), t);
+    };
+  }
+  const debouncedCalc = debounce(calculateAndRender, 160);
+
+  // --- Init ---
+  function init() {
+    attachListeners();
+    // if any input has a non-empty value treat as user triggered initial calc
+    const rawInputs = readRawInputs(); let any = false;
+    if (rawInputs) for (const k of ["Bust","Waist","HighHip","Hips"]) if (String(rawInputs[k].raw).trim() !== "") any = true;
+    calculateAndRender(!!any);
+  }
+
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+
+  // expose tiny debug helpers (non-intrusive)
+  window.__bikiniCalc = {
+    calculateAndRender,
+    parseFlexibleNumber
+  };
+})();
 </script>
   
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
