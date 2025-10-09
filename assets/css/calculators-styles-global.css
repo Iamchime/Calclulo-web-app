@@ -1582,7 +1582,15 @@ color: #4F5163;
     .number-of-source{ font-size: .82rem; }
     .sources-list{ padding: 14px; font-size: .9rem; }
   }
-
+  .what-user-think{
+display: flex;
+align-items: center;
+justify-content: center;
+gap: .2em;
+font-size: .95em;
+margin-top: 1.5em;
+margin-bottom: .4em;
+}
  .similar-calculators-wrap{
    display: flex;
    flex-direction: column;
