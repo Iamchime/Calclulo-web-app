@@ -2648,3 +2648,65 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
 /************************************** charts *********/
 
 /**********************************************************/
+/************** vote feedback ***************/
+document.addEventListener("DOMContentLoaded", () => {
+  const likeBtn = document.querySelector(".vote-up");
+  const dislikeBtn = document.querySelector(".vote-down");
+  
+  // Create tooltip for like button
+  const tooltip = document.createElement("div");
+  tooltip.className = "vote-tooltip";
+  tooltip.textContent = "Thanks!";
+  likeBtn.appendChild(tooltip);
+  
+  // Function to update button state
+  function updateButtons(vote) {
+    if (vote === "like") {
+      likeBtn.classList.add("active");
+      dislikeBtn.classList.remove("active");
+    } else if (vote === "dislike") {
+      dislikeBtn.classList.add("active");
+      likeBtn.classList.remove("active");
+    } else {
+      likeBtn.classList.remove("active");
+      dislikeBtn.classList.remove("active");
+    }
+  }
+  
+  // Restore saved vote from localStorage
+  const savedVote = localStorage.getItem("userVote");
+  if (savedVote) {
+    updateButtons(savedVote);
+  }
+  
+  // Like button click
+  likeBtn.addEventListener("click", () => {
+    const isActive = likeBtn.classList.contains("active");
+    if (isActive) {
+      updateButtons(null);
+      localStorage.removeItem("userVote");
+    } else {
+      updateButtons("like");
+      localStorage.setItem("userVote", "like");
+      
+      // Show tooltip only when liked
+      tooltip.classList.add("show");
+      setTimeout(() => {
+        tooltip.classList.remove("show");
+      }, 1500);
+    }
+  });
+  
+  // Dislike button click
+  dislikeBtn.addEventListener("click", () => {
+    const isActive = dislikeBtn.classList.contains("active");
+    if (isActive) {
+      updateButtons(null);
+      localStorage.removeItem("userVote");
+    } else {
+      updateButtons("dislike");
+      localStorage.setItem("userVote", "dislike");
+    }
+  });
+});
+/*****************************************/
