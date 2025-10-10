@@ -415,8 +415,7 @@ Everyday Life
   document.addEventListener("DOMContentLoaded", function() {
   const personOneInput = document.getElementById("personOne");
   const personTwoInput = document.getElementById("personTwo");
-  const resultContainer = document.getElementById("ageResult");
-  const resetBtn = document.getElementById("reset-btn");
+  const resultContainer = document.querySelector(".output-group");
   
   function formatNumber(num) {
     return num.toLocaleString();
@@ -478,11 +477,11 @@ Everyday Life
     
     let valid = true;
     if (d1 > today) {
-      showError("Birth date cannot be in the future");
+      showMessage("Birth date cannot be in the future","error");
       valid = false;
     }
     if (d2 > today) {
-      showError("Birth date cannot be in the future");
+      showMessage("Birth date cannot be in the future","error");
       valid = false;
     }
     
