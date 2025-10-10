@@ -2218,8 +2218,443 @@ function closeCurrencyPopup() {
     }
   }
 }
+/* currency-converter.js
+   Updated to use serverless proxy at /api/currency-conv (Vercel)
+   Keep the rest of your logic unchanged. */
 
+
+// ---------------- UI helpers (unchanged) ----------------
 function applyCurrencyToUI(currency) {
+  if (!currency || !currency.code) return;
+
+  const symbol = currency.symbol || currency.sign || currency.code;
+
+  document.querySelectorAll(".currency-or-unit-display").forEach(span => {
+    span.textContent = symbol;
+    span.dataset.currencyCode = currency.code;
+  });
+
+  document.querySelectorAll(".naira-to-selected-currency-car-custom-duty").forEach(span => {
+    span.textContent = symbol;
+    span.dataset.currencyCode = currency.code;
+  });
+
+  document.querySelectorAll(".currency-display-for-expanded-results").forEach(span => {
+    span.textContent = symbol;
+    span.dataset.currencyCode = currency.code;
+  });
+
+  document.querySelectorAll(".currency-display-for-tooltip").forEach(span => {
+    span.textContent = currency.name || currency.code;
+    span.dataset.currencyCode = currency.code;
+  });
+}
+
+const CB_BASE = "/api/currency-conv";
+const CURRENCYBEACON_API_KEY = ""; 
+
+const DEBUG_CB = true;
+function _cbLog(...args) { if (DEBUG_CB) console.debug("[CB]", ...args); }
+
+// ---------------- Local cache helpers (unchanged) ----------------
+function _todayDateString() {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+function _cacheKeyForBase(base) {
+  base = (base || "").toUpperCase();
+  return `cb_rates::${base}::${_todayDateString()}`;
+}
+function _getCachedRates(base) {
+  try {
+    const k = _cacheKeyForBase(base);
+    const raw = localStorage.getItem(k);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (parsed && parsed.rates) return parsed.rates;
+  } catch (e) {
+    console.warn("Cache read error", e);
+  }
+  return null;
+}
+function _setCachedRates(base, ratesObj) {
+  try {
+    const k = _cacheKeyForBase(base);
+    localStorage.setItem(k, JSON.stringify({ timestamp: Date.now(), rates: ratesObj }));
+  } catch (e) {
+    console.warn("Cache write error", e);
+  }
+}
+
+// ---------------- Updated: _fetchLatestRates (use proxy) ----------------
+async function _fetchLatestRates(base, symbols = []) {
+  base = (base || "").toUpperCase();
+  if (!base) return { ok: false, reason: "no_base" };
+
+  const cached = _getCachedRates(base);
+  if (cached) {
+    _cbLog("Using daily cache for", base);
+    if (symbols.length === 0) return { ok: true, rates: cached };
+    const filtered = {};
+    symbols.forEach(s => { if (cached[s]) filtered[s] = cached[s]; });
+    return { ok: true, rates: filtered };
+  }
+
+  // Build relative proxy URL to Vercel serverless function
+  let url = `${CB_BASE}?action=latest&base=${encodeURIComponent(base)}`;
+  if (symbols.length) url += `&symbols=${encodeURIComponent(symbols.join(","))}`;
+
+  try {
+    const res = await fetch(url, { method: "GET", cache: "no-store" });
+    if (!res.ok) {
+      const txt = await res.text();
+      _cbLog("proxy latest http error", res.status, txt);
+      return { ok: false, reason: `http_${res.status}`, body: txt };
+    }
+
+    const j = await res.json();
+    _cbLog("proxy latest response for base", base, j);
+
+    // If proxy normalized rates already
+    if (j && j.rates && typeof j.rates === "object") {
+      const normalized = {};
+      Object.keys(j.rates).forEach(k => { normalized[k.toUpperCase()] = Number(j.rates[k]); });
+      _setCachedRates(base, normalized);
+      return { ok: true, rates: normalized };
+    }
+
+    // Proxy may return raw payload (json.raw or direct)
+    const json = j.raw || j;
+
+    let rates = {};
+    if (json && typeof json === "object") {
+      if (json.rates && typeof json.rates === "object") {
+        Object.keys(json.rates).forEach(k => { rates[k.toUpperCase()] = Number(json.rates[k]); });
+      } else if (json.quotes && typeof json.quotes === "object") {
+        Object.keys(json.quotes).forEach(k => {
+          const v = Number(json.quotes[k]);
+          const key = String(k).toUpperCase();
+          if (key.length === 3) rates[key] = v;
+          else if (key.length === 6) rates[key.slice(3)] = v;
+          else rates[key] = v;
+        });
+      } else if (json.data && json.data.rates && typeof json.data.rates === "object") {
+        Object.keys(json.data.rates).forEach(k => { rates[k.toUpperCase()] = Number(json.data.rates[k]); });
+      } else {
+        Object.keys(json).forEach(k => { if (typeof json[k] === "number") rates[k.toUpperCase()] = Number(json[k]); });
+      }
+    }
+
+    if (Object.keys(rates).length > 0) {
+      _setCachedRates(base, rates);
+      return { ok: true, rates };
+    }
+
+    return { ok: false, reason: "no_rates_in_response", body: json };
+  } catch (err) {
+    _cbLog("proxy fetchLatestRates exception", err);
+    return { ok: false, reason: "fetch_exception", err };
+  }
+}
+
+// ---------------- Updated: _fetchConvertPair (use proxy) ----------------
+async function _fetchConvertPair(from, to, amount = 1) {
+  from = (from || "").toUpperCase();
+  to = (to || "").toUpperCase();
+  if (!from || !to) return { ok: false, reason: "invalid_params" };
+
+  const url = `${CB_BASE}?action=convert&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}&amount=${encodeURIComponent(String(amount))}`;
+
+  try {
+    const res = await fetch(url, { method: "GET", cache: "no-store" });
+    if (!res.ok) {
+      const t = await res.text();
+      _cbLog("proxy convert http error", res.status, t);
+      return { ok: false, reason: `http_${res.status}`, body: t };
+    }
+
+    const j = await res.json();
+    _cbLog("proxy convert response", j);
+
+    // If proxy returned normalized numeric value
+    if (j && typeof j.value === "number") return { ok: true, value: Number(j.value) };
+
+    const json = j.raw || j;
+    if (json && typeof json === "object") {
+      if (typeof json.result === "number") return { ok: true, value: Number(json.result) };
+      if (json.data && typeof json.data.result === "number") return { ok: true, value: Number(json.data.result) };
+      if (json.conversion && typeof json.conversion.result === "number") return { ok: true, value: Number(json.conversion.result) };
+      if (typeof json.value === "number") return { ok: true, value: Number(json.value) };
+      if (json.rates && typeof json.rates[to] === "number") return { ok: true, value: Number(json.rates[to]) * amount };
+    }
+
+    return { ok: false, reason: "unknown_convert_shape", body: j };
+  } catch (e) {
+    _cbLog("proxy convert fetch exception", e);
+    return { ok: false, reason: "fetch_exception", err: e };
+  }
+}
+
+// ---------------- rest of your code (unchanged) ----------------
+
+async function resolveRate(from, to) {
+  from = (from || "").toUpperCase();
+  to = (to || "").toUpperCase();
+  if (!from || !to) return null;
+  if (from === to) return 1;
+
+  const a = await _fetchLatestRates(from, [to]);
+  if (a.ok && a.rates && typeof a.rates[to] === "number") {
+    _cbLog(`Rate ${from}->${to} via base ${from}`, a.rates[to]);
+    return Number(a.rates[to]);
+  }
+
+  const b = await _fetchLatestRates(to, [from]);
+  if (b.ok && b.rates && typeof b.rates[from] === "number" && b.rates[from] !== 0) {
+    const inv = 1 / Number(b.rates[from]);
+    _cbLog(`Rate ${from}->${to} by inverting ${to}->${from}`, inv);
+    return inv;
+  }
+
+  const c = await _fetchConvertPair(from, to, 1);
+  if (c.ok && typeof c.value === "number") {
+    _cbLog(`Rate ${from}->${to} via convert`, c.value);
+    return Number(c.value);
+  }
+
+  _cbLog(`Failed to resolve rate ${from}->${to}`);
+  return null;
+}
+
+function inferCurrencyCodeFromSymbol(symbol) {
+  if (!symbol) return null;
+  if (!inferCurrencyCodeFromSymbol._map) {
+    inferCurrencyCodeFromSymbol._map = {};
+    currencies.forEach(c => {
+      const s = (c.symbol || "").toString();
+      if (!inferCurrencyCodeFromSymbol._map[s]) inferCurrencyCodeFromSymbol._map[s] = new Set();
+      inferCurrencyCodeFromSymbol._map[s].add(c.code.toUpperCase());
+    });
+  }
+  const set = inferCurrencyCodeFromSymbol._map[symbol];
+  if (!set) return null;
+  const arr = Array.from(set);
+  return arr.length === 1 ? arr[0] : null;
+}
+
+async function convertCapturedItemsToTargetCurrency(targetCurrency, items) {
+  if (!targetCurrency || !targetCurrency.code) return { success: false, reason: "no_target" };
+  const targetCode = targetCurrency.code.toUpperCase();
+
+  const groups = {};
+  for (const it of items) {
+    const src = (it.srcCode || "").toUpperCase() || null;
+    if (!src || src === targetCode) continue;
+    if (!groups[src]) groups[src] = [];
+    groups[src].push(it);
+  }
+
+  if (Object.keys(groups).length === 0) return { success: true, converted: 0 };
+
+  const resolved = {};
+  for (const src of Object.keys(groups)) {
+    const rate = await resolveRate(src, targetCode);
+    if (rate === null) {
+      return { success: false, reason: "rate_resolution_failed", source: src };
+    }
+    resolved[src] = rate;
+  }
+
+  let convertedCount = 0;
+  for (const src of Object.keys(groups)) {
+    const rate = resolved[src];
+    for (const item of groups[src]) {
+      const newVal = Number((item.amount * rate).toFixed(2));
+      item.input.value = newVal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      if (item.span) item.span.dataset.currencyCode = targetCode;
+      convertedCount++;
+    }
+  }
+
+  return { success: true, converted: convertedCount };
+}
+
+async function convertAllInputsToTargetCurrency(targetCurrency) {
+  if (!targetCurrency || !targetCurrency.code) return { success: false, reason: "no_target" };
+
+  const wrappers = Array.from(document.querySelectorAll(".currency-or-unit-input"));
+  const captured = [];
+
+  let savedSelectedCode = null;
+  try {
+    const saved = localStorage.getItem("selectedCurrency");
+    if (saved) {
+      const s = JSON.parse(saved);
+      if (s && s.code) savedSelectedCode = s.code.toUpperCase();
+    }
+  } catch (e) {}
+
+  for (const w of wrappers) {
+    const span = w.querySelector(".currency-or-unit-display");
+    const input = w.querySelector("input");
+    if (!span || !input) continue;
+
+    let src = (span.dataset.currencyCode || "").toUpperCase();
+    if (!src) {
+      src = inferCurrencyCodeFromSymbol((span.textContent || "").trim());
+    }
+    if (!src) src = savedSelectedCode || "USD";
+
+    const raw = (input.value || "").toString().replace(/,/g, "").trim();
+    const num = raw === "" ? null : Number(raw);
+    if (num === null || !isFinite(num)) {
+      captured.push({ span, input, srcCode: src, amount: 0, shouldConvert: false });
+    } else {
+      captured.push({ span, input, srcCode: src, amount: num, shouldConvert: true });
+    }
+  }
+
+  const itemsToConvert = captured
+    .filter(it => it.shouldConvert && it.amount !== null)
+    .map(it => ({ span: it.span, input: it.input, srcCode: it.srcCode, amount: it.amount }));
+
+  if (itemsToConvert.length === 0) return { success: true, converted: 0 };
+
+  return convertCapturedItemsToTargetCurrency(targetCurrency, itemsToConvert);
+}
+
+async function selectCurrencyWithAtomicConversion(currency) {
+  if (!currency || !currency.code) return;
+
+  const targetCode = currency.code.toUpperCase();
+
+  const wrappers = Array.from(document.querySelectorAll(".currency-or-unit-input"));
+  const capturedItems = [];
+  
+  let savedSelectedCode = null;
+  try {
+    const saved = localStorage.getItem("selectedCurrency");
+    if (saved) {
+      const s = JSON.parse(saved);
+      if (s && s.code) savedSelectedCode = s.code.toUpperCase();
+    }
+  } catch (e) {}
+
+  for (const w of wrappers) {
+    const span = w.querySelector(".currency-or-unit-display");
+    const input = w.querySelector("input");
+    if (!span || !input) continue;
+
+    let src = (span.dataset.currencyCode || "").toUpperCase();
+    if (!src) src = inferCurrencyCodeFromSymbol((span.textContent || "").trim());
+    if (!src) src = savedSelectedCode || "USD";
+
+    const raw = (input.value || "").toString().replace(/,/g, "").trim();
+    const num = raw === "" ? null : Number(raw);
+    if (num === null || !isFinite(num)) {
+      capturedItems.push({ span, input, srcCode: src, amount: 0, shouldConvert: false });
+    } else {
+      capturedItems.push({ span, input, srcCode: src, amount: num, shouldConvert: true });
+    }
+  }
+
+  const spans = document.querySelectorAll(
+    ".symbol,.currency-or-unit-display, .naira-to-selected-currency-car-custom-duty, .currency-display-for-expanded-results, .currency-display-for-tooltip"
+  );
+  spans.forEach(s => s.classList.add("currency-flash"));
+
+  applyCurrencyToUI(currency);
+  try { localStorage.setItem("selectedCurrency", JSON.stringify(currency)); } catch (e) { console.warn("save fail", e); }
+
+  document.body.classList.add("converting");
+
+  try {
+    const itemsToConvert = capturedItems
+      .filter(it => it.shouldConvert && it.amount !== null)
+      .map(it => ({ span: it.span, input: it.input, srcCode: it.srcCode, amount: it.amount }));
+
+    if (itemsToConvert.length === 0) {
+      return;
+    }
+
+    const convResult = await convertCapturedItemsToTargetCurrency(currency, itemsToConvert);
+
+    if (!convResult.success) {
+      console.warn("Conversion aborted:", convResult);
+      showMessage("Currency conversion failed")
+      return;
+    }
+
+  } catch (err) {
+    console.error("Conversion error:", err);
+    alert("Currency conversion failed");
+    return;
+  } finally {
+    spans.forEach(s => s.classList.remove("currency-flash"));
+    document.body.classList.remove("converting");
+    closeCurrencyPopup();
+  }
+}
+
+function loadSavedCurrency() {
+  const saved = localStorage.getItem("selectedCurrency");
+  if (saved) {
+    try {
+      const currency = JSON.parse(saved);
+      applyCurrencyToUI(currency);
+      return;
+    } catch (e) {
+      console.warn("loadSavedCurrency parse error", e);
+    }
+  }
+
+  const allSymbols = {};
+  currencies.forEach(c => {
+    if (!allSymbols[c.symbol]) allSymbols[c.symbol] = [];
+    allSymbols[c.symbol].push(c.code);
+  });
+  document.querySelectorAll(".currency-or-unit-display").forEach(span => {
+    const txt = (span.textContent || "").trim();
+    if (txt && allSymbols[txt] && allSymbols[txt].length === 1) {
+      span.dataset.currencyCode = allSymbols[txt][0];
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadSavedCurrency();
+  document.querySelectorAll(".currency-select-svg").forEach(svg => {
+    svg.addEventListener("click", openCurrencyPopup);
+  });
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const svgElements = document.querySelectorAll(".currency-select-svg");
+  
+  svgElements.forEach(svg => {
+    const tooltip = document.createElement("div");
+    tooltip.className = "currency-tooltip";
+    tooltip.textContent = "Choose your preferred Currency";
+    document.body.appendChild(tooltip);
+    
+    const rect = svg.getBoundingClientRect();
+    tooltip.style.top = rect.top - 30 + "px";
+    tooltip.style.left = rect.left + rect.width / 2 - tooltip.offsetWidth / 2 + "px";
+    
+    setTimeout(() => {
+      tooltip.classList.add("visible");
+      setTimeout(() => tooltip.classList.remove("visible"), 5000);
+    }, 2000);
+  });
+});
+
+window._cbResolveRate = resolveRate;
+window._cbConvertAll = convertAllInputsToTargetCurrency;
+window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
+/*function applyCurrencyToUI(currency) {
   if (!currency || !currency.code) return;
 
   const symbol = currency.symbol || currency.sign || currency.code;
@@ -2247,7 +2682,7 @@ function applyCurrencyToUI(currency) {
 
 /*const CURRENCYBEACON_API_KEY = "9RguthE8FO8RDbBbnOYbH19Icd0U3z6Y";
 const CB_BASE = "https://api.currencybeacon.com/v1";*/
-// API key is now stored securely on the server
+/*
 const CURRENCYBEACON_API_KEY = null;
 const CB_BASE = "/api/currency-conv";
 
@@ -2641,7 +3076,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window._cbResolveRate = resolveRate;
 window._cbConvertAll = convertAllInputsToTargetCurrency;
-window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
+window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;*/
 
 /**********************************************************/
 
