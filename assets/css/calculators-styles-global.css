@@ -575,12 +575,13 @@ padding: 5px;
   align-items: center;
   gap: 0.5em;
   font-weight: 550;
-  font-family: "Young";
+  font-family: young;
   color: #575865;
   font-size: 16px;
   width: 100%;
   position: relative;
   margin-bottom: 15px;
+  font-size: .95em;
 }
 .input-group #input-tip-icon {
   transition: transform 0.25s ease;
@@ -611,7 +612,7 @@ padding: 5px;
   border: 1.4px solid #464BFF2B;
   border-radius: 8px;
   padding: 12px 36px 12px 12px;
-  min-height: 40px;
+  min-height: 38px;
   background-color: #fff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   outline: none;
@@ -683,7 +684,7 @@ font-weight: 600;
   line-height: 20px;
   color: #111;
   padding: 12px;
-  min-height: 40px;
+  min-height: 38px;
   border: none;
   outline: none;
   background: transparent;
@@ -698,7 +699,7 @@ font-weight: 600;
   line-height: 20px;
   color: #464BFF;
   padding: 12px 36px 12px 12px;
-  min-height: 40px;
+  min-height: 38px;
 padding-left: 0;
 text-align: center;
   border: none;
@@ -758,7 +759,7 @@ text-align: center;
   color: #42445AD9;
   padding: 12px;
   padding-right: 0;
-  min-height: 40px;
+  min-height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -772,7 +773,7 @@ text-align: center;
   line-height: 20px;
   color: #111;
   padding: 12px;
-  min-height: 40px;
+  min-height: 38px;
   border: none;
   outline: none;
   background: transparent;
@@ -813,7 +814,7 @@ text-align: center;
   line-height: 20px;
   color: #464BFF;
   padding: 12px 36px 12px 12px;
-  min-height: 40px;
+  min-height: 38px;
   padding-left: 0;
   text-align: center;
   border: none;
@@ -933,6 +934,38 @@ font-weight: 410;
     border-radius: 10px;
     font-size: .9em;
   }
+  .container strong {
+  font-family: lexend;
+  font-weight: 600;
+  font-size: .9em;
+}
+    .countdown-output {
+      font-size: .95rem;
+      margin-top: 8px;
+      padding: 10px;
+      white-space: pre-line;
+      line-height: 1.7;
+      font-family: "Young";
+    }
+  .snowflake {
+  position: fixed;
+  top: -2em;
+  color: #fff;
+  font-size: 1em;
+  user-select: none;
+  pointer-events: none;
+  animation-name: fall;
+  animation-timing-function: linear;
+  z-index: 9999;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(110vh);
+    opacity: 0.5;
+  }
+}
+
 /******************************/
 
 .currency-select-svg{
@@ -1105,10 +1138,13 @@ outline: none;
   opacity: 1;
 }
 /*******text overflow*******/
-
+.vote-tooltip.show {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
 .input-tooltip-float {
   position: absolute;
-  background-color: #202427;
+  background-color: #393C3F;
   color: #fff;
   font-size: 13px;
   letter-spacing: .25px;
@@ -1125,12 +1161,7 @@ outline: none;
   transform: scale(0.9);
   visibility: hidden;
   transition: transform 0.16s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-
-.input-tooltip-float.visible {
-  visibility: visible;
-  transform: scale(1);
+  
 }
 
 .input-tooltip-float::after {
@@ -1141,7 +1172,11 @@ outline: none;
   transform: translateX(-50%);
   border-width: 6px 6px 0 6px;
   border-style: solid;
-  border-color: #202427 transparent transparent transparent;
+  border-color: #393C3F transparent transparent transparent;
+}
+.input-tooltip-float.visible {
+  visibility: visible;
+  transform: scale(1);
 }
 /********************/
 .sec-seperate{
@@ -1425,7 +1460,9 @@ summary {
   font-family: "young";
   user-select: none;
   letter-spacing: .5px;
-  color: #575865;
+  font-family: lexend;
+font-weight: 600;
+font-size: .9em;
 }
 summary::before {
   content: "";
@@ -1583,7 +1620,6 @@ color: #4F5163;
 .vote-up, .vote-down {
   background: none;
   border: none;
-  cursor: pointer;
   transition: transform 0.25s ease;
   position: relative;
 }
@@ -1593,12 +1629,12 @@ color: #4F5163;
 }
 
 .vote-up.active svg {
-  fill: #00b341;
+  fill: #000000;
   transform: scale(1.2);
 }
 
 .vote-down.active svg {
-  fill: #d91a1a;
+ fill: #000000;
   transform: scale(1.2);
 }
 
@@ -1606,19 +1642,20 @@ color: #4F5163;
   transform: scale(0.9);
 }
 
-/* Tooltip styling */
 .vote-tooltip {
   position: absolute;
-  top: -40px;
+  top: -35px;
   left: 50%;
   transform: translateX(-50%) scale(0.8);
   background: white;
   color: #1f1f1f;
   font-size: 0.8em;
-  padding: 6px 10px;
+  padding: 6px 12px;
   border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
   opacity: 0;
+  font-family: Alansans;
+  letter-spacing: 1px;
   pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
 }
