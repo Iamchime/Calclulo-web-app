@@ -411,7 +411,9 @@ Everyday Life
 </div>
 
 <div class="output-group">
-  
+  <div class="output-group-data">
+    
+  </div>
 </div>
 
 </div>
@@ -461,9 +463,9 @@ Clear all changes
     <div class="similar-calculators-wrap">
   <h2>Similar calculators</h2>
   <div class="similar-calculators">
-    <a href="/agriculture/herbicide-calculator">Herbicide Calculator</a>
-    <a href="/health/gfr-calculator">GFR Calculator</a>
-<a href="/everyday-life">Fat Intake Calculator</a>
+    <a href="/agriculture/herbicide-calculator">Herbicide calculator</a>
+    <a href="/health/gfr-calculator">GFR calculator</a>
+<a href="/everyday-life">Fat intake calculator</a>
   </div>
 </div>
 <article class="description-txt">
@@ -641,7 +643,7 @@ function calculateResults() {
   const L = parseFloat(document.getElementById('fieldLosses').value);
   const Area = parseFloat(document.getElementById('area').value);
   
-  const resultsDiv = document.querySelector(".output-group");
+  const resultsDiv = document.querySelector(".output-group-data");
   
   if ([TP, TGW, G, L, Area].some(isNaN)) {
     
@@ -666,19 +668,6 @@ Adjusted loss rate:    ${L}%
   resultsDiv.innerHTML = formatResultHTML(lastResult);
 }
 
-function downloadTxt() {
-  if (!lastResult.trim()) {
-    alert("Please calculate results first.");
-    return;
-  }
-  
-  const blob = new Blob([lastResult.trim()], { type: 'text/plain' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = `seed_rate_results_${Math.round(Math.random() * 100000)}.txt`;
-  link.click();
-}
-
 function formatResultHTML(resultText) {
   return `
     ${resultText.split("\n").map(line => {
@@ -686,7 +675,6 @@ function formatResultHTML(resultText) {
       const [label, value] = line.split(":");
       return `<div class="result-line"><span class="label">${label.trim()}:</span> ${value.trim()}</div>`;
     }).join("")}
-    <button class="download" onclick="downloadTxt()">Download Results</button>
   `;
 }
 

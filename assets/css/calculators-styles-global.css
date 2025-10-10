@@ -859,7 +859,7 @@ border: none;
   100% { transform: scale(1);}
 }
 .output-group{
-  
+  position: relative;
 }
 .output-group .money {
   font-family: "zalando";
@@ -874,25 +874,6 @@ border: none;
   margin: 9px 0;
   font-family: "Young";
   color: #464752E0;
-}
-.download{
-font-size: 15px;
-border-radius: 10px;
-font-weight: 400;
-display: flex;
-align-items: center;
-transition: .1s;
-justify-content: center;
-font-family: 'Young';
-text-decoration: underline;
-            background: transparent;
-            border: none;
-            margin-top: 15px;
-            color: #3D3E45E8;
-            user-select: none;
-}
-.download:active{
-  transform: scale(.98);
 }
   .interest-rate-results{
     font-family: "young";
@@ -1730,52 +1711,6 @@ font-weight: 400;
 
 .similar-calculators a:hover::after {
   transform: translateY(-50%) translateX(-20px);
-}
-#page-pin-icon{
-  display: inline-flex;
-align-items: center;
-margin-left: 8px;
-color: #464BFF;
-position: relative;
-border-radius: 50%;
-padding: 1px;
-transition: .2s;
-}
-#page-pin-icon svg{
-  stroke: #464BFF61;
-  transition: .2s;
-}
-#page-pin-icon svg:hover{
-  stroke: #464BFF;
-}
-.tooltip-bubble {
-  position: absolute;
-  bottom: 125%;
-  left: 50%;
-  transform: translateX(-50%) scale(0);
-  background: #fff;
-  color: #1F1F1FC2;
-  padding: 6px 10px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 400;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  pointer-events: none;
-  transition: transform 0.1s ease, opacity 0.1s ease;
-  z-index: 1000;
-  max-width: 90vw;
-  overflow-wrap: break-word;
-  line-height: 1.4;
-  white-space: normal;
-  opacity: 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  font-family: "Young";
-}
-#page-pin-icon.show-tooltip .tooltip-bubble {
-  transform: translateX(-50%) scale(1);
-  opacity: 1;
 }
  .description-txt{
     display: flex;

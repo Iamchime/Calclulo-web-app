@@ -2643,7 +2643,501 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
 /**********************************************************/
 
 /************************************** output group function *********/
+(function () {
+  'use strict';
 
+  function q(sel, root = document) { return root.querySelector(sel); }
+  function qa(sel, root = document) { return Array.from(root.querySelectorAll(sel)); }
+  function debounce(fn, wait = 120) {
+    let t = null;
+    return function (...args) {
+      clearTimeout(t);
+      t = setTimeout(() => fn.apply(this, args), wait);
+    };
+  }
+  function isNonEmptyNode(el) {
+    if (!el) return false;
+    // Consider non-empty if it has child elements or visible text
+    if (el.childElementCount > 0) return true;
+    const txt = (el.textContent || '').trim();
+    return txt.length > 0;
+  }
+
+  // ---------- inline SVGs (use currentColor for visibility) ----------
+  const rawCopySvg = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>`;
+  const rawDownloadSvg = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>`;
+  // Force fill -> currentColor for adaptability
+  const COPY_SVG = rawCopySvg.replace(/fill="[^"]*"/, 'fill="currentColor"');
+  const DOWNLOAD_SVG = rawDownloadSvg.replace(/fill="[^"]*"/, 'fill="currentColor"');
+
+  // ---------- PDF builder (minimal single-page plain text) ----------
+  function escapePdfString(s) {
+    return String(s || '')
+      .replace(/\\/g, '\\\\')
+      .replace(/\(/g, '\\(')
+      .replace(/\)/g, '\\)');
+  }
+  function buildPdfBlobFromText(text) {
+    const encoder = new TextEncoder();
+    const pageWidth = 612, pageHeight = 792;
+    const startX = 72, startY = 760, leading = 14, fontSize = 12;
+    const lines = String(text || '').split(/\r?\n/).slice(0, 4000);
+    const escapedLines = lines.map(l => escapePdfString(l));
+    let content = 'BT\n/F1 ' + fontSize + ' Tf\n' + startX + ' ' + startY + ' Td\n';
+    escapedLines.forEach((ln, i) => {
+      content += '(' + ln + ') Tj\n';
+      if (i !== escapedLines.length - 1) content += '0 -' + leading + ' Td\n';
+    });
+    content += 'ET\n';
+    const objs = [];
+    objs.push('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+    objs.push('2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n');
+    objs.push('3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ' + pageWidth + ' ' + pageHeight +
+              '] /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>\nendobj\n');
+    const contentStream = content;
+    const contentLen = encoder.encode(contentStream).length;
+    objs.push('4 0 obj\n<< /Length ' + contentLen + ' >>\nstream\n' + contentStream + 'endstream\nendobj\n');
+    objs.push('5 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj\n');
+    const header = '%PDF-1.3\n%âãÏÓ\n';
+    const parts = [header].concat(objs);
+    const offsets = [];
+    let cursor = 0;
+    for (let i = 0; i < parts.length; i++) {
+      offsets.push(cursor);
+      cursor += encoder.encode(parts[i]).length;
+    }
+    const xrefStart = cursor;
+    const totalObjects = objs.length + 1;
+    let xref = 'xref\n0 ' + totalObjects + '\n';
+    xref += '0000000000 65535 f \n';
+    for (let i = 0; i < objs.length; i++) {
+      const off = offsets[i + 1];
+      xref += String(off).padStart(10, '0') + ' 00000 n \n';
+    }
+    const trailer = 'trailer\n<< /Size ' + totalObjects + ' /Root 1 0 R >>\nstartxref\n' + xrefStart + '\n%%EOF\n';
+    const all = parts.concat([xref, trailer]).join('');
+    return new Blob([encoder.encode(all)], { type: 'application/pdf' });
+  }
+
+  // ---------- download helpers ----------
+  function triggerDownloadBlob(filename, blob) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    // append to body to ensure click works
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+  function makeCsvFromText(text) {
+    return String(text || '').split(/\r?\n/).map(l => '"' + l.replace(/"/g, '""') + '"').join('\r\n');
+  }
+
+  // ---------- inject CSS (only once) ----------
+  function injectCss() {
+    if (document.getElementById('calclulo-output-styles')) return;
+    const css = `
+/* Calclulo output tools - injected styles (fade-only) */
+.calclulo-output-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  pointer-events: none; /* disabled until visible */
+  opacity: 0;
+  transition: opacity 180ms ease;
+  z-index: 9998;
+}
+.output-group:hover .calclulo-output-actions,
+.output-group:focus-within .calclulo-output-actions,
+.calclulo-output-actions.calclulo-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.calclulo-action-btn {
+    all: unset;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #44454E;
+  transition: 0.1s;
+  background: #eee;
+}
+
+.calclulo-action-btn svg {
+ width: 20px;
+  height: 20px;
+ display: block;
+}
+.calclulo-action-btn:active {transform: scale(1.1);}
+
+.calclulo-download-wrapper { position: relative; }
+.calclulo-download-menu {
+  position: absolute;
+  right: 50px;
+  top: 0;
+  transform: translateY(-50%);
+  background: #fff;
+  border: 1px solid #eef2f7;
+  border-radius: 10px;
+  padding: 6px;
+  min-width: 180px;
+  box-shadow: 0 14px 40px rgba(15,23,36,0.09);
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 160ms ease;
+  z-index: 9999;
+  user-select: none;
+}
+.calclulo-download-menu.open { opacity: 1; pointer-events: auto; }
+.calclulo-download-option {
+  all: unset;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-align: left;
+  font-size: 14px;
+  color: #0f1724;
+}
+.calclulo-download-option:hover { background: rgba(15,23,36,0.03); }
+.calclulo-toast {
+  position: absolute;
+  right: 68px;
+  top: 8px;
+  background: #111827;
+  color: #fff;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  opacity: 0;
+  transition: opacity 160ms ease;
+  pointer-events: none;
+  z-index: 10000;
+}
+.calclulo-toast.show { opacity: 1; }
+
+`;
+    const s = document.createElement('style');
+    s.id = 'calclulo-output-styles';
+    s.textContent = css;
+    document.head.appendChild(s);
+  }
+
+  // ---------- core: create UI element (but do not attach yet) ----------
+  function createUiElement() {
+    const container = document.createElement('div');
+    container.className = 'calclulo-output-actions';
+    container.innerHTML = `
+      <div class="calclulo-toast" aria-hidden="true"></div>
+
+      <button class="calclulo-action-btn calclulo-copy-btn" type="button" title="Copy results" aria-label="Copy results">
+        <span class="icon">${COPY_SVG}</span>
+      </button>
+
+      <div class="calclulo-download-wrapper">
+        <button class="calclulo-action-btn calclulo-download-btn" type="button" title="Download results" aria-label="Download results" aria-expanded="false">
+          <span class="icon">${DOWNLOAD_SVG}</span>
+        </button>
+        <div class="calclulo-download-menu" role="menu" aria-hidden="true">
+          <button class="calclulo-download-option" data-type="pdf" type="button">Save as PDF</button>
+          <button class="calclulo-download-option" data-type="csv" type="button">Download CSV</button>
+          <button class="calclulo-download-option" data-type="txt" type="button">Download TXT</button>
+        </div>
+      </div>
+    `;
+    return container;
+  }
+
+  // ---------- attach UI to a specific output-group, but only if .output-group-data non-empty ----------
+  const attached = new WeakMap(); // host -> { ui, listeners... }
+
+  function attachToGroup(host) {
+    if (!host || !(host instanceof Element)) return;
+    // find the .output-group-data child
+    const dataEl = host.querySelector('.output-group-data');
+    if (!dataEl) return; // no data element, do nothing
+
+    // check non-empty
+    if (!isNonEmptyNode(dataEl)) {
+      // remove if previously attached
+      detachFromGroup(host);
+      return;
+    }
+
+    // if already attached, ensure UI exists and return
+    if (attached.has(host)) {
+      // UI present, maybe re-position or do nothing
+      const state = attached.get(host);
+      // ensure toast exists
+      return state;
+    }
+
+    // create UI element and insert after dataEl
+    injectCss();
+    const ui = createUiElement();
+
+    // Insert immediately after dataEl inside host
+    // If dataEl has next sibling and it's our UI, skip. Otherwise insert.
+    if (dataEl.nextElementSibling) {
+      dataEl.insertAdjacentElement('afterend', ui);
+    } else {
+      dataEl.parentNode.appendChild(ui);
+    }
+
+    // For accessibility + hover behavior: we also add 'calclulo-visible' if host has :hover/focus-within,
+    // but CSS already handles host:hover .calclulo-output-actions so no further action needed.
+    // We'll also toggle class when host gains keyboard focus (focusin/out) to ensure keyboard users see it.
+    function onHostFocusIn() { ui.classList.add('calclulo-visible'); }
+    function onHostFocusOut() { ui.classList.remove('calclulo-visible'); }
+
+    host.addEventListener('focusin', onHostFocusIn);
+    host.addEventListener('focusout', onHostFocusOut);
+
+    // Add small padding-right so the content does not sit beneath the UI
+    // Opt-out if host has data-calclulo-no-pad="1"
+    let addedPad = false;
+    if (host.dataset.calcluloNoPad !== '1') {
+      try {
+        const cs = window.getComputedStyle(host);
+        const currentPad = parseFloat(cs.paddingRight || '0') || 0;
+        // store inline original to restore on detach
+        host.dataset._calcluloOrigPad = host.style.paddingRight || '';
+        const needed = 76; // approx width for UI area
+        if (currentPad < needed) {
+          host.style.paddingRight = (currentPad + needed) + 'px';
+          host.dataset._calcluloAddedPad = '1';
+          addedPad = true;
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    // wire up buttons
+    const copyBtn = ui.querySelector('.calclulo-copy-btn');
+    const downloadBtn = ui.querySelector('.calclulo-download-btn');
+    const menu = ui.querySelector('.calclulo-download-menu');
+    const options = Array.from(ui.querySelectorAll('.calclulo-download-option'));
+    const toast = ui.querySelector('.calclulo-toast');
+
+    function getDataText() {
+      // copy whole content inside .output-group-data (prefer innerText)
+      const el = host.querySelector('.output-group-data');
+      if (!el) return '';
+      // preserve line breaks and trim
+      return (el.innerText || '').trim().replace(/\r\n/g, '\n');
+    }
+
+    function showToast(msg) {
+      if (!toast) return;
+      toast.textContent = msg;
+      toast.classList.add('show');
+      toast.setAttribute('aria-hidden', 'false');
+      setTimeout(() => {
+        toast.classList.remove('show');
+        toast.setAttribute('aria-hidden', 'true');
+      }, 1300);
+    }
+
+    // copy handler
+    async function onCopyClick(ev) {
+      ev.stopPropagation();
+      const txt = getDataText();
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(txt);
+        } else {
+          const ta = document.createElement('textarea');
+          ta.value = txt;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+        }
+        showToast('Copied');
+      } catch (err) {
+        console.error('copy failed', err);
+        showToast('Copy failed');
+      }
+    }
+
+    // download handlers
+    function onDownloadToggle(ev) {
+      ev.stopPropagation();
+      const open = menu.classList.toggle('open');
+      downloadBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      menu.setAttribute('aria-hidden', open ? 'false' : 'true');
+    }
+    function onOptionClick(ev) {
+      ev.stopPropagation();
+      const btn = ev.currentTarget;
+      const type = btn.getAttribute('data-type');
+      const txt = getDataText();
+      try {
+        if (type === 'txt') {
+          triggerDownloadBlob('results.txt', new Blob([txt], { type: 'text/plain;charset=utf-8' }));
+          showToast('Downloading TXT');
+        } else if (type === 'csv') {
+          const csv = makeCsvFromText(txt);
+          triggerDownloadBlob('results.csv', new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+          showToast('Downloading CSV');
+        } else if (type === 'pdf') {
+          const blob = buildPdfBlobFromText(txt);
+          triggerDownloadBlob('results.pdf', blob);
+          showToast('Downloading PDF');
+        }
+      } catch (err) {
+        console.error('download error', err);
+        showToast('Download failed');
+      } finally {
+        menu.classList.remove('open');
+        menu.setAttribute('aria-hidden', 'true');
+        downloadBtn.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    function outsideClickHandler(ev) {
+      // if click outside the host, close menu
+      if (!host.contains(ev.target)) {
+        menu.classList.remove('open');
+        menu.setAttribute('aria-hidden', 'true');
+        downloadBtn.setAttribute('aria-expanded', 'false');
+      }
+    }
+
+    copyBtn.addEventListener('click', onCopyClick);
+    downloadBtn.addEventListener('click', onDownloadToggle);
+    options.forEach(o => o.addEventListener('click', onOptionClick));
+    document.addEventListener('click', outsideClickHandler, { passive: true });
+
+    // store attached state so we can detach later
+    attached.set(host, {
+      ui,
+      handlers: { onHostFocusIn, onHostFocusOut, onCopyClick, onDownloadToggle, onOptionClick, outsideClickHandler },
+      addedPad
+    });
+
+    return attached.get(host);
+  }
+
+  // ---------- detach/cleanup ----------
+  function detachFromGroup(host) {
+    if (!host || !attached.has(host)) return;
+    const state = attached.get(host);
+    const ui = state.ui;
+    // remove event listeners
+    try {
+      host.removeEventListener('focusin', state.handlers.onHostFocusIn);
+      host.removeEventListener('focusout', state.handlers.onHostFocusOut);
+    } catch (e) {}
+    try {
+      const copyBtn = ui.querySelector('.calclulo-copy-btn');
+      const downloadBtn = ui.querySelector('.calclulo-download-btn');
+      const options = Array.from(ui.querySelectorAll('.calclulo-download-option'));
+      if (copyBtn) copyBtn.removeEventListener('click', state.handlers.onCopyClick);
+      if (downloadBtn) downloadBtn.removeEventListener('click', state.handlers.onDownloadToggle);
+      options.forEach(o => o.removeEventListener('click', state.handlers.onOptionClick));
+    } catch (e) {}
+    try { document.removeEventListener('click', state.handlers.outsideClickHandler); } catch (e) {}
+    // remove UI element if present
+    try { if (ui && ui.parentNode) ui.parentNode.removeChild(ui); } catch (e) {}
+    // restore padding if added
+    try {
+      if (host.dataset._calcluloAddedPad === '1') {
+        host.style.paddingRight = host.dataset._calcluloOrigPad || '';
+        delete host.dataset._calcluloAddedPad;
+        delete host.dataset._calcluloOrigPad;
+      }
+    } catch (e) {}
+    attached.delete(host);
+  }
+
+  // ---------- scan & process all groups (debounced) ----------
+  function processAllGroups() {
+    const groups = qa('.output-group');
+    groups.forEach(g => {
+      const dataEl = g.querySelector('.output-group-data');
+      if (!dataEl) {
+        // remove if previously attached
+        detachFromGroup(g);
+        return;
+      }
+      if (isNonEmptyNode(dataEl)) {
+        attachToGroup(g);
+      } else {
+        detachFromGroup(g);
+      }
+    });
+  }
+  const debouncedProcess = debounce(processAllGroups, 120);
+
+  // ---------- observe DOM changes (new nodes / subtree changes) ----------
+  let globalObserver = null;
+  function startObserving() {
+    if (globalObserver) return;
+    globalObserver = new MutationObserver((mutations) => {
+      // If mutation affects .output-group or .output-group-data, re-process.
+      let shouldRun = false;
+      for (const m of mutations) {
+        if (m.type === 'childList') {
+          if (m.addedNodes && m.addedNodes.length) {
+            for (const n of m.addedNodes) {
+              if (n.nodeType !== 1) continue;
+              if (n.matches && (n.matches('.output-group') || n.matches('.output-group-data'))) { shouldRun = true; break; }
+              if (n.querySelector && (n.querySelector('.output-group') || n.querySelector('.output-group-data'))) { shouldRun = true; break; }
+            }
+            if (shouldRun) break;
+          }
+          if (m.removedNodes && m.removedNodes.length) {
+            for (const n of m.removedNodes) {
+              if (n.nodeType !== 1) continue;
+              if (n.matches && (n.matches('.output-group') || n.matches('.output-group-data'))) { shouldRun = true; break; }
+            }
+            if (shouldRun) break;
+          }
+        } else if (m.type === 'characterData' || m.type === 'attributes') {
+          // text or attributes changed - could affect emptiness
+          shouldRun = true;
+          break;
+        }
+      }
+      if (shouldRun) debouncedProcess();
+    });
+    globalObserver.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['style', 'class'] });
+  }
+
+  // ---------- initial run ----------
+  injectCss();
+  // small delay so other scripts that run at DOMContentLoaded can finish writing
+  setTimeout(() => {
+    processAllGroups();
+    startObserving();
+  }, 30);
+
+  // ---------- expose API (optional) ----------
+  window.calcluloOutputTools = window.calcluloOutputTools || {};
+  window.calcluloOutputTools.processAll = processAllGroups;
+  window.calcluloOutputTools.attachTo = attachToGroup;
+  window.calcluloOutputTools.detachFrom = detachFromGroup;
+  window.calcluloOutputTools.destroy = function () {
+    // remove all attached UIs and observer
+    qa('.output-group').forEach(g => detachFromGroup(g));
+    try { if (globalObserver) { globalObserver.disconnect(); globalObserver = null; } } catch (e) {}
+    try { const s = document.getElementById('calclulo-output-styles'); if (s) s.remove(); } catch (e) {}
+  };
+
+  // ---------- done ----------
+})();
 /**********************************************************/
 
 /************************************** charts *********/
