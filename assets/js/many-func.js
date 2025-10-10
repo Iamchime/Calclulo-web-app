@@ -2245,8 +2245,12 @@ function applyCurrencyToUI(currency) {
   });
 }
 
-const CURRENCYBEACON_API_KEY = "9RguthE8FO8RDbBbnOYbH19Icd0U3z6Y";
-const CB_BASE = "https://api.currencybeacon.com/v1";
+/*const CURRENCYBEACON_API_KEY = "9RguthE8FO8RDbBbnOYbH19Icd0U3z6Y";
+const CB_BASE = "https://api.currencybeacon.com/v1";*/
+// API key is now stored securely on the server
+const CURRENCYBEACON_API_KEY = null;
+const CB_BASE = "/api/currency-conv";
+
 const DEBUG_CB = true;
 
 function _cbLog(...args) { if (DEBUG_CB) console.debug("[CB]", ...args); }
@@ -2845,4 +2849,3 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })();*/
 /**********************************************************/
-//fetch("https://your-vercel-domain.vercel.app/api/currency-conv?action=latest&base=USD&symbols=EUR")
