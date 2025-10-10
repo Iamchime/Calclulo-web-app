@@ -2711,7 +2711,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 /*****************************************/
 /************************************** protection function *********/
-(function () {
+/*(function () {
   const DEVTOOLS_TIME_THRESHOLD_MS = 100;
   const DIMENSION_DIFF_THRESHOLD = 160;
   const CHECK_INTERVAL_MS = 800;
@@ -2843,5 +2843,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (e) { console.error(e); }
   };
 
-})();
+})();*/
 /**********************************************************/
+//fetch("https://your-vercel-domain.vercel.app/api/currency-conv?action=latest&base=USD&symbols=EUR")
