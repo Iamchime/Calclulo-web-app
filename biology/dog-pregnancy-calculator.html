@@ -250,15 +250,14 @@ Clear all changes
   <svg height="18" viewBox="0 -960 960 960" width="18" fill="currentColor"><path d="M280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h280v200H280v480h400v-80h80v200q0 33-23.5 56.5T680-40H280Zm440-360L520-600l56-56 104 104v-288h80v288l104-104 56 56-200 200Z"></path></svg>
 </button>
     </div>
-
-    <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
-      <div class="similar-calculators">
-        <a href="/health/gfr-calculator">GFR Calculator</a>
-        <a href="/food/coffee-calculator">Coffee Calculator</a>
-        <a href="/biology/llama-pregnancy-calculator">Llama pregnancy</a>
-      </div>
-    </div>
+<div class="similar-calculators-wrap">
+  <h2>Similar animal pregnancy calculators</h2>
+  <div class="similar-calculators">
+    <a href="/biology/cat-pregnancy-calculator">Cat pregnancy</a>
+    <a href="/biology/guinea-pig-pregnancy-calculator">Guinea pig pregnancy</a>
+    <a href="/biology/llama-pregnancy-calculator">Llama pregnancy</a>
+  </div>
+</div>
 <article class="description-txt">
    <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
    <p>
@@ -391,50 +390,49 @@ Everyday Life
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
 <script defer crossorigin="anonymous">
 (() => {
-  const matingInput = document.getElementById("matingDate");
-  const dueInput = document.getElementById("dueDate");
-  const resultsDiv = document.querySelector(".output-group");
-
+  'use strict';
+  
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
   const EARLIEST = 58;
   const AVERAGE = 63;
   const LATEST = 68;
-
-  let lastChanged = null;
+  const pad = n => String(n).padStart(2, '0');
   
-  const pad = n => String(n).padStart(2, "0");
-
   function parseDateInput(v) {
     if (!v) return null;
-    const [y, m, d] = v.split("-").map(Number);
+    const parts = v.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(x => Number.isNaN(x))) return null;
+    const [y, m, d] = parts;
     return new Date(Date.UTC(y, m - 1, d));
   }
-
+  
   function toInputValue(date) {
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
+    if (!date) return '';
+    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth()+1)}-${pad(date.getUTCDate())}`;
   }
-
+  
   function formatDate(date) {
-    return `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
+    if (!date) return '';
+    return `${pad(date.getUTCDate())}/${pad(date.getUTCMonth()+1)}/${date.getUTCFullYear()}`;
   }
-
+  
   function addDays(date, days) {
     return new Date(date.getTime() + days * MS_PER_DAY);
   }
-
+  
   function todayUTC() {
     const n = new Date();
     return new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()));
   }
-
+  
   function fromMating(mating) {
     return {
       due: addDays(mating, AVERAGE),
       earliest: addDays(mating, EARLIEST),
-      latest: addDays(mating, LATEST),
+      latest: addDays(mating, LATEST)
     };
   }
-
+  
   function fromDue(due) {
     const mating = addDays(due, -AVERAGE);
     return {
@@ -444,27 +442,18 @@ Everyday Life
       due
     };
   }
-
-  function clearResultClasses() {
-    matingInput.classList.remove("result");
-    dueInput.classList.remove("result");
-  }
-
-  function updateResults() {
-    resultsDiv.innerHTML = "";
-    clearResultClasses();
-    const today = todayUTC();
-
-    if (lastChanged === "mating" && matingInput.value) {
-      const mating = parseDateInput(matingInput.value);
-      const { due, earliest, latest } = fromMating(mating);
-
-      dueInput.value = toInputValue(due);
-      dueInput.classList.add("result");
-
-      const diff = Math.round((due - today) / MS_PER_DAY);
-
-      resultsDiv.innerHTML = `
+  
+  function init() {
+    const matingInput = document.getElementById("matingDate");
+    const dueInput = document.getElementById("dueDate");
+    const resultsDiv = document.querySelector(".output-group");
+    if (!resultsDiv) return;
+    
+    let lastChanged = null;
+    
+    function buildHtmlForDue(due, earliest, latest, today) {
+      const diff = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
+      return `
         🐶 Expected due date is on a <strong>${due.toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" })}</strong>!<br><br>
         ${diff >= 0
           ? `Your dog is expected to give birth in <strong>${diff}</strong> day(s)!`
@@ -477,46 +466,60 @@ Everyday Life
         </ul>
       `;
     }
-
-    if (lastChanged === "due" && dueInput.value) {
-      const due = parseDateInput(dueInput.value);
-      const { mating, earliest, latest } = fromDue(due);
-
-      matingInput.value = toInputValue(mating);
-      matingInput.classList.add("result");
-
-      const diff = Math.round((due - today) / MS_PER_DAY);
-
-      resultsDiv.innerHTML = `
-        🐶 Expected due date is on a <strong>${due.toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" })}</strong>!<br><br>
-        ${diff >= 0
-          ? `Your dog is expected to give birth in <strong>${diff}</strong> day(s)!`
-          : `Your dog gave birth <strong>${Math.abs(diff)}</strong> day(s) ago!`}
-        <br><br>
-        <ul>
-          <li>Earliest possible date: <strong>${formatDate(earliest)}</strong></li>
-          <li>Average due date: <strong>${formatDate(due)}</strong></li>
-          <li>Latest possible date: <strong>${formatDate(latest)}</strong></li>
-        </ul>
-      `;
+    
+    function updateResults() {
+      resultsDiv.innerHTML = "";
+      const today = todayUTC();
+      
+      if (lastChanged === "mating" && matingInput && matingInput.value) {
+        const mating = parseDateInput(matingInput.value);
+        if (!mating) return;
+        const { due, earliest, latest } = fromMating(mating);
+        if (dueInput) dueInput.value = toInputValue(due);
+        resultsDiv.innerHTML = buildHtmlForDue(due, earliest, latest, today);
+        return;
+      }
+      
+      if (lastChanged === "due" && dueInput && dueInput.value) {
+        const due = parseDateInput(dueInput.value);
+        if (!due) return;
+        const { mating, earliest, latest } = fromDue(due);
+        if (matingInput) matingInput.value = toInputValue(mating);
+        resultsDiv.innerHTML = buildHtmlForDue(due, earliest, latest, today);
+        return;
+      }
+      
+      resultsDiv.innerHTML = "";
     }
+    
+    if (matingInput) {
+      matingInput.addEventListener("input", () => {
+        lastChanged = "mating";
+        updateResults();
+      });
+    }
+    
+    if (dueInput) {
+      dueInput.addEventListener("input", () => {
+        lastChanged = "due";
+        updateResults();
+      });
+    }
+    
+    const runOnLoad = () => {
+      setTimeout(() => {
+        if (matingInput && matingInput.value) lastChanged = "mating";
+        else if (dueInput && dueInput.value) lastChanged = "due";
+        updateResults();
+      }, 150);
+    };
+    
+    if (document.readyState === "complete") runOnLoad();
+    else window.addEventListener("load", runOnLoad);
   }
-
-  matingInput.addEventListener("input", () => {
-    matingInput.classList.remove("result");
-    lastChanged = "mating";
-    updateResults();
-  });
-
-  dueInput.addEventListener("input", () => {
-
-    dueInput.classList.remove("result");
-    lastChanged = "due";
-    updateResults();
-  });
-
-  if (matingInput.value) { lastChanged = "mating"; updateResults(); } 
-  else if (dueInput.value) { lastChanged = 'due'; updateResults(); }
+  
+  if (document.readyState === "complete") init();
+  else window.addEventListener("load", init);
 })();
 </script>
 

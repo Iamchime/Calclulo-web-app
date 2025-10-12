@@ -200,7 +200,7 @@ Everyday Life
      </div>
    </div>
    
-   <span class="input-tips">Choose operation type </span>
+   <span class="input-tips">Type of breed. </span>
    <div class="input-options">
    <div class="input-options-item">
   <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
@@ -303,12 +303,13 @@ Clear all changes
 </button>
     </div>
 
-    <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
+  <div class="similar-calculators-wrap">
+      <h2>Similar animal pregnancy calculators</h2>
       <div class="similar-calculators">
-        <a href="/health/gfr-calculator">GFR Calculator</a>
-        <a href="/food/coffee-calculator">Coffee Calculator</a>
+        <a href="/biology/cow-gestation-calculator">Cow gestation</a>
+        <a href="/biology/horse-gestation-calculator">Horse gestation</a>
         <a href="/biology/llama-pregnancy-calculator">Llama pregnancy</a>
+        <a href="/biology/sheep-gestation-calculator">Sheep gestation</a>
       </div>
     </div>
 <article class="description-txt">
@@ -447,84 +448,70 @@ Everyday Life
   const kiddingInput = document.getElementById("Kiddingdate");
   const resultsDiv = document.querySelector(".output-group");
   const breedRadios = document.querySelectorAll("input[name='breedType']");
-
+  
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
   const STANDARD_GESTATION = 150;
-  const MINIATURE_GESTATION = 145; 
+  const MINIATURE_GESTATION = 145;
   const WINDOW_DAYS = 5;
-
+  
   let lastChanged = null;
   
   const pad = n => String(n).padStart(2, "0");
-
-  function parseDateInput(value) {
-    if (!value) return null;
-    const [y, m, d] = value.split("-").map(Number);
+  
+  const parseDateInput = v => {
+    if (!v) return null;
+    const [y, m, d] = v.split("-").map(Number);
     return new Date(Date.UTC(y, m - 1, d));
-  }
-
-  function toInputValue(date) {
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
-  }
-
-  function formatDDMMYYYY(date) {
-    return `${pad(date.getUTCDate())}/${pad(date.getUTCMonth() + 1)}/${date.getUTCFullYear()}`;
-  }
-
-  function addDaysUTC(date, days) {
-    return new Date(date.getTime() + days * MS_PER_DAY);
-  }
-
-  function todayUTC() {
+  };
+  
+  const toInputValue = d => `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+  const formatDDMMYYYY = d => `${pad(d.getUTCDate())}/${pad(d.getUTCMonth() + 1)}/${d.getUTCFullYear()}`;
+  const addDaysUTC = (d, days) => new Date(d.getTime() + days * MS_PER_DAY);
+  const todayUTC = () => {
     const n = new Date();
     return new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()));
-  }
-
-  function getGestationDays() {
-    const sel = document.querySelector("input[name='breedType']:checked").value;
-    return sel === "miniaturebreed" ? MINIATURE_GESTATION : STANDARD_GESTATION;
-  }
-
-  function calcFromBreeding(breedingUTC) {
-    const gest = getGestationDays();
-    const due = addDaysUTC(breedingUTC, gest);
-    const earliest = addDaysUTC(breedingUTC, gest - WINDOW_DAYS);
-    const latest = addDaysUTC(breedingUTC, gest + WINDOW_DAYS);
-    return { due, earliest, latest, gest };
-  }
-
-  function calcFromKidding(kiddingUTC) {
-    const gest = getGestationDays();
-    const mating = addDaysUTC(kiddingUTC, -gest);
-    const earliest = addDaysUTC(mating, gest - WINDOW_DAYS);
-    const latest = addDaysUTC(mating, gest + WINDOW_DAYS);
-    return { mating, earliest, latest, gest, due: kiddingUTC };
-  }
-
-  function clearResultClasses() {
-    breedingInput.classList.remove("result");
-    kiddingInput.classList.remove("result");
-  }
-
+  };
+  
+  const getGestationDays = () =>
+    document.querySelector("input[name='breedType']:checked").value === "miniaturebreed" ?
+    MINIATURE_GESTATION :
+    STANDARD_GESTATION;
+  
+  const calcFromBreeding = d => {
+    const g = getGestationDays();
+    const due = addDaysUTC(d, g);
+    return {
+      due,
+      earliest: addDaysUTC(d, g - WINDOW_DAYS),
+      latest: addDaysUTC(d, g + WINDOW_DAYS),
+      g
+    };
+  };
+  
+  const calcFromKidding = d => {
+    const g = getGestationDays();
+    const mating = addDaysUTC(d, -g);
+    return {
+      mating,
+      earliest: addDaysUTC(mating, g - WINDOW_DAYS),
+      latest: addDaysUTC(mating, g + WINDOW_DAYS),
+      g,
+      due: d
+    };
+  };
+  
   function updateResults() {
     resultsDiv.innerHTML = "";
-    clearResultClasses();
     const today = todayUTC();
-
+    
     if (lastChanged === "breeding" && breedingInput.value) {
       const breedingUTC = parseDateInput(breedingInput.value);
-      const { due, earliest, latest, gest } = calcFromBreeding(breedingUTC);
-
+      const { due, earliest, latest } = calcFromBreeding(breedingUTC);
       kiddingInput.value = toInputValue(due);
-      kiddingInput.classList.add("result");
-
-      const diffDays = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
-
+      const diffDays = Math.round((due - today) / MS_PER_DAY);
       resultsDiv.innerHTML = `
         🐐 Your goat's due date is on a <strong>${due.toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" })}</strong>!<br><br>
-        ${diffDays >= 0
-          ? `🐐 Your goat is going to give birth in <strong>${diffDays}</strong> day(s)!`
-          : `🐐 Your goat gave birth <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
+        ${diffDays >= 0 ? `🐐 Your goat is going to give birth in <strong>${diffDays}</strong> day(s)!` : `🐐 Your goat gave birth <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
         <br><br>
         <ul style="margin-top:8px;">
           <li>The earliest possible kidding date is: <strong>${formatDDMMYYYY(earliest)}</strong></li>
@@ -534,21 +521,15 @@ Everyday Life
       `;
       return;
     }
-
+    
     if (lastChanged === "kidding" && kiddingInput.value) {
       const kiddingUTC = parseDateInput(kiddingInput.value);
-      const { mating, earliest, latest, gest } = calcFromKidding(kiddingUTC);
-
+      const { mating, earliest, latest } = calcFromKidding(kiddingUTC);
       breedingInput.value = toInputValue(mating);
-      breedingInput.classList.add("result");
-
-      const diffDays = Math.round((kiddingUTC.getTime() - today.getTime()) / MS_PER_DAY);
-
+      const diffDays = Math.round((kiddingUTC - today) / MS_PER_DAY);
       resultsDiv.innerHTML = `
         🐐 Your goat's due date is on a <strong>${kiddingUTC.toLocaleDateString("en-GB", { weekday: "long", timeZone: "UTC" })}</strong>!<br><br>
-        ${diffDays >= 0
-          ? `🐐 Your goat is going to give birth in <strong>${diffDays}</strong> day(s)!`
-          : `🐐 Your goat gave birth <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
+        ${diffDays >= 0 ? `🐐 Your goat is going to give birth in <strong>${diffDays}</strong> day(s)!` : `🐐 Your goat gave birth <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
         <br><br>
         <ul style="margin-top:8px;">
           <li>The earliest possible kidding date is: <strong>${formatDDMMYYYY(earliest)}</strong></li>
@@ -556,32 +537,34 @@ Everyday Life
           <li>The latest possible kidding date is: <strong>${formatDDMMYYYY(latest)}</strong></li>
         </ul>
       `;
-      return;
     }
-
-    resultsDiv.innerHTML = "";
   }
-
+  
   breedingInput.addEventListener("input", () => {
-    breedingInput.classList.remove("result");
     lastChanged = "breeding";
     updateResults();
   });
-
+  
   kiddingInput.addEventListener("input", () => {
-    kiddingInput.classList.remove("result");
     lastChanged = "kidding";
     updateResults();
   });
-
-  breedRadios.forEach(r => r.addEventListener("change", () => {
   
+  breedRadios.forEach(r => r.addEventListener("change", () => {
     if (lastChanged) updateResults();
   }));
-
-  if (breedingInput.value) { lastChanged = "breeding"; updateResults(); }
-  else if (kiddingInput.value) { lastChanged = "kidding"; updateResults(); }
-
+  
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      if (breedingInput.value) {
+        lastChanged = "breeding";
+        updateResults();
+      } else if (kiddingInput.value) {
+        lastChanged = "kidding";
+        updateResults();
+      }
+    }, 300);
+  });
 })();
 </script>
 
