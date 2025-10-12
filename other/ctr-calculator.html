@@ -486,28 +486,116 @@ Everyday Life
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 <script defer crossorigin="anonymous">
-  document.getElementById('clicks').addEventListener('input', calculateResults);
-document.getElementById('impressions').addEventListener('input', calculateResults);
+  const clicksInput = document.getElementById('clicks');
+const impressionsInput = document.getElementById('impressions');
+const ctrInput = document.getElementById('ctrOutput');
 
-function calculateResults() {
-  const clicks = parseFloat(document.getElementById('clicks').value.replace(/,/g, "")) || 0;
-  const impressions = parseFloat(document.getElementById('impressions').value.replace(/,/g, "")) || 0;
-  const output = document.getElementById('ctrOutput');
+const inputs = [clicksInput, impressionsInput, ctrInput];
+let lastEdited = null;
+let lastDirection = null;
+let typingTimer = null;
+
+inputs.forEach((input, index) => {
+  input.dataset.index = index + 1;
+  input.addEventListener('input', (e) => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => handleInput(e), 600);
+  });
+});
+
+function handleInput(e) {
+  const id = e.target.id;
+  const index = parseInt(e.target.dataset.index);
+  lastEdited = index;
   
-  if (impressions === 0 || clicks < 0 || impressions < 0) {
-    output.value = "";
+  const clicks = parseFloat(clicksInput.value.replace(/,/g, "")) || 0;
+  const impressions = parseFloat(impressionsInput.value.replace(/,/g, "")) || 0;
+  const ctr = parseFloat(ctrInput.value.replace(/,/g, "")) || 0;
+  
+  clearMessage();
+  
+  if (clicks < 0 || impressions < 0 || ctr < 0) {
+    showMessage("Values cannot be negative", "error");
     return;
   }
   
-  const ctr = (clicks / impressions) * 100;
-  output.value = ctr.toLocaleString(undefined, {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-  });
+  if (lastEdited === 1) lastDirection = "down";
+  else if (lastEdited === 3) lastDirection = "up";
+  else if (lastEdited === 2 && !lastDirection) {
+    lastDirection = clicks > 0 ? "down" : "up";
+  }
+  
+  if (id === "clicks") {
+    if (impressions > 0) {
+      const newCtr = (clicks / impressions) * 100;
+      if (newCtr > 100) {
+        showMessage("CTR cannot exceed 100%. Please check your inputs.", "error");
+        return;
+      }
+      updateInput(ctrInput, newCtr);
+    }
+  } else if (id === "impressions") {
+    if (clicks > 0 && lastDirection === "down") {
+      const newCtr = (clicks / impressions) * 100;
+      if (newCtr > 100) {
+        showMessage("CTR cannot exceed 100%. Please check your inputs.", "error");
+        return;
+      }
+      updateInput(ctrInput, newCtr);
+    } else if (ctr > 0 && lastDirection === "up") {
+      const newClicks = (ctr / 100) * impressions;
+      updateInput(clicksInput, newClicks);
+    }
+  } else if (id === "ctrOutput") {
+    if (ctr > 100) {
+      showMessage("CTR cannot exceed 100%. Please check your inputs.", "error");
+      return;
+    }
+    if (impressions > 0) {
+      const newClicks = (ctr / 100) * impressions;
+      updateInput(clicksInput, newClicks);
+    }
+  }
+  
+  cascadeUpdate();
+}
+
+function cascadeUpdate() {
+  const clicks = parseFloat(clicksInput.value.replace(/,/g, "")) || 0;
+  const impressions = parseFloat(impressionsInput.value.replace(/,/g, "")) || 0;
+  const ctr = parseFloat(ctrInput.value.replace(/,/g, "")) || 0;
+  
+  if (lastDirection === "down" && impressions > 0) {
+    const newCtr = (clicks / impressions) * 100;
+    if (newCtr <= 100) updateInput(ctrInput, newCtr);
+  } else if (lastDirection === "up" && impressions > 0) {
+    const newClicks = (ctr / 100) * impressions;
+    updateInput(clicksInput, newClicks);
+  }
+}
+
+function updateInput(input, value) {
+  if (document.activeElement === input) return;
+  input.value = value ?
+    value.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }) :
+    "";
+}
+
+function clearMessage() {
+  const existing = document.querySelector(".error-message");
+  if (existing) existing.remove();
 }
 
 window.addEventListener("load", () => {
-  calculateResults();
+  inputs.forEach(i => {
+    if (i.value) {
+      const num = parseFloat(i.value.replace(/,/g, ""));
+      i.value = num.toLocaleString();
+    }
+  });
 });
 </script>
 
