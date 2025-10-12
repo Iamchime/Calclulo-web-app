@@ -3330,3 +3330,93 @@ document.addEventListener("DOMContentLoaded", () => {
 
 })();*/
 /**********************************************************/
+
+/************** ripple effect handling ****************/
+function addRipple(element, options = {}) {
+  if (!element) return;
+  const color = options.color || 'rgba(0,0,0,0.15)';
+  const duration = options.duration || 550;
+  const fadeDuration = options.fadeDuration || 350;
+  const maxRipples = options.maxRipples || 3;
+  
+  const style = window.getComputedStyle(element);
+  if (style.position === 'static') element.style.position = 'relative';
+  if (style.overflow !== 'hidden') element.style.overflow = 'hidden';
+  
+  const activeRipples = [];
+  
+  function createRipple(x, y) {
+    if (activeRipples.length >= maxRipples) {
+      const oldest = activeRipples.shift();
+      if (oldest.parentNode) oldest.remove();
+    }
+    
+    const rect = element.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    const size = Math.sqrt(rect.width ** 2 + rect.height ** 2) * 2;
+    
+    ripple.style.width = ripple.style.height = `${size}px`;
+    ripple.style.position = 'absolute';
+    ripple.style.borderRadius = '50%';
+    ripple.style.left = `${x - size / 2}px`;
+    ripple.style.top = `${y - size / 2}px`;
+    ripple.style.backgroundColor = color;
+    ripple.style.pointerEvents = 'none';
+    ripple.style.opacity = '0.1';
+    ripple.style.transform = 'scale(0)';
+    ripple.style.zIndex = '0';
+    ripple.style.animation = `ripple-enter ${duration}ms cubic-bezier(0.4,0,0.2,1) forwards`;
+    
+    element.appendChild(ripple);
+    activeRipples.push(ripple);
+    
+    setTimeout(() => {
+      ripple.style.animation = `ripple-exit ${fadeDuration}ms linear forwards`;
+      ripple.addEventListener('animationend', () => {
+        ripple.remove();
+        const index = activeRipples.indexOf(ripple);
+        if (index > -1) activeRipples.splice(index, 1);
+      });
+    }, duration);
+  }
+  
+  element.addEventListener('mousedown', (e) => {
+    const rect = element.getBoundingClientRect();
+    createRipple(e.clientX - rect.left, e.clientY - rect.top);
+  });
+  
+  element.addEventListener('touchstart', (e) => {
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = element.getBoundingClientRect();
+    createRipple(touch.clientX - rect.left, touch.clientY - rect.top);
+  });
+  
+  element.addEventListener('keydown', (e) => {
+    if (e.key === ' ' || e.key === 'Enter') {
+      const rect = element.getBoundingClientRect();
+      createRipple(rect.width / 2, rect.height / 2);
+    }
+  });
+}
+
+if (!document.getElementById('material-ripple-keyframes')) {
+  const rippleStyle = document.createElement('style');
+  rippleStyle.id = 'material-ripple-keyframes';
+  rippleStyle.textContent = `
+  @keyframes ripple-enter {
+    0% { transform: scale(0); opacity: 0.1; }
+    50% { opacity: 0.35; }
+    100% { transform: scale(1); opacity: 0.35; }
+  }
+  @keyframes ripple-exit {
+    from { opacity: 0.35; transform: scale(1); }
+    to { opacity: 0; transform: scale(1); }
+  }`;
+  document.head.appendChild(rippleStyle);
+}
+
+document.querySelectorAll('.header-btns-container button,.side-nav a').forEach(el =>
+  addRipple(el, { color: 'darkgrey', maxRipples: 3 })
+);
+/*********************************/

@@ -391,9 +391,9 @@ Clear all changes
     <div class="similar-calculators-wrap">
       <h2>Similar calculators</h2>
       <div class="similar-calculators">
-        <a href="/agriculture/seed-rate-calculator">Seed Rate Calculator</a>
-        <a href="/health/gfr-calculator">GFR Calculator</a>
-<a href="/biology/ligation-calculator">Ligation Calculator</a>
+        <a href="/agriculture/seed-rate-calculator">Seed rate calculator</a>
+        <a href="/health/gfr-calculator">GFR calculator</a>
+<a href="/biology/ligation-calculator">Ligation calculator</a>
       </div>
     </div>
   <article class="description-txt">
@@ -540,8 +540,14 @@ Everyday Life
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 <script defer crossorigin="anonymous">
-  (function () {
-  
+/* Anneal calculator — enforceBounds toggle added
+   - Set reverseConfig.enforceBounds = true to keep old strict behavior (reject out-of-range).
+   - Default is false to mimic Omni: apply calculated values but warn the user.
+   - No <script> tags; paste into a .js file or load after DOM.
+*/
+(function () {
+  'use strict';
+
   const primerInput = document.getElementById("PrimerMeltingTemperature");
   const primerUnit = document.getElementById("PrimerMeltingtemperatureUnit");
 
@@ -556,43 +562,56 @@ Everyday Life
     return;
   }
 
+  // CONFIG: tweak these if you want different behavior
   const reverseConfig = {
     reversible: { primer: true, target: true },
-    boundsC: { min: -50, max: 150 },
+    // bounds are applied to Celsius values (physical clamp)
+    boundsC: { min: -273.15, max: 1000 },
+    // If true -> reject out-of-range computed values (old behavior).
+    // If false -> apply anyway and show warning (Omni-like). Default: false.
+    enforceBounds: false,
     strategy: "top-to-bottom",
-    
-    relativeTolerance: 1e-6
+    // relative tolerance for "no-op" when backsolving
+    relativeTolerance: 1e-6,
+    // how many decimal places to show for fractional results
+    displayDecimals: 6,
+    // suggested range for annealing temperature (for user guidance only)
+    suggestedRangeC: { enabled: true, min: 50, max: 65 }
   };
 
   let programmatic = false;
   let transactionLock = false;
-  let lastEditedId = null;       
+  let lastEditedId = null;
   let rafScheduled = false;
 
-  function showHint(msg) {
-    const el = document.querySelector(".calc-hint");
-    if (el) { el.textContent = msg; el.style.display = msg ? "block" : "none"; }
-    else if (msg) console.info("Hint:", msg);
-  }
-  function showError(msg) {
-    const el = document.querySelector(".calc-error");
-    if (el) { el.textContent = msg; el.style.display = msg ? "block" : "none"; }
-    else if (msg) console.warn("Error:", msg);
-  }
 
+
+  // ---- number parsing/formatting ----
   function parseNumber(s) {
     if (s === null || s === undefined) return null;
-    const t = String(s).replace(/[,\s]/g, "").trim();
-    if (t === "" || /[A-Za-z]/.test(t)) return null;
+    let t = String(s).trim();
+    if (t === "") return null;
+    t = t.replace(/\u2212/g, '-');
+    t = t.replace(/[°º]/g, '');
+    t = t.replace(/[, \u202F\u00A0]/g, '');
+    const numericRegex = /^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+))(?:[eE][+-]?\d+)?$/;
+    if (!numericRegex.test(t)) return null;
     const n = Number(t);
     return Number.isFinite(n) ? n : null;
   }
+
   function formatNumber(n) {
     if (n === null || n === undefined || Number.isNaN(n)) return "";
-    const r = Math.round((Number(n) + Number.EPSILON) * 100) / 100;
-    if (Number.isInteger(r)) return r.toLocaleString();
-    return r.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+    const decimals = Math.max(0, Math.min(12, Number(reverseConfig.displayDecimals || 6)));
+    const abs = Math.abs(n);
+    if ((abs !== 0 && (abs >= 1e9 || abs < 1e-6))) {
+      return Number(n).toExponential(decimals);
+    }
+    const rounded = Number(Math.round((Number(n) + Number.EPSILON) * Math.pow(10, decimals)) / Math.pow(10, decimals));
+    if (Number.isInteger(rounded)) return rounded.toLocaleString();
+    return rounded.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: decimals });
   }
+
   function normalizeUnit(u) {
     if (!u) return "Celsius";
     const l = String(u).toLowerCase();
@@ -624,10 +643,47 @@ Everyday Life
     programmatic = false;
   }
 
-  function clampCelsius(valC) {
+  // old clampCelsius preserved for strict mode
+  function clampCelsiusStrict(valC) {
     if (valC === null || Number.isNaN(valC)) return null;
     const { min, max } = reverseConfig.boundsC;
-    return (valC < min || valC > max) ? null : valC;
+    if (valC < min || valC > max) return null;
+    return valC;
+  }
+
+  // New helper: apply value according to enforceBounds policy.
+  // type: 'primer'|'target' for messaging; celsiusVal is raw computed value in °C.
+  // inputEl: the corresponding input element; unitEl: select element with unit or undefined.
+  function applyCelsiusValue(type, celsiusVal, inputEl, unitEl) {
+    if (!inputEl) return false;
+    const unitName = unitEl ? unitEl.value : (type === 'primer' ? (primerUnit ? primerUnit.value : 'Celsius') : (targetUnit ? targetUnit.value : 'Celsius'));
+
+    if (reverseConfig.enforceBounds) {
+      const strict = clampCelsiusStrict(celsiusVal);
+      if (strict === null) {
+        // reject
+        showMessage(`Calculated ${type} Tm outside allowed range; not applied.`, 'error');
+        return false;
+      }
+      // accepted
+      safeSetValue(inputEl, fromCelsius(strict, unitName));
+      return true;
+    } else {
+      // warn but apply
+      const { min, max } = reverseConfig.boundsC;
+      if (celsiusVal < min || celsiusVal > max) {
+        // format the value in the unit selected by the user
+        const valInUnit = fromCelsius(celsiusVal, unitName);
+        const minFmt = fromCelsius(min, unitName);
+        const maxFmt = fromCelsius(max, unitName);
+        showMessage(
+          `Calculated ${type} Tm (${formatNumber(valInUnit)} ${unitName}) is outside allowed range of ${formatNumber(minFmt)} to ${formatNumber(maxFmt)} ${unitName}. Applied anyway.`,
+          'info'
+        );
+      }
+      safeSetValue(inputEl, fromCelsius(celsiusVal, unitName));
+      return true;
+    }
   }
 
   function computeAnnealFrom(primerC, targetC) {
@@ -641,7 +697,6 @@ Everyday Life
   }
 
   function calculateAnnealingTemperature() {
-    showError(""); showHint("");
     if (!primerInput || !targetInput || !annealInput) return;
 
     const pRaw = parseNumber(primerInput.value);
@@ -656,6 +711,16 @@ Everyday Life
     if (pC === null || tC === null) { safeSetValue(annealInput, null); return; }
 
     const aC = computeAnnealFrom(pC, tC);
+
+    if (reverseConfig.suggestedRangeC && reverseConfig.suggestedRangeC.enabled) {
+      const minS = Number(reverseConfig.suggestedRangeC.min);
+      const maxS = Number(reverseConfig.suggestedRangeC.max);
+      if (!Number.isNaN(minS) && !Number.isNaN(maxS) && (aC < minS || aC > maxS)) {
+        const msg = `The annealing temperature is out of the suggested range of ${minS} to ${maxS} °C. (But calculation continues)`;
+        showMessage(msg, 'info');
+      }
+    }
+
     safeSetValue(annealInput, fromCelsius(aC, annealUnit ? annealUnit.value : "Celsius"));
   }
 
@@ -666,7 +731,6 @@ Everyday Life
     if (candidates.length === 0) return null;
 
     function isBefore(a, b) {
-    
       return !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
     }
 
@@ -675,7 +739,6 @@ Everyday Life
     } else if (reverseConfig.strategy === "bottom-to-top") {
       candidates.sort((A, B) => isBefore(A.el, B.el) ? 1 : -1);
     } else {
-      
       candidates.sort((A, B) => isBefore(A.el, B.el) ? -1 : 1);
     }
 
@@ -686,7 +749,6 @@ Everyday Life
   }
 
   function backsolveFromAnneal() {
-    showError(""); showHint("");
     if (!annealInput) return;
     if (transactionLock) return;
 
@@ -710,20 +772,16 @@ Everyday Life
 
       transactionLock = true;
       if (candidate === 'primer') {
-        
         const newPrimerC = (aC + 14.9 - 0.7 * tC) / 0.3;
-        const clamped = clampCelsius(newPrimerC);
-        if (clamped === null) { transactionLock = false; showError("Calculated primer Tm outside allowed range; not applied."); return; }
-        safeSetValue(primerInput, fromCelsius(clamped, primerUnit ? primerUnit.value : "Celsius"));
+        const applied = applyCelsiusValue('primer', newPrimerC, primerInput, primerUnit);
+        transactionLock = false;
+        if (!applied) return;
       } else {
-        
         const newTargetC = (aC + 14.9 - 0.3 * pC) / 0.7;
-        const clamped = clampCelsius(newTargetC);
-        if (clamped === null) { transactionLock = false; showError("Calculated target Tm outside allowed range; not applied."); return; }
-        safeSetValue(targetInput, fromCelsius(clamped, targetUnit ? targetUnit.value : "Celsius"));
+        const applied = applyCelsiusValue('target', newTargetC, targetInput, targetUnit);
+        transactionLock = false;
+        if (!applied) return;
       }
-      transactionLock = false;
-      
       calculateAnnealingTemperature();
       return;
     }
@@ -732,11 +790,8 @@ Everyday Life
       if (!reverseConfig.reversible.target) { showHint("Target auto-calc disabled. Enable it in settings."); return; }
       const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : "Celsius");
       const newTargetC = (aC + 14.9 - 0.3 * pC) / 0.7;
-      const clamped = clampCelsius(newTargetC);
-      if (clamped === null) { showError("Computed target temperature outside allowed range; not applied."); return; }
-      transactionLock = true;
-      safeSetValue(targetInput, fromCelsius(clamped, targetUnit ? targetUnit.value : "Celsius"));
-      transactionLock = false;
+      const applied = applyCelsiusValue('target', newTargetC, targetInput, targetUnit);
+      if (!applied) return;
       calculateAnnealingTemperature();
       return;
     }
@@ -745,11 +800,8 @@ Everyday Life
       if (!reverseConfig.reversible.primer) { showHint("Primer auto-calc disabled. Enable it in settings."); return; }
       const tC = toCelsius(tRaw, targetUnit ? targetUnit.value : "Celsius");
       const newPrimerC = (aC + 14.9 - 0.7 * tC) / 0.3;
-      const clamped = clampCelsius(newPrimerC);
-      if (clamped === null) { showError("Computed primer temperature outside allowed range; not applied."); return; }
-      transactionLock = true;
-      safeSetValue(primerInput, fromCelsius(clamped, primerUnit ? primerUnit.value : "Celsius"));
-      transactionLock = false;
+      const applied = applyCelsiusValue('primer', newPrimerC, primerInput, primerUnit);
+      if (!applied) return;
       calculateAnnealingTemperature();
       return;
     }
@@ -757,6 +809,7 @@ Everyday Life
     showHint("Provide at least one primer or target Tm to back-calculate the other.");
   }
 
+  // track unit previous values for conversion
   [primerUnit, targetUnit, annealUnit].forEach(sel => {
     if (!sel) return;
     sel.dataset.prevUnit = sel.value;
@@ -772,9 +825,30 @@ Everyday Life
     safeSetValue(inputEl, out);
   }
 
-  if (primerUnit) primerUnit.addEventListener("change", () => { const prev = primerUnit.dataset.prevUnit || primerUnit.value; programmatic = true; convertField(primerInput, prev, primerUnit.value); programmatic = false; primerUnit.dataset.prevUnit = primerUnit.value; scheduleCalc(); });
-  if (targetUnit) targetUnit.addEventListener("change", () => { const prev = targetUnit.dataset.prevUnit || targetUnit.value; programmatic = true; convertField(targetInput, prev, targetUnit.value); programmatic = false; targetUnit.dataset.prevUnit = targetUnit.value; scheduleCalc(); });
-  if (annealUnit) annealUnit.addEventListener("change", () => { const prev = annealUnit.dataset.prevUnit || annealUnit.value; programmatic = true; convertField(annealInput, prev, annealUnit.value); programmatic = false; annealUnit.dataset.prevUnit = annealUnit.value; backsolveFromAnneal(); });
+  if (primerUnit) primerUnit.addEventListener("change", () => {
+    const prev = primerUnit.dataset.prevUnit || primerUnit.value;
+    programmatic = true;
+    convertField(primerInput, prev, primerUnit.value);
+    programmatic = false;
+    primerUnit.dataset.prevUnit = primerUnit.value;
+    scheduleCalc();
+  });
+  if (targetUnit) targetUnit.addEventListener("change", () => {
+    const prev = targetUnit.dataset.prevUnit || targetUnit.value;
+    programmatic = true;
+    convertField(targetInput, prev, targetUnit.value);
+    programmatic = false;
+    targetUnit.dataset.prevUnit = targetUnit.value;
+    scheduleCalc();
+  });
+  if (annealUnit) annealUnit.addEventListener("change", () => {
+    const prev = annealUnit.dataset.prevUnit || annealUnit.value;
+    programmatic = true;
+    convertField(annealInput, prev, annealUnit.value);
+    programmatic = false;
+    annealUnit.dataset.prevUnit = annealUnit.value;
+    backsolveFromAnneal();
+  });
 
   function wireInput(el, idName) {
     if (!el) return;
@@ -800,6 +874,7 @@ Everyday Life
   wireInput(targetInput, 'target');
   wireInput(annealInput, 'anneal');
 
+  // run on DOM ready
   document.addEventListener("DOMContentLoaded", () => {
     const hintEl = document.querySelector(".calc-hint"); if (hintEl) hintEl.style.display = "none";
     const errEl = document.querySelector(".calc-error"); if (errEl) errEl.style.display = "none";
@@ -807,9 +882,19 @@ Everyday Life
   });
   if (document.readyState === "complete" || document.readyState === "interactive") calculateAnnealingTemperature();
 
+  // expose for debugging and external use
+  window.__calcluloAnneal = window.__calcluloAnneal || {};
+  Object.assign(window.__calcluloAnneal, {
+    parseNumber,
+    formatNumber,
+    config: reverseConfig,
+    calculate: calculateAnnealingTemperature,
+    backsolve: backsolveFromAnneal,
+    showMessage
+  });
+
 })();
 </script>
-
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
