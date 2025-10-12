@@ -392,127 +392,82 @@ Everyday Life
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
 <script defer crossorigin="anonymous">
 (() => {
-  
   const AVG_DAYS = 342;
   const EARLY_OFFSET = -10;
   const LATE_OFFSET = 10;
-  
-  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const MS_PER_DAY = 86400000;
 
   const matingInput = document.getElementById('matingDate');
   const dueInput = document.getElementById('dueDate');
   const resultsDiv = document.querySelector('.output-group');
 
   let lastChanged = null;
-  
-  const pad = n => String(n).padStart(2, '0');
 
-  function parseDateInput(v) {
+  const pad = n => String(n).padStart(2, '0');
+  const parseDateInput = v => {
     if (!v) return null;
     const [y, m, d] = v.split('-').map(Number);
     return new Date(Date.UTC(y, m - 1, d));
-  }
-
-  function toInputValue(date) {
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
-  }
-
-  function addDaysUTC(date, days) {
-    return new Date(date.getTime() + days * MS_PER_DAY);
-  }
-
-  function todayUTC() {
+  };
+  const toInputValue = d => `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+  const addDaysUTC = (d, days) => new Date(d.getTime() + days * MS_PER_DAY);
+  const todayUTC = () => {
     const n = new Date();
     return new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()));
-  }
-
-  function shortDateUTC(date) {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-  }
-
-  function weekdayUTC(date) {
-    return date.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
-  }
-
-  function clearResultClasses() {
+  };
+  const shortDateUTC = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  const weekdayUTC = d => d.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' });
+  const clearResultClasses = () => {
     matingInput.classList.remove('result');
     dueInput.classList.remove('result');
-  }
+  };
 
   function renderFromMating(matingUTC) {
+    if (!matingUTC || isNaN(matingUTC)) return;
     const dueUTC = addDaysUTC(matingUTC, AVG_DAYS);
-    const earliestUTC = addDaysUTC(dueUTC, EARLY_OFFSET);
-    const latestUTC = addDaysUTC(dueUTC, LATE_OFFSET);
-
+    const earliest = addDaysUTC(dueUTC, EARLY_OFFSET);
+    const latest = addDaysUTC(dueUTC, LATE_OFFSET);
     dueInput.value = toInputValue(dueUTC);
     dueInput.classList.add('result');
-
     const today = todayUTC();
-    const daysUntil = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
-
-    resultsDiv.innerHTML = `
-      🦙 Your llama or alpaca is going to give birth in <strong>${Math.max(0, daysUntil)}</strong> day(s)!<br><br>
-      Your llama's or alpaca's due date is on a <strong>${weekdayUTC(dueUTC)}</strong>!<br><br>
-      The earliest normal delivery: <strong>${shortDateUTC(earliestUTC)}</strong><br>
-      The latest normal delivery: <strong>${shortDateUTC(latestUTC)}</strong>
-    `;
+    const daysUntil = Math.round((dueUTC - today) / MS_PER_DAY);
+    resultsDiv.innerHTML = `🦙 Your llama or alpaca is going to give birth in <strong>${Math.max(0, daysUntil)}</strong> day(s)!<br><br>
+      Due on a <strong>${weekdayUTC(dueUTC)}</strong>.<br><br>
+      Earliest normal delivery: <strong>${shortDateUTC(earliest)}</strong><br>
+      Latest normal delivery: <strong>${shortDateUTC(latest)}</strong>`;
   }
 
   function renderFromDue(dueUTC) {
-    
+    if (!dueUTC || isNaN(dueUTC)) return;
     const matingUTC = addDaysUTC(dueUTC, -AVG_DAYS);
-    const earliestUTC = addDaysUTC(dueUTC, EARLY_OFFSET);
-    const latestUTC = addDaysUTC(dueUTC, LATE_OFFSET);
-
+    const earliest = addDaysUTC(dueUTC, EARLY_OFFSET);
+    const latest = addDaysUTC(dueUTC, LATE_OFFSET);
     matingInput.value = toInputValue(matingUTC);
     matingInput.classList.add('result');
-
     const today = todayUTC();
-    const daysUntil = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
-
-    resultsDiv.innerHTML = `
-      🦙 Your llama or alpaca is going to give birth in <strong>${Math.max(0, daysUntil)}</strong> day(s)!<br><br>
-      Your llama's or alpaca's due date is on a <strong>${weekdayUTC(dueUTC)}</strong>!<br><br>
-      The earliest normal delivery: <strong>${shortDateUTC(earliestUTC)}</strong><br>
-      The latest normal delivery: <strong>${shortDateUTC(latestUTC)}</strong>
-    `;
+    const daysUntil = Math.round((dueUTC - today) / MS_PER_DAY);
+    resultsDiv.innerHTML = `🦙 Your llama or alpaca is going to give birth in <strong>${Math.max(0, daysUntil)}</strong> day(s)!<br><br>
+      Due on a <strong>${weekdayUTC(dueUTC)}</strong>.<br><br>
+      Earliest normal delivery: <strong>${shortDateUTC(earliest)}</strong><br>
+      Latest normal delivery: <strong>${shortDateUTC(latest)}</strong>`;
   }
 
   function updateResults() {
     resultsDiv.innerHTML = '';
     clearResultClasses();
-
-    if (lastChanged === 'mating' && matingInput.value) {
-      const matingUTC = parseDateInput(matingInput.value);
-      if (!matingUTC) return;
-      renderFromMating(matingUTC);
-      return;
-    }
-
-    if (lastChanged === 'due' && dueInput.value) {
-      const dueUTC = parseDateInput(dueInput.value);
-      if (!dueUTC) return;
-      renderFromDue(dueUTC);
-      return;
-    }
-
-    resultsDiv.innerHTML = '';
+    if (lastChanged === 'mating' && matingInput.value) renderFromMating(parseDateInput(matingInput.value));
+    else if (lastChanged === 'due' && dueInput.value) renderFromDue(parseDateInput(dueInput.value));
   }
 
-  matingInput.addEventListener('input', () => {
-    matingInput.classList.remove('result');
-    lastChanged = 'mating';
-    updateResults();
-  });
+  matingInput.addEventListener('input', () => { lastChanged = 'mating'; updateResults(); });
+  dueInput.addEventListener('input', () => { lastChanged = 'due'; updateResults(); });
 
-  dueInput.addEventListener('input', () => {
-    dueInput.classList.remove('result');
-    lastChanged = 'due';
-    updateResults();
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (matingInput.value) { lastChanged = 'mating'; updateResults(); }
+      else if (dueInput.value) { lastChanged = 'due'; updateResults(); }
+    }, 300);
   });
-
-  if (matingInput.value) { lastChanged = 'mating'; updateResults(); }
-  else if (dueInput.value) { lastChanged = 'due'; updateResults(); }
 })();
 </script>
 

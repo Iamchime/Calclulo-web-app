@@ -391,58 +391,51 @@ Everyday Life
 
 <script defer crossorigin="anonymous">
 (() => {
-  
   const AVG_DAYS = 114;
   const EARLY_OFFSET = -2;
   const LATE_OFFSET = 6;
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
-
+  
   const breedingInput = document.getElementById('breedingDate');
   const farrowingInput = document.getElementById('farrowingdate');
   const resultsDiv = document.querySelector('.output-group');
-
+  
   let lastChanged = null;
   const pad = n => String(n).padStart(2, '0');
-
+  
   function parseDateInput(v) {
     if (!v) return null;
     const [y, m, d] = v.split('-').map(Number);
     return new Date(Date.UTC(y, m - 1, d));
   }
-
+  
   function toInputValue(date) {
     return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
   }
-
+  
   function addDaysUTC(date, days) {
     return new Date(date.getTime() + days * MS_PER_DAY);
   }
-
+  
   function todayUTC() {
     const n = new Date();
     return new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()));
   }
-
+  
   function formatMMDDYYYY(date) {
     return `${pad(date.getUTCMonth() + 1)}/${pad(date.getUTCDate())}/${date.getUTCFullYear()}`;
   }
-
-  function clearResultClasses() {
-    breedingInput.classList.remove('result');
-    farrowingInput.classList.remove('result');
-  }
-
+  
   function renderFromBreeding(breedingUTC) {
     const dueUTC = addDaysUTC(breedingUTC, AVG_DAYS);
     const earliestUTC = addDaysUTC(dueUTC, EARLY_OFFSET);
     const latestUTC = addDaysUTC(dueUTC, LATE_OFFSET);
-
+    
     farrowingInput.value = toInputValue(dueUTC);
-    farrowingInput.classList.add('result');
-
+    
     const today = todayUTC();
     const daysUntil = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
-
+    
     resultsDiv.innerHTML = `
       🐖 Your sow ${daysUntil >= 0
         ? `is going to farrow in <strong>${daysUntil}</strong> days!`
@@ -452,18 +445,17 @@ Everyday Life
       • Latest possible farrowing: <strong>${formatMMDDYYYY(latestUTC)}</strong>
     `;
   }
-
+  
   function renderFromFarrowing(dueUTC) {
     const breedingUTC = addDaysUTC(dueUTC, -AVG_DAYS);
     const earliestUTC = addDaysUTC(dueUTC, EARLY_OFFSET);
     const latestUTC = addDaysUTC(dueUTC, LATE_OFFSET);
-
+    
     breedingInput.value = toInputValue(breedingUTC);
-    breedingInput.classList.add('result');
-
+    
     const today = todayUTC();
     const daysUntil = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
-
+    
     resultsDiv.innerHTML = `
       🐖 Your sow ${daysUntil >= 0
         ? `is going to farrow in <strong>${daysUntil}</strong> days!`
@@ -473,44 +465,45 @@ Everyday Life
       • Latest possible farrowing: <strong>${formatMMDDYYYY(latestUTC)}</strong>
     `;
   }
-
+  
   function updateResults() {
     resultsDiv.innerHTML = '';
-    clearResultClasses();
-
+    
     if (lastChanged === 'breeding' && breedingInput.value) {
       const breedingUTC = parseDateInput(breedingInput.value);
       if (!breedingUTC) return;
       renderFromBreeding(breedingUTC);
       return;
     }
-
+    
     if (lastChanged === 'farrowing' && farrowingInput.value) {
       const dueUTC = parseDateInput(farrowingInput.value);
       if (!dueUTC) return;
       renderFromFarrowing(dueUTC);
       return;
     }
-
-    resultsDiv.innerHTML = '';
   }
-
+  
   breedingInput.addEventListener('input', () => {
-    
-    breedingInput.classList.remove('result');
     lastChanged = 'breeding';
     updateResults();
   });
-
+  
   farrowingInput.addEventListener('input', () => {
-    farrowingInput.classList.remove('result');
     lastChanged = 'farrowing';
     updateResults();
   });
+  
 
-  if (breedingInput.value) { lastChanged = 'breeding'; updateResults(); }
-  else if (farrowingInput.value) { lastChanged = 'farrowing'; updateResults(); }
-
+  window.addEventListener('load', () => {
+    if (breedingInput.value) {
+      lastChanged = 'breeding';
+      updateResults();
+    } else if (farrowingInput.value) {
+      lastChanged = 'farrowing';
+      updateResults();
+    }
+  });
 })();
 </script>
 

@@ -394,123 +394,90 @@ Everyday Life
   const breedingInput = document.getElementById('breedingDate');
   const dueInput = document.getElementById('dueDate');
   const resultsDiv = document.querySelector('.output-group');
-
   
   const MIN_DAYS = 59;
   const AVG_DAYS = 65;
   const MAX_DAYS = 72;
-
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  
   let lastChanged = null;
   
   const pad = n => String(n).padStart(2, '0');
-
-  function parseDateInput(v) {
-    if (!v) return null;
-    const [y, m, d] = v.split('-').map(Number);
-    return new Date(Date.UTC(y, m - 1, d));
-  }
-
-  function toInputValue(d) {
-    return `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
-  }
-
-  function shortDate(d) {
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-  }
-
-  function addDaysUTC(d, days) {
-    return new Date(d.getTime() + days * MS_PER_DAY);
-  }
-
-  function todayUTC() {
-    const now = new Date();
-    return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  }
-
-  function calcFromBreeding(breedingUTC) {
-    const avgDue = addDaysUTC(breedingUTC, AVG_DAYS);
-    const earliest = addDaysUTC(breedingUTC, MIN_DAYS);
-    const latest = addDaysUTC(breedingUTC, MAX_DAYS);
-    return { breedingUTC, avgDue, earliest, latest };
-  }
-
-  function calcFromDue(dueUTC) {
-    
-    const breedingUTC = addDaysUTC(dueUTC, -AVG_DAYS);
-    const earliest = addDaysUTC(breedingUTC, MIN_DAYS);
-    const latest = addDaysUTC(breedingUTC, MAX_DAYS);
-    return { breedingUTC, dueUTC, earliest, latest };
-  }
-
-  function clearResultClasses() {
-    breedingInput.classList.remove('result');
-    dueInput.classList.remove('result');
-  }
-
+  const parseDateInput = v => v ? new Date(Date.UTC(...v.split('-').map((x, i) => i === 1 ? x - 1 : +x))) : null;
+  const toInputValue = d => `${d.getUTCFullYear()}-${pad(d.getUTCMonth() + 1)}-${pad(d.getUTCDate())}`;
+  const shortDate = d => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+  const addDaysUTC = (d, days) => new Date(d.getTime() + days * MS_PER_DAY);
+  const todayUTC = () => {
+    const n = new Date();
+    return new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()));
+  };
+  
+  const calcFromBreeding = d => ({
+    avgDue: addDaysUTC(d, AVG_DAYS),
+    earliest: addDaysUTC(d, MIN_DAYS),
+    latest: addDaysUTC(d, MAX_DAYS)
+  });
+  
+  const calcFromDue = d => {
+    const breedingUTC = addDaysUTC(d, -AVG_DAYS);
+    return { breedingUTC, earliest: addDaysUTC(breedingUTC, MIN_DAYS), latest: addDaysUTC(breedingUTC, MAX_DAYS) };
+  };
+  
   function updateResults() {
     resultsDiv.innerHTML = '';
-    clearResultClasses();
     const today = todayUTC();
-
+    
     if (lastChanged === 'breeding' && breedingInput.value) {
       const breedingUTC = parseDateInput(breedingInput.value);
       const { avgDue, earliest, latest } = calcFromBreeding(breedingUTC);
-
       dueInput.value = toInputValue(avgDue);
-      dueInput.classList.add('result');
-
-      const daysLeft = Math.round((avgDue.getTime() - today.getTime()) / MS_PER_DAY);
-      const daysPregnantRaw = Math.floor((today.getTime() - breedingUTC.getTime()) / MS_PER_DAY);
-      const dayOfGestation = Math.max(0, daysPregnantRaw); 
-      
+      const daysLeft = Math.round((avgDue - today) / MS_PER_DAY);
+      const daysPregnant = Math.max(0, Math.floor((today - breedingUTC) / MS_PER_DAY));
       resultsDiv.innerHTML = `
         🐹 Your guinea pig is going to give birth in about <strong>${Math.max(0, daysLeft)}</strong> day(s)!<br><br>
-        Today is day <strong>${dayOfGestation}</strong> of the gestation.<br><br>
+        Today is day <strong>${daysPregnant}</strong> of the gestation.<br><br>
         The earliest possible birth: <strong>${shortDate(earliest)}</strong><br>
         The latest possible birth: <strong>${shortDate(latest)}</strong>
       `;
       return;
     }
-
+    
     if (lastChanged === 'due' && dueInput.value) {
       const dueUTC = parseDateInput(dueInput.value);
       const { breedingUTC, earliest, latest } = calcFromDue(dueUTC);
-
       breedingInput.value = toInputValue(breedingUTC);
-      breedingInput.classList.add('result');
-
-      const daysLeft = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
-      const daysPregnantRaw = Math.floor((today.getTime() - breedingUTC.getTime()) / MS_PER_DAY);
-      const dayOfGestation = Math.max(0, daysPregnantRaw);
-
+      const daysLeft = Math.round((dueUTC - today) / MS_PER_DAY);
+      const daysPregnant = Math.max(0, Math.floor((today - breedingUTC) / MS_PER_DAY));
       resultsDiv.innerHTML = `
         🐹 Your guinea pig is going to give birth in about <strong>${Math.max(0, daysLeft)}</strong> day(s)!<br><br>
-        Today is day <strong>${dayOfGestation}</strong> of the gestation.<br><br>
+        Today is day <strong>${daysPregnant}</strong> of the gestation.<br><br>
         The earliest possible birth: <strong>${shortDate(earliest)}</strong><br>
         The latest possible birth: <strong>${shortDate(latest)}</strong>
       `;
-      return;
     }
-    resultsDiv.innerHTML = '';
   }
   
   breedingInput.addEventListener('input', () => {
-    
-    breedingInput.classList.remove('result');
     lastChanged = 'breeding';
     updateResults();
   });
-
+  
   dueInput.addEventListener('input', () => {
-    dueInput.classList.remove('result');
     lastChanged = 'due';
     updateResults();
   });
-
-  if (breedingInput.value) { lastChanged = 'breeding'; updateResults(); }
-  else if (dueInput.value) { lastChanged = 'due'; updateResults(); }
-
+  
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (breedingInput.value) {
+        lastChanged = 'breeding';
+        updateResults();
+      } else if (dueInput.value) {
+        lastChanged = 'due';
+        updateResults();
+      }
+    }, 300);
+  });
 })();
 </script>
 

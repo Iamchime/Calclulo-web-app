@@ -402,80 +402,64 @@ document.addEventListener('DOMContentLoaded', () => {
   const lambingInput = document.getElementById('Lambingdate');
   const resultDiv = document.querySelector('.output-group');
   
+  if (!resultDiv || (!matingInput && !lambingInput)) return;
+  
   const pad = n => String(n).padStart(2, '0');
   
-  function parseDateInput(v) {
+  const parseDateInput = v => {
     if (!v) return null;
-    const [y, m, d] = v.split('-').map(Number);
+    const parts = v.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(x => Number.isNaN(x))) return null;
+    const [y, m, d] = parts;
     return new Date(Date.UTC(y, m - 1, d));
-  }
+  };
   
-  function toInputValue(date) {
-    return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
-  }
-  
-  function addDaysUTC(date, days) {
-    return new Date(date.getTime() + days * MS_PER_DAY);
-  }
-  
-  function formatLongUTC(date) {
-    return date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
-  }
+  const toInputValue = date => `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())}`;
+  const addDaysUTC = (date, days) => new Date(date.getTime() + days * MS_PER_DAY);
+  const formatLongUTC = date => date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
   
   function calculateFromMating() {
-    const matingUTC = parseDateInput(matingInput.value);
+    const matingUTC = parseDateInput(matingInput && matingInput.value);
     if (!matingUTC) {
       resultDiv.innerHTML = '';
-      lambingInput.value = '';
-      lambingInput.classList.remove('result');
+      if (lambingInput) lambingInput.value = '';
       return;
     }
-    
     const avgDate = addDaysUTC(matingUTC, AVG_DAYS);
     const earlyDate = addDaysUTC(matingUTC, EARLY_DAYS);
     const lateDate = addDaysUTC(matingUTC, LATE_DAYS);
-    
-    lambingInput.value = toInputValue(avgDate);
-    lambingInput.classList.add('result');
-    
-    resultDiv.innerHTML = `
-      🐑 You may expect the lamb to be born between <strong>${formatLongUTC(earlyDate)}</strong> and <strong>${formatLongUTC(lateDate)}</strong>.
-    `;
+    if (lambingInput) lambingInput.value = toInputValue(avgDate);
+    resultDiv.innerHTML = `🐑 You may expect the lamb to be born between <strong>${formatLongUTC(earlyDate)}</strong> and <strong>${formatLongUTC(lateDate)}</strong>.`;
   }
   
   function calculateFromLambing() {
-    const lambingUTC = parseDateInput(lambingInput.value);
+    const lambingUTC = parseDateInput(lambingInput && lambingInput.value);
     if (!lambingUTC) {
       resultDiv.innerHTML = '';
-      matingInput.value = '';
-      matingInput.classList.remove('result');
+      if (matingInput) matingInput.value = '';
       return;
     }
-    
     const matingUTC = addDaysUTC(lambingUTC, -AVG_DAYS);
     const earlyDate = addDaysUTC(matingUTC, EARLY_DAYS);
     const lateDate = addDaysUTC(matingUTC, LATE_DAYS);
-    
-    matingInput.value = toInputValue(matingUTC);
-    matingInput.classList.add('result');
-    
-    resultDiv.innerHTML = `
-      🐑 You may expect the lamb to be born between <strong>${formatLongUTC(earlyDate)}</strong> and <strong>${formatLongUTC(lateDate)}</strong>.
-    `;
+    if (matingInput) matingInput.value = toInputValue(matingUTC);
+    resultDiv.innerHTML = `🐑 You may expect the lamb to be born between <strong>${formatLongUTC(earlyDate)}</strong> and <strong>${formatLongUTC(lateDate)}</strong>.`;
   }
   
-  matingInput.addEventListener('input', () => {
-    matingInput.classList.remove('result');
-    calculateFromMating();
-  });
+  if (matingInput) {
+    matingInput.addEventListener('input', () => calculateFromMating());
+  }
+  if (lambingInput) {
+    lambingInput.addEventListener('input', () => calculateFromLambing());
+  }
   
-  lambingInput.addEventListener('input', () => {
-    lambingInput.classList.remove('result');
-    calculateFromLambing();
-  });
+  const runInitial = () => {
+    if (matingInput && matingInput.value) calculateFromMating();
+    else if (lambingInput && lambingInput.value) calculateFromLambing();
+  };
   
-  if (matingInput.value) calculateFromMating();
-  else if (lambingInput.value) calculateFromLambing();
+  runInitial();
+  setTimeout(runInitial, 200);
 });
 </script>
 
