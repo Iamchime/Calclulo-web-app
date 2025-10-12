@@ -223,7 +223,7 @@ Everyday Life
      </div>
    </div>
    
-   <span class="input-tips">Choose operation type </span>
+   <span class="input-tips">Is your cow giving birth for the first time?</span>
    <div class="input-options">
    <div class="input-options-item">
   <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
@@ -329,9 +329,9 @@ Clear all changes
     <div class="similar-calculators-wrap">
       <h2>Similar calculators</h2>
       <div class="similar-calculators">
-        <a href="/health/gfr-calculator">GFR Calculator</a>
-        <a href="/food/coffee-calculator">Coffee Calculator</a>
-        <a href="/everyday-life">Fat Intake Calculator</a>
+        <a href="/biology/goat-gestation-calculator">Goat gestation</a>
+        <a href="/biology/horse-gestation-calculator">Horse gestation</a>
+        <a href="/biology/llama-pregnancy-calculator">Llama pregnancy</a>
       </div>
     </div>
 <article class="description-txt">
@@ -467,52 +467,57 @@ Everyday Life
 
 <script defer crossorigin="anonymous">
 (() => {
+  'use strict';
   
   const exposedInput = document.getElementById('Exposed');
   const calvingInput = document.getElementById('Calvingstart');
   const postpartumInput = document.getElementById('EndOfPostpartum');
-  const radios = document.querySelectorAll("input[name='FirsTtimeCalver']");
+  const radios = Array.from(document.querySelectorAll("input[name='FirsTtimeCalver']"));
   const resultsDiv = document.querySelector('.output-group');
-
+  
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
   const AVG_GESTATION = 283;
   const EARLY_GESTATION = 279;
   const LATE_GESTATION = 287;
   const FIRST_TIME_EXTRA = 15;
   const POSTPARTUM_DAYS = 65;
-
-  let lastChanged = null; 
   
+  let lastChanged = null;
   const pad = n => String(n).padStart(2, '0');
-
-  function parseDateInput(v){
+  
+  function parseDateInput(v) {
     if (!v) return null;
-    const [y, m, d] = v.split('-').map(Number);
+    const parts = v.split('-').map(Number);
+    if (parts.length !== 3 || parts.some(x => Number.isNaN(x))) return null;
+    const [y, m, d] = parts;
     return new Date(Date.UTC(y, m - 1, d));
   }
-
-  function toInputValue(date){
+  
+  function toInputValue(date) {
+    if (!date) return '';
     return `${date.getUTCFullYear()}-${pad(date.getUTCMonth()+1)}-${pad(date.getUTCDate())}`;
   }
-
-  function formatMMDDYYYY(date){
+  
+  function formatMMDDYYYY(date) {
+    if (!date) return '';
     return `${pad(date.getUTCMonth()+1)}/${pad(date.getUTCDate())}/${date.getUTCFullYear()}`;
   }
-
-  function addDaysUTC(date, days){
+  
+  function addDaysUTC(date, days) {
     return new Date(date.getTime() + days * MS_PER_DAY);
   }
-
-  function todayUTC(){
+  
+  function todayUTC() {
     const n = new Date();
     return new Date(Date.UTC(n.getUTCFullYear(), n.getUTCMonth(), n.getUTCDate()));
   }
-
-  function isFirstTime(){
-    return document.querySelector("input[name='FirsTtimeCalver']:checked").value === 'yes';
+  
+  function isFirstTime() {
+    const checked = radios.find(r => r.checked);
+    return !!(checked && checked.value === 'yes');
   }
-
-  function calcFromExposed(exposedUTC){
+  
+  function calcFromExposed(exposedUTC) {
     const extra = isFirstTime() ? FIRST_TIME_EXTRA : 0;
     const avg = AVG_GESTATION + extra;
     const earliest = addDaysUTC(exposedUTC, EARLY_GESTATION + extra);
@@ -521,8 +526,8 @@ Everyday Life
     const postpartum = addDaysUTC(due, POSTPARTUM_DAYS);
     return { exposed: exposedUTC, due, earliest, latest, postpartum };
   }
-
-  function calcFromCalving(calvingUTC){
+  
+  function calcFromCalving(calvingUTC) {
     const extra = isFirstTime() ? FIRST_TIME_EXTRA : 0;
     const avg = AVG_GESTATION + extra;
     const exposed = addDaysUTC(calvingUTC, -avg);
@@ -531,97 +536,80 @@ Everyday Life
     const postpartum = addDaysUTC(calvingUTC, POSTPARTUM_DAYS);
     return { exposed, due: calvingUTC, earliest, latest, postpartum };
   }
-
-  function clearResultClasses(){
-    exposedInput.classList.remove('result');
-    calvingInput.classList.remove('result');
-    postpartumInput.classList.remove('result');
+  
+  function buildCalvingHtml(due, earliest, latest, postpartum, today) {
+    const diffDays = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
+    return `
+      🐄 Expected calving date is on a <strong>${due.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })}</strong>!<br><br>
+      ${diffDays >= 0
+        ? `🐮 Your cow is expected to calve in around <strong>${diffDays}</strong> day(s)!`
+        : `🐮 Your cow calved <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
+      <br><br>
+      <ul style="margin-top:8px;">
+        <li>Earliest possible calving: <strong>${formatMMDDYYYY(earliest)}</strong></li>
+        <li>Average calving (expected): <strong>${formatMMDDYYYY(due)}</strong></li>
+        <li>Latest possible calving: <strong>${formatMMDDYYYY(latest)}</strong></li>
+        <li>End of postpartum recovery: <strong>${formatMMDDYYYY(postpartum)}</strong></li>
+      </ul>
+    `;
   }
-
-  function updateResults(){
+  
+  function calculateResults() {
+    if (!resultsDiv) return;
     resultsDiv.innerHTML = '';
-    clearResultClasses();
     const today = todayUTC();
-
-    if (lastChanged === 'exposed' && exposedInput.value){
+    
+    if (lastChanged === 'exposed' && exposedInput && exposedInput.value) {
       const exposedUTC = parseDateInput(exposedInput.value);
+      if (!exposedUTC) return;
       const { due, earliest, latest, postpartum } = calcFromExposed(exposedUTC);
-
-      calvingInput.value = toInputValue(due);
-      calvingInput.classList.add('result');
-
-      postpartumInput.value = toInputValue(postpartum);
-      postpartumInput.classList.add('result');
-
-      const diffDays = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
-
-      resultsDiv.innerHTML = `
-        🐄 Expected calving date is on a <strong>${due.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })}</strong>!<br><br>
-        ${diffDays >= 0
-          ? `🐮 Your cow is expected to calve in around <strong>${diffDays}</strong> day(s)!`
-          : `🐮 Your cow calved <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
-        <br><br>
-        <ul style="margin-top:8px;">
-          <li>Earliest possible calving: <strong>${formatMMDDYYYY(earliest)}</strong></li>
-          <li>Average calving (expected): <strong>${formatMMDDYYYY(due)}</strong></li>
-          <li>Latest possible calving: <strong>${formatMMDDYYYY(latest)}</strong></li>
-          <li>End of postpartum recovery: <strong>${formatMMDDYYYY(postpartum)}</strong></li>
-        </ul>
-      `;
+      if (calvingInput) calvingInput.value = toInputValue(due);
+      if (postpartumInput) postpartumInput.value = toInputValue(postpartum);
+      resultsDiv.innerHTML = buildCalvingHtml(due, earliest, latest, postpartum, today);
       return;
     }
-
-    if (lastChanged === 'calving' && calvingInput.value){
+    
+    if (lastChanged === 'calving' && calvingInput && calvingInput.value) {
       const calvingUTC = parseDateInput(calvingInput.value);
+      if (!calvingUTC) return;
       const { exposed, earliest, latest, postpartum } = calcFromCalving(calvingUTC);
-
-      exposedInput.value = toInputValue(exposed);
-      exposedInput.classList.add('result');
-
-      postpartumInput.value = toInputValue(postpartum);
-      postpartumInput.classList.add('result');
-
-      const diffDays = Math.round((calvingUTC.getTime() - today.getTime()) / MS_PER_DAY);
-
-      resultsDiv.innerHTML = `
-        🐄 Expected calving date is on a <strong>${calvingUTC.toLocaleDateString('en-US', { weekday: 'long', timeZone: 'UTC' })}</strong>!<br><br>
-        ${diffDays >= 0
-          ? `🐮 Your cow is expected to calve in around <strong>${diffDays}</strong> day(s)!`
-          : `🐮 Your cow calved <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
-        <br><br>
-        <ul style="margin-top:8px;">
-          <li>Earliest possible calving: <strong>${formatMMDDYYYY(earliest)}</strong></li>
-          <li>Average calving (implied): <strong>${formatMMDDYYYY(calvingUTC)}</strong></li>
-          <li>Latest possible calving: <strong>${formatMMDDYYYY(latest)}</strong></li>
-          <li>End of postpartum recovery: <strong>${formatMMDDYYYY(postpartum)}</strong></li>
-        </ul>
-      `;
+      if (exposedInput) exposedInput.value = toInputValue(exposed);
+      if (postpartumInput) postpartumInput.value = toInputValue(postpartum);
+      resultsDiv.innerHTML = buildCalvingHtml(calvingUTC, earliest, latest, postpartum, today);
       return;
     }
-
+    
     resultsDiv.innerHTML = '';
   }
-
-  exposedInput.addEventListener('input', () => {
-    exposedInput.classList.remove('result');
-    lastChanged = 'exposed';
-    updateResults();
-  });
-
-  calvingInput.addEventListener('input', () => {
-    calvingInput.classList.remove('result');
-    lastChanged = 'calving';
-    updateResults();
-  });
-
+  
+  if (exposedInput) {
+    exposedInput.addEventListener('input', () => {
+      lastChanged = 'exposed';
+      calculateResults();
+    });
+  }
+  
+  if (calvingInput) {
+    calvingInput.addEventListener('input', () => {
+      lastChanged = 'calving';
+      calculateResults();
+    });
+  }
+  
   radios.forEach(r => r.addEventListener('change', () => {
-    updateResults();
+    calculateResults();
   }));
-
-
-  if (exposedInput.value){ lastChanged = 'exposed'; updateResults(); }
-  else if (calvingInput.value){ lastChanged = 'calving'; updateResults(); }
-
+  
+  const runOnLoad = () => {
+    setTimeout(() => {
+      if (exposedInput && exposedInput.value) lastChanged = 'exposed';
+      else if (calvingInput && calvingInput.value) lastChanged = 'calving';
+      calculateResults();
+    }, 200);
+  };
+  
+  if (document.readyState === 'complete') runOnLoad();
+  else window.addEventListener('load', runOnLoad);
 })();
 </script>
 

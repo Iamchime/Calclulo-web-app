@@ -254,15 +254,15 @@ Clear all changes
     </div>
 
     <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
+      <h2>Similar animal pregnancy calculators</h2>
       <div class="similar-calculators">
-        <a href="/health/gfr-calculator">GFR Calculator</a>
-        <a href="/food/coffee-calculator">Coffee Calculator</a>
-        <a href="/everyday-life">Fat Intake Calculator</a>
+        <a href="/biology/dog-pregnancy-calculator">Dog pregnancy</a>
+        <a href="/biology/guinea-pig-pregnancy-calculator">Guinea pig pregnancy</a>
+        <a href="/biology/goat-gestation-calculator">Goat gestation</a>
       </div>
     </div>
 <article class="description-txt">
-   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">tool</span></h2>
+   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
    <p>
      The cat pregnancy calculator lets you estimate when your cat is likely to give birth.
    </p>
@@ -393,17 +393,13 @@ Everyday Life
 <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
 <script defer crossorigin="anonymous">
   (() => {
-  const matingInput = document.getElementById('matingDate');
-  const dueInput = document.getElementById('dueDate');
-  const resultsDiv = document.querySelector('.output-group');
+  'use strict';
 
   const MS_PER_DAY = 24 * 60 * 60 * 1000;
   const AVG_GESTATION = 63;
   const EARLY_GESTATION = 58;
   const LATE_GESTATION = 71;
-  
-  let lastChanged = null;
-  
+
   const pad = n => String(n).padStart(2, '0');
 
   function parseDateInput(v){
@@ -443,80 +439,102 @@ Everyday Life
     return { mating, earliest, latest };
   }
 
-  function clearResultClasses(){
-    matingInput.classList.remove('result');
-    dueInput.classList.remove('result');
+  function buildResultForDue(due, earliest, latest, today){
+    const diffDays = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
+    return `
+      <p>🐈 Your cat's due date is on a <strong>${due.toLocaleDateString('en-GB', { weekday: 'long', timeZone: 'UTC' })}</strong>!</p>
+      <p>${diffDays >= 0
+        ? `🐱 Your cat is going to give birth in around <strong>${diffDays}</strong> day(s)!`
+        : `🐱 Your cat gave birth <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}</p>
+      <ul>
+        <li>The earliest possible delivery date is: <strong>${formatDDMMYYYY(earliest)}</strong></li>
+        <li>The latest possible delivery date is: <strong>${formatDDMMYYYY(latest)}</strong></li>
+      </ul>
+    `;
   }
 
-  function updateResults(){
-    resultsDiv.innerHTML = '';
-    clearResultClasses();
-    const today = todayUTC();
-
-    if (lastChanged === 'mating' && matingInput.value){
-      const matingUTC = parseDateInput(matingInput.value);
-      const { due, earliest, latest } = calcFromMating(matingUTC);
-
-      dueInput.value = toInputValue(due);
-      dueInput.classList.add('result');
-
-      const diffDays = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
-
-      resultsDiv.innerHTML = `
-       <p> 🐈 Your cat's due date is on a <strong>${due.toLocaleDateString('en-GB', { weekday: 'long', timeZone: 'UTC' })}</strong>!</p><p>
-        ${diffDays >= 0
-          ? `🐱 Your cat is going to give birth in around <strong>${diffDays}</strong> day(s)!`
-          : `🐱 Your cat gave birth <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
-        </p>
-        <ul>
-          <li>The earliest possible delivery date is: <strong>${formatDDMMYYYY(earliest)}</strong></li>
-          <li>The latest possible delivery date is: <strong>${formatDDMMYYYY(latest)}</strong></li>
-        </ul>
-      `;
-      return;
-    }
-
-    if (lastChanged === 'due' && dueInput.value){
-      const dueUTC = parseDateInput(dueInput.value);
-      const { mating, earliest, latest } = calcFromDue(dueUTC);
-
-      matingInput.value = toInputValue(mating);
-      matingInput.classList.add('result');
-
-      const diffDays = Math.round((dueUTC.getTime() - today.getTime()) / MS_PER_DAY);
-
-      resultsDiv.innerHTML = `
-        🐈 Your cat's due date is on a <strong>${dueUTC.toLocaleDateString('en-GB', { weekday: 'long', timeZone: 'UTC' })}</strong>!<br><br>
-        ${diffDays >= 0
-          ? `🐱 Your cat is going to give birth in around <strong>${diffDays}</strong> day(s)!`
-          : `🐱 Your cat gave birth <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}
-        <br><br>
-        <ul>
-          <li>The earliest possible delivery date is: <strong>${formatDDMMYYYY(earliest)}</strong></li>
-          <li>The latest possible delivery date is: <strong>${formatDDMMYYYY(latest)}</strong></li>
-        </ul>
-      `;
-      return;
-    }
-
-    resultsDiv.innerHTML = '';
+  function buildResultForMating(mating, earliest, latest, today){
+    const due = addDaysUTC(mating, AVG_GESTATION);
+    const diffDays = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
+    return `
+      <p>🐈 Your cat's due date is on a <strong>${due.toLocaleDateString('en-GB', { weekday: 'long', timeZone: 'UTC' })}</strong>!</p>
+      <p>${diffDays >= 0
+        ? `🐱 Your cat is going to give birth in around <strong>${diffDays}</strong> day(s)!`
+        : `🐱 Your cat gave birth <strong>${Math.abs(diffDays)}</strong> day(s) ago!`}</p>
+      <ul>
+        <li>The earliest possible delivery date is: <strong>${formatDDMMYYYY(earliest)}</strong></li>
+        <li>The latest possible delivery date is: <strong>${formatDDMMYYYY(latest)}</strong></li>
+      </ul>
+    `;
   }
 
-  matingInput.addEventListener('input', () => {
-    matingInput.classList.remove('result');
-    lastChanged = 'mating';
-    updateResults();
-  });
+  function initCalculator() {
+    const matingInput = document.getElementById('matingDate');
+    const dueInput = document.getElementById('dueDate');
+    const resultsDiv = document.querySelector('.output-group');
 
-  dueInput.addEventListener('input', () => {
-    dueInput.classList.remove('result');
-    lastChanged = 'due';
-    updateResults();
-  });
+    if (!resultsDiv) return;
 
-  if (matingInput.value){ lastChanged = 'mating'; updateResults(); }
-  else if (dueInput.value){ lastChanged = 'due'; updateResults(); }
+    let lastChanged = null;
 
+    function updateResults(){
+      resultsDiv.innerHTML = '';
+      const today = todayUTC();
+
+      if (lastChanged === 'mating' && matingInput && matingInput.value){
+        const matingUTC = parseDateInput(matingInput.value);
+        if (!matingUTC) return;
+        const { due, earliest, latest } = calcFromMating(matingUTC);
+        if (dueInput) { dueInput.value = toInputValue(due); dueInput.classList.add('result'); }
+        resultsDiv.innerHTML = buildResultForMating(matingUTC, earliest, latest, today);
+        return;
+      }
+
+      if (lastChanged === 'due' && dueInput && dueInput.value){
+        const dueUTC = parseDateInput(dueInput.value);
+        if (!dueUTC) return;
+        const { mating, earliest, latest } = calcFromDue(dueUTC);
+        if (matingInput) { matingInput.value = toInputValue(mating); matingInput.classList.add('result'); }
+        resultsDiv.innerHTML = buildResultForDue(dueUTC, earliest, latest, today);
+        return;
+      }
+
+      resultsDiv.innerHTML = '';
+    }
+
+    if (matingInput) {
+      matingInput.addEventListener('input', () => {
+        lastChanged = 'mating';
+        updateResults();
+      });
+    }
+
+    if (dueInput) {
+      dueInput.addEventListener('input', () => {
+        lastChanged = 'due';
+        updateResults();
+      });
+    }
+    const runOnLoad = () => {
+      setTimeout(() => {
+        if (matingInput && matingInput.value) lastChanged = 'mating';
+        else if (dueInput && dueInput.value) lastChanged = 'due';
+        updateResults();
+      }, 150);
+    };
+
+    if (document.readyState === 'complete') {
+      runOnLoad();
+    } else {
+      window.addEventListener('load', runOnLoad);
+    }
+  }
+
+  if (document.readyState === 'complete') {
+    initCalculator();
+  } else {
+    window.addEventListener('load', initCalculator);
+  }
 })();
 </script>
 

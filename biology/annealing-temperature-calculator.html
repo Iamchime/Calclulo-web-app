@@ -391,9 +391,9 @@ Clear all changes
     <div class="similar-calculators-wrap">
       <h2>Similar calculators</h2>
       <div class="similar-calculators">
-        <a href="/agriculture/seed-rate-calculator">Seed rate calculator</a>
-        <a href="/health/gfr-calculator">GFR calculator</a>
-<a href="/biology/ligation-calculator">Ligation calculator</a>
+        <a href="/physics/bullet-energy-calculator">Bullet energy</a>
+        <a href="/biology/horse-gestation-calculator">Hore gestation</a>
+<a href="/biology/ligation-calculator">Ligation</a>
       </div>
     </div>
   <article class="description-txt">
@@ -540,42 +540,16 @@ Everyday Life
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 <script defer crossorigin="anonymous">
-/* Anneal calculator — enforceBounds toggle added
-   - Set reverseConfig.enforceBounds = true to keep old strict behavior (reject out-of-range).
-   - Default is false to mimic Omni: apply calculated values but warn the user.
-   - No <script> tags; paste into a .js file or load after DOM.
-*/
-(function () {
+(function CalcluloAnneal() {
   'use strict';
 
-  const primerInput = document.getElementById("PrimerMeltingTemperature");
-  const primerUnit = document.getElementById("PrimerMeltingtemperatureUnit");
-
-  const targetInput = document.getElementById("TargetMeltingTemperature");
-  const targetUnit = document.getElementById("TargetMeltingTemperatureUnit");
-
-  const annealInput = document.getElementById("Annealingtemperature");
-  const annealUnit = document.getElementById("AnnealingtemperatureUnit");
-
-  if (!primerInput && !targetInput && !annealInput) {
-    console.warn("Anneal calculator: no relevant inputs found. Script aborted.");
-    return;
-  }
-
-  // CONFIG: tweak these if you want different behavior
   const reverseConfig = {
     reversible: { primer: true, target: true },
-    // bounds are applied to Celsius values (physical clamp)
     boundsC: { min: -273.15, max: 1000 },
-    // If true -> reject out-of-range computed values (old behavior).
-    // If false -> apply anyway and show warning (Omni-like). Default: false.
     enforceBounds: false,
-    strategy: "top-to-bottom",
-    // relative tolerance for "no-op" when backsolving
+    strategy: 'top-to-bottom',
     relativeTolerance: 1e-6,
-    // how many decimal places to show for fractional results
     displayDecimals: 6,
-    // suggested range for annealing temperature (for user guidance only)
     suggestedRangeC: { enabled: true, min: 50, max: 65 }
   };
 
@@ -584,16 +558,18 @@ Everyday Life
   let lastEditedId = null;
   let rafScheduled = false;
 
+  let primerInput = null;
+  let primerUnit = null;
+  let targetInput = null;
+  let targetUnit = null;
+  let annealInput = null;
+  let annealUnit = null;
 
-
-  // ---- number parsing/formatting ----
   function parseNumber(s) {
     if (s === null || s === undefined) return null;
     let t = String(s).trim();
-    if (t === "") return null;
-    t = t.replace(/\u2212/g, '-');
-    t = t.replace(/[°º]/g, '');
-    t = t.replace(/[, \u202F\u00A0]/g, '');
+    if (t === '') return null;
+    t = t.replace(/\u2212/g, '-').replace(/[°º]/g, '').replace(/[, \u202F\u00A0]/g, '');
     const numericRegex = /^[+-]?(?:(?:\d+(?:\.\d*)?)|(?:\.\d+))(?:[eE][+-]?\d+)?$/;
     if (!numericRegex.test(t)) return null;
     const n = Number(t);
@@ -601,37 +577,37 @@ Everyday Life
   }
 
   function formatNumber(n) {
-    if (n === null || n === undefined || Number.isNaN(n)) return "";
+    if (n === null || n === undefined || Number.isNaN(n)) return '';
     const decimals = Math.max(0, Math.min(12, Number(reverseConfig.displayDecimals || 6)));
     const abs = Math.abs(n);
-    if ((abs !== 0 && (abs >= 1e9 || abs < 1e-6))) {
-      return Number(n).toExponential(decimals);
-    }
+    if (abs !== 0 && (abs >= 1e9 || abs < 1e-6)) return Number(n).toExponential(decimals);
     const rounded = Number(Math.round((Number(n) + Number.EPSILON) * Math.pow(10, decimals)) / Math.pow(10, decimals));
     if (Number.isInteger(rounded)) return rounded.toLocaleString();
     return rounded.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: decimals });
   }
 
   function normalizeUnit(u) {
-    if (!u) return "Celsius";
+    if (!u) return 'Celsius';
     const l = String(u).toLowerCase();
-    if (l.startsWith("f")) return "Fahrenheit";
-    if (l.startsWith("k")) return "Kelvin";
-    return "Celsius";
+    if (l.startsWith('f')) return 'Fahrenheit';
+    if (l.startsWith('k')) return 'Kelvin';
+    return 'Celsius';
   }
+
   function toCelsius(v, u) {
     if (v === null) return null;
     switch (normalizeUnit(u)) {
-      case "Fahrenheit": return (v - 32) * 5 / 9;
-      case "Kelvin": return v - 273.15;
+      case 'Fahrenheit': return (v - 32) * 5 / 9;
+      case 'Kelvin': return v - 273.15;
       default: return v;
     }
   }
+
   function fromCelsius(vc, u) {
     if (vc === null) return null;
     switch (normalizeUnit(u)) {
-      case "Fahrenheit": return (vc * 9 / 5) + 32;
-      case "Kelvin": return vc + 273.15;
+      case 'Fahrenheit': return (vc * 9 / 5) + 32;
+      case 'Kelvin': return vc + 273.15;
       default: return vc;
     }
   }
@@ -639,11 +615,13 @@ Everyday Life
   function safeSetValue(inputEl, numericValue) {
     if (!inputEl) return;
     programmatic = true;
-    inputEl.value = numericValue === null ? "" : formatNumber(numericValue);
-    programmatic = false;
+    try {
+      inputEl.value = numericValue === null ? '' : formatNumber(numericValue);
+    } finally {
+      setTimeout(() => { programmatic = false; }, 0);
+    }
   }
 
-  // old clampCelsius preserved for strict mode
   function clampCelsiusStrict(valC) {
     if (valC === null || Number.isNaN(valC)) return null;
     const { min, max } = reverseConfig.boundsC;
@@ -651,9 +629,6 @@ Everyday Life
     return valC;
   }
 
-  // New helper: apply value according to enforceBounds policy.
-  // type: 'primer'|'target' for messaging; celsiusVal is raw computed value in °C.
-  // inputEl: the corresponding input element; unitEl: select element with unit or undefined.
   function applyCelsiusValue(type, celsiusVal, inputEl, unitEl) {
     if (!inputEl) return false;
     const unitName = unitEl ? unitEl.value : (type === 'primer' ? (primerUnit ? primerUnit.value : 'Celsius') : (targetUnit ? targetUnit.value : 'Celsius'));
@@ -661,29 +636,26 @@ Everyday Life
     if (reverseConfig.enforceBounds) {
       const strict = clampCelsiusStrict(celsiusVal);
       if (strict === null) {
-        // reject
-        showMessage(`Calculated ${type} Tm outside allowed range; not applied.`, 'error');
+        if (typeof showMessage === 'function') showMessage(`Calculated ${type} Tm outside allowed range; not applied.`, 'error');
         return false;
       }
-      // accepted
       safeSetValue(inputEl, fromCelsius(strict, unitName));
       return true;
-    } else {
-      // warn but apply
-      const { min, max } = reverseConfig.boundsC;
-      if (celsiusVal < min || celsiusVal > max) {
-        // format the value in the unit selected by the user
-        const valInUnit = fromCelsius(celsiusVal, unitName);
-        const minFmt = fromCelsius(min, unitName);
-        const maxFmt = fromCelsius(max, unitName);
-        showMessage(
-          `Calculated ${type} Tm (${formatNumber(valInUnit)} ${unitName}) is outside allowed range of ${formatNumber(minFmt)} to ${formatNumber(maxFmt)} ${unitName}. Applied anyway.`,
-          'info'
-        );
-      }
-      safeSetValue(inputEl, fromCelsius(celsiusVal, unitName));
-      return true;
     }
+
+    const { min, max } = reverseConfig.boundsC;
+    if (celsiusVal < min || celsiusVal > max) {
+      const valInUnit = fromCelsius(celsiusVal, unitName);
+      const minFmt = fromCelsius(min, unitName);
+      const maxFmt = fromCelsius(max, unitName);
+      if (typeof showMessage === 'function') showMessage(
+        `Calculated ${type} Tm (${formatNumber(valInUnit)} ${unitName}) is outside allowed range of ${formatNumber(minFmt)} to ${formatNumber(maxFmt)} ${unitName}. Applied anyway.`,
+        'info'
+      );
+    }
+
+    safeSetValue(inputEl, fromCelsius(celsiusVal, unitName));
+    return true;
   }
 
   function computeAnnealFrom(primerC, targetC) {
@@ -693,54 +665,42 @@ Everyday Life
   function scheduleCalc() {
     if (rafScheduled) return;
     rafScheduled = true;
-    requestAnimationFrame(() => { rafScheduled = false; calculateAnnealingTemperature(); });
+    requestAnimationFrame(() => { rafScheduled = false; calculate(); });
   }
 
-  function calculateAnnealingTemperature() {
+  function calculate() {
     if (!primerInput || !targetInput || !annealInput) return;
-
     const pRaw = parseNumber(primerInput.value);
     const tRaw = parseNumber(targetInput.value);
-    if (pRaw === null || tRaw === null) {
-      safeSetValue(annealInput, null);
-      return;
-    }
-
-    const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : "Celsius");
-    const tC = toCelsius(tRaw, targetUnit ? targetUnit.value : "Celsius");
+    if (pRaw === null || tRaw === null) { safeSetValue(annealInput, null); return; }
+    const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : 'Celsius');
+    const tC = toCelsius(tRaw, targetUnit ? targetUnit.value : 'Celsius');
     if (pC === null || tC === null) { safeSetValue(annealInput, null); return; }
-
     const aC = computeAnnealFrom(pC, tC);
-
     if (reverseConfig.suggestedRangeC && reverseConfig.suggestedRangeC.enabled) {
       const minS = Number(reverseConfig.suggestedRangeC.min);
       const maxS = Number(reverseConfig.suggestedRangeC.max);
       if (!Number.isNaN(minS) && !Number.isNaN(maxS) && (aC < minS || aC > maxS)) {
-        const msg = `The annealing temperature is out of the suggested range of ${minS} to ${maxS} °C. (But calculation continues)`;
-        showMessage(msg, 'info');
+        if (typeof showMessage === 'function') showMessage(
+          `The annealing temperature is out of the suggested range of ${minS} to ${maxS} °C. (But calculation continues)`,
+          'info'
+        );
       }
     }
-
-    safeSetValue(annealInput, fromCelsius(aC, annealUnit ? annealUnit.value : "Celsius"));
+    safeSetValue(annealInput, fromCelsius(aC, annealUnit ? annealUnit.value : 'Celsius'));
   }
 
-  function chooseCandidateWhenBoth(primerEl, targetEl, annealEl) {
+  function chooseCandidateWhenBoth(primerEl, targetEl) {
     const candidates = [];
     if (reverseConfig.reversible.primer && primerEl) candidates.push({ id: 'primer', el: primerEl });
     if (reverseConfig.reversible.target && targetEl) candidates.push({ id: 'target', el: targetEl });
     if (candidates.length === 0) return null;
 
-    function isBefore(a, b) {
-      return !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
-    }
+    function isBefore(a, b) { return !!(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING); }
 
-    if (reverseConfig.strategy === "top-to-bottom") {
-      candidates.sort((A, B) => isBefore(A.el, B.el) ? -1 : 1);
-    } else if (reverseConfig.strategy === "bottom-to-top") {
-      candidates.sort((A, B) => isBefore(A.el, B.el) ? 1 : -1);
-    } else {
-      candidates.sort((A, B) => isBefore(A.el, B.el) ? -1 : 1);
-    }
+    if (reverseConfig.strategy === 'top-to-bottom') candidates.sort((A, B) => isBefore(A.el, B.el) ? -1 : 1);
+    else if (reverseConfig.strategy === 'bottom-to-top') candidates.sort((A, B) => isBefore(A.el, B.el) ? 1 : -1);
+    else candidates.sort((A, B) => isBefore(A.el, B.el) ? -1 : 1);
 
     if (candidates.length > 1 && lastEditedId) {
       if (candidates[0].id === lastEditedId && candidates[1]) return candidates[1].id;
@@ -751,24 +711,26 @@ Everyday Life
   function backsolveFromAnneal() {
     if (!annealInput) return;
     if (transactionLock) return;
-
     const aRaw = parseNumber(annealInput.value);
     if (aRaw === null) return;
-    const aC = toCelsius(aRaw, annealUnit ? annealUnit.value : "Celsius");
+    const aC = toCelsius(aRaw, annealUnit ? annealUnit.value : 'Celsius');
     if (aC === null || Number.isNaN(aC)) return;
 
     const pRaw = primerInput ? parseNumber(primerInput.value) : null;
     const tRaw = targetInput ? parseNumber(targetInput.value) : null;
 
     if (pRaw !== null && tRaw !== null) {
-      const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : "Celsius");
-      const tC = toCelsius(tRaw, targetUnit ? targetUnit.value : "Celsius");
+      const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : 'Celsius');
+      const tC = toCelsius(tRaw, targetUnit ? targetUnit.value : 'Celsius');
       const expectedA = computeAnnealFrom(pC, tC);
       const relDiff = Math.abs(expectedA - aC) / Math.max(1, Math.abs(expectedA));
       if (relDiff < reverseConfig.relativeTolerance) return;
 
-      const candidate = chooseCandidateWhenBoth(primerInput, targetInput, annealInput);
-      if (!candidate) { showHint("Inconsistent values but no reversible input enabled."); return; }
+      const candidate = chooseCandidateWhenBoth(primerInput, targetInput);
+      if (!candidate) {
+        if (typeof showMessage === 'function') showMessage('Inconsistent values but no reversible input enabled.', 'info');
+        return;
+      }
 
       transactionLock = true;
       if (candidate === 'primer') {
@@ -782,39 +744,32 @@ Everyday Life
         transactionLock = false;
         if (!applied) return;
       }
-      calculateAnnealingTemperature();
+      calculate();
       return;
     }
 
     if (pRaw !== null && tRaw === null) {
-      if (!reverseConfig.reversible.target) { showHint("Target auto-calc disabled. Enable it in settings."); return; }
-      const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : "Celsius");
+      if (!reverseConfig.reversible.target) { if (typeof showMessage === 'function') showMessage('Target auto-calc disabled. Enable it in settings.', 'info'); return; }
+      const pC = toCelsius(pRaw, primerUnit ? primerUnit.value : 'Celsius');
       const newTargetC = (aC + 14.9 - 0.3 * pC) / 0.7;
       const applied = applyCelsiusValue('target', newTargetC, targetInput, targetUnit);
       if (!applied) return;
-      calculateAnnealingTemperature();
+      calculate();
       return;
     }
 
     if (tRaw !== null && pRaw === null) {
-      if (!reverseConfig.reversible.primer) { showHint("Primer auto-calc disabled. Enable it in settings."); return; }
-      const tC = toCelsius(tRaw, targetUnit ? targetUnit.value : "Celsius");
+      if (!reverseConfig.reversible.primer) { if (typeof showMessage === 'function') showMessage('Primer auto-calc disabled. Enable it in settings.', 'info'); return; }
+      const tC = toCelsius(tRaw, targetUnit ? targetUnit.value : 'Celsius');
       const newPrimerC = (aC + 14.9 - 0.7 * tC) / 0.3;
       const applied = applyCelsiusValue('primer', newPrimerC, primerInput, primerUnit);
       if (!applied) return;
-      calculateAnnealingTemperature();
+      calculate();
       return;
     }
 
-    showHint("Provide at least one primer or target Tm to back-calculate the other.");
+    if (typeof showMessage === 'function') showMessage('Provide at least one primer or target Tm to back-calculate the other.', 'info');
   }
-
-  // track unit previous values for conversion
-  [primerUnit, targetUnit, annealUnit].forEach(sel => {
-    if (!sel) return;
-    sel.dataset.prevUnit = sel.value;
-    ['focus', 'mousedown', 'touchstart'].forEach(ev => sel.addEventListener(ev, () => { sel.dataset.prevUnit = sel.value; }));
-  });
 
   function convertField(inputEl, prevUnit, newUnit) {
     if (!inputEl) return;
@@ -825,75 +780,92 @@ Everyday Life
     safeSetValue(inputEl, out);
   }
 
-  if (primerUnit) primerUnit.addEventListener("change", () => {
-    const prev = primerUnit.dataset.prevUnit || primerUnit.value;
-    programmatic = true;
-    convertField(primerInput, prev, primerUnit.value);
-    programmatic = false;
-    primerUnit.dataset.prevUnit = primerUnit.value;
-    scheduleCalc();
-  });
-  if (targetUnit) targetUnit.addEventListener("change", () => {
-    const prev = targetUnit.dataset.prevUnit || targetUnit.value;
-    programmatic = true;
-    convertField(targetInput, prev, targetUnit.value);
-    programmatic = false;
-    targetUnit.dataset.prevUnit = targetUnit.value;
-    scheduleCalc();
-  });
-  if (annealUnit) annealUnit.addEventListener("change", () => {
-    const prev = annealUnit.dataset.prevUnit || annealUnit.value;
-    programmatic = true;
-    convertField(annealInput, prev, annealUnit.value);
-    programmatic = false;
-    annealUnit.dataset.prevUnit = annealUnit.value;
-    backsolveFromAnneal();
-  });
-
   function wireInput(el, idName) {
     if (!el) return;
-    el.removeAttribute && el.removeAttribute("readonly");
-    el.removeAttribute && el.removeAttribute("disabled");
-    el.addEventListener("focus", () => { lastEditedId = idName; });
-    el.addEventListener("input", () => {
-      if (programmatic) return;
-      lastEditedId = idName;
-      el.dataset.userEditedAt = Date.now();
-      if (idName === 'anneal') backsolveFromAnneal();
-      else scheduleCalc();
-    });
-    ['change', 'blur'].forEach(ev => el.addEventListener(ev, () => {
-      if (programmatic) return;
-      lastEditedId = idName;
-      el.dataset.userEditedAt = Date.now();
-      if (idName === 'anneal') backsolveFromAnneal(); else scheduleCalc();
-    }));
+    try {
+      if (el.removeAttribute) { el.removeAttribute('readonly'); el.removeAttribute('disabled'); }
+      try { el.readOnly = false; } catch (e) {}
+      try { el.disabled = false; } catch (e) {}
+
+      el.addEventListener('focus', () => { lastEditedId = idName; });
+      el.addEventListener('input', () => {
+        if (programmatic) return;
+        lastEditedId = idName;
+        el.dataset.userEditedAt = Date.now();
+        if (idName === 'anneal') backsolveFromAnneal(); else scheduleCalc();
+      });
+      ['change', 'blur'].forEach(ev => el.addEventListener(ev, () => {
+        if (programmatic) return;
+        lastEditedId = idName;
+        el.dataset.userEditedAt = Date.now();
+        if (idName === 'anneal') backsolveFromAnneal(); else scheduleCalc();
+      }));
+    } catch (e) {
+      console.error('Error wiring input', idName, e);
+    }
   }
 
-  wireInput(primerInput, 'primer');
-  wireInput(targetInput, 'target');
-  wireInput(annealInput, 'anneal');
+  function init() {
+    primerInput = document.getElementById('PrimerMeltingTemperature');
+    primerUnit = document.getElementById('PrimerMeltingtemperatureUnit');
+    targetInput = document.getElementById('TargetMeltingTemperature');
+    targetUnit = document.getElementById('TargetMeltingTemperatureUnit');
+    annealInput = document.getElementById('Annealingtemperature');
+    annealUnit = document.getElementById('AnnealingtemperatureUnit');
 
-  // run on DOM ready
-  document.addEventListener("DOMContentLoaded", () => {
-    const hintEl = document.querySelector(".calc-hint"); if (hintEl) hintEl.style.display = "none";
-    const errEl = document.querySelector(".calc-error"); if (errEl) errEl.style.display = "none";
-    calculateAnnealingTemperature();
-  });
-  if (document.readyState === "complete" || document.readyState === "interactive") calculateAnnealingTemperature();
+    if (!primerInput && !targetInput && !annealInput) {
+      console.warn('Anneal calculator: no relevant inputs found. Script aborted.');
+      return;
+    }
 
-  // expose for debugging and external use
+    [primerUnit, targetUnit, annealUnit].forEach(sel => {
+      if (!sel) return;
+      sel.dataset.prevUnit = sel.value;
+      ['focus', 'mousedown', 'touchstart'].forEach(ev => sel.addEventListener(ev, () => { sel.dataset.prevUnit = sel.value; }));
+    });
+
+    if (primerUnit) primerUnit.addEventListener('change', () => {
+      const prev = primerUnit.dataset.prevUnit || primerUnit.value;
+      convertField(primerInput, prev, primerUnit.value);
+      primerUnit.dataset.prevUnit = primerUnit.value;
+      scheduleCalc();
+    });
+
+    if (targetUnit) targetUnit.addEventListener('change', () => {
+      const prev = targetUnit.dataset.prevUnit || targetUnit.value;
+      convertField(targetInput, prev, targetUnit.value);
+      targetUnit.dataset.prevUnit = targetUnit.value;
+      scheduleCalc();
+    });
+
+    if (annealUnit) annealUnit.addEventListener('change', () => {
+      const prev = annealUnit.dataset.prevUnit || annealUnit.value;
+      convertField(annealInput, prev, annealUnit.value);
+      annealUnit.dataset.prevUnit = annealUnit.value;
+      backsolveFromAnneal();
+    });
+
+    wireInput(primerInput, 'primer');
+    wireInput(targetInput, 'target');
+    wireInput(annealInput, 'anneal');
+
+    try { const errEl = document.querySelector('.calc-error'); if (errEl) errEl.style.display = 'none'; } catch (e) {}
+
+    const filled = [primerInput, targetInput, annealInput].reduce((c, el) => c + (el && typeof el.value === 'string' && el.value.trim() !== '' ? 1 : 0), 0);
+    if (filled >= 2) calculate();
+  }
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(init, 0);
+  else document.addEventListener('DOMContentLoaded', init);
+
   window.__calcluloAnneal = window.__calcluloAnneal || {};
-  Object.assign(window.__calcluloAnneal, {
-    parseNumber,
-    formatNumber,
-    config: reverseConfig,
-    calculate: calculateAnnealingTemperature,
-    backsolve: backsolveFromAnneal,
-    showMessage
-  });
+  Object.assign(window.__calcluloAnneal, { parseNumber, formatNumber, config: reverseConfig, calculate, backsolve: backsolveFromAnneal });
 
-})();
+window.onload = () => CalcluloAnneal();
+}
+)();
+
+
 </script>
 
 <script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
