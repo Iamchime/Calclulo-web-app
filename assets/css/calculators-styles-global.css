@@ -250,7 +250,7 @@ font-size: .9em;
 color: #4F5163;
 text-decoration: none;
 cursor: none;
-transition: .3s;
+transition: .4s;
 border-bottom: 1px solid #4F516330;
 width: 90%;
 position: relative;
@@ -272,12 +272,11 @@ display: block;
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(5px);
+  background: rgba(0, 0, 0, 0.85);
   z-index: 1000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity .3s ease;
+  transition: opacity .4s ease;
 }
 .overlay.visible {
   opacity: 1;

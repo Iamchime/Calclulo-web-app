@@ -1626,8 +1626,7 @@ document.addEventListener("click", (e) => {
       .calclulo-btn.ghost:active { background: #42445A26 }
       @media (min-width: 640px) {
         .calclulo-pwa-drawer { left: auto; right: auto; bottom: 20px; width: calc(100% - 40px); max-width: 640px; }
-      }
-    `;
+      }`;
     const s = document.createElement('style');
     s.id = DRAWER_BASE + 'Styles';
     s.appendChild(document.createTextNode(css));
@@ -3331,92 +3330,161 @@ document.addEventListener("DOMContentLoaded", () => {
 })();*/
 /**********************************************************/
 
-/************** ripple effect handling ****************/
-function addRipple(element, options = {}) {
-  if (!element) return;
-  const color = options.color || 'rgba(0,0,0,0.15)';
-  const duration = options.duration || 550;
-  const fadeDuration = options.fadeDuration || 350;
-  const maxRipples = options.maxRipples || 3;
-  
-  const style = window.getComputedStyle(element);
-  if (style.position === 'static') element.style.position = 'relative';
-  if (style.overflow !== 'hidden') element.style.overflow = 'hidden';
-  
-  const activeRipples = [];
-  
-  function createRipple(x, y) {
-    if (activeRipples.length >= maxRipples) {
-      const oldest = activeRipples.shift();
-      if (oldest.parentNode) oldest.remove();
-    }
-    
-    const rect = element.getBoundingClientRect();
-    const ripple = document.createElement('span');
-    const size = Math.sqrt(rect.width ** 2 + rect.height ** 2) * 2;
-    
-    ripple.style.width = ripple.style.height = `${size}px`;
-    ripple.style.position = 'absolute';
-    ripple.style.borderRadius = '50%';
-    ripple.style.left = `${x - size / 2}px`;
-    ripple.style.top = `${y - size / 2}px`;
-    ripple.style.backgroundColor = color;
-    ripple.style.pointerEvents = 'none';
-    ripple.style.opacity = '0.1';
-    ripple.style.transform = 'scale(0)';
-    ripple.style.zIndex = '0';
-    ripple.style.animation = `ripple-enter ${duration}ms cubic-bezier(0.4,0,0.2,1) forwards`;
-    
-    element.appendChild(ripple);
-    activeRipples.push(ripple);
-    
-    setTimeout(() => {
-      ripple.style.animation = `ripple-exit ${fadeDuration}ms linear forwards`;
-      ripple.addEventListener('animationend', () => {
-        ripple.remove();
-        const index = activeRipples.indexOf(ripple);
-        if (index > -1) activeRipples.splice(index, 1);
-      });
-    }, duration);
+/************** ripple effect handling (supports dynamic elements) ****************/
+(function () {
+  const applied = new WeakSet();
+
+  function ensureKeyframes() {
+    if (document.getElementById('material-ripple-keyframes')) return;
+    const rippleStyle = document.createElement('style');
+    rippleStyle.id = 'material-ripple-keyframes';
+    rippleStyle.textContent = `
+      @keyframes ripple-enter {
+        0% { transform: scale(0); opacity: 0.1; }
+        50% { opacity: 0.35; }
+        100% { transform: scale(1); opacity: 0.35; }
+      }
+      @keyframes ripple-exit {
+        from { opacity: 0.35; transform: scale(1); }
+        to { opacity: 0; transform: scale(1); }
+      }`;
+    document.head.appendChild(rippleStyle);
   }
-  
-  element.addEventListener('mousedown', (e) => {
-    const rect = element.getBoundingClientRect();
-    createRipple(e.clientX - rect.left, e.clientY - rect.top);
-  });
-  
-  element.addEventListener('touchstart', (e) => {
-    const touch = e.touches[0];
-    if (!touch) return;
-    const rect = element.getBoundingClientRect();
-    createRipple(touch.clientX - rect.left, touch.clientY - rect.top);
-  });
-  
-  element.addEventListener('keydown', (e) => {
-    if (e.key === ' ' || e.key === 'Enter') {
+
+  function addRipple(element, options = {}) {
+    if (!element || applied.has(element)) return;
+    applied.add(element);
+    ensureKeyframes();
+
+    const color = options.color || 'rgba(0,0,0,0.15)';
+    const duration = options.duration || 550;
+    const fadeDuration = options.fadeDuration || 350;
+    const maxRipples = options.maxRipples || 3;
+
+    const activeRipples = [];
+
+    const computed = window.getComputedStyle(element);
+    if (computed.position === 'static') element.style.position = 'relative';
+    if (computed.overflow !== 'hidden') element.style.overflow = 'hidden';
+
+    function createRipple(x, y) {
+      
+      if (activeRipples.length >= maxRipples) {
+        const oldest = activeRipples.shift();
+        if (oldest && oldest.parentNode) oldest.remove();
+      }
+
       const rect = element.getBoundingClientRect();
-      createRipple(rect.width / 2, rect.height / 2);
+      const size = Math.sqrt(rect.width * rect.width + rect.height * rect.height) * 2;
+      const ripple = document.createElement('span');
+
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.position = 'absolute';
+      ripple.style.borderRadius = '50%';
+      ripple.style.left = `${x - size / 2}px`;
+      ripple.style.top = `${y - size / 2}px`;
+      ripple.style.backgroundColor = color;
+      ripple.style.pointerEvents = 'none';
+      ripple.style.opacity = '0.1';
+      ripple.style.transform = 'scale(0)';
+      ripple.style.zIndex = '0';
+      ripple.style.willChange = 'transform, opacity';
+      ripple.style.animation = `ripple-enter ${duration}ms cubic-bezier(0.4,0,0.2,1) forwards`;
+
+      element.appendChild(ripple);
+      activeRipples.push(ripple);
+
+      setTimeout(() => {
+        
+        ripple.style.animation = `ripple-exit ${fadeDuration}ms linear forwards`;
+        
+        ripple.addEventListener(
+          'animationend',
+          (ev) => {
+            if (ev.animationName && ev.animationName.indexOf('ripple-exit') > -1) {
+              ripple.remove();
+              const idx = activeRipples.indexOf(ripple);
+              if (idx > -1) activeRipples.splice(idx, 1);
+            }
+          },
+          { once: true }
+        );
+      }, duration);
     }
-  });
-}
 
-if (!document.getElementById('material-ripple-keyframes')) {
-  const rippleStyle = document.createElement('style');
-  rippleStyle.id = 'material-ripple-keyframes';
-  rippleStyle.textContent = `
-  @keyframes ripple-enter {
-    0% { transform: scale(0); opacity: 0.1; }
-    50% { opacity: 0.35; }
-    100% { transform: scale(1); opacity: 0.35; }
+    function onPointerDown(e) {
+      
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      const rect = element.getBoundingClientRect();
+      const x = (e.clientX ?? (e.touches && e.touches[0] && e.touches[0].clientX)) - rect.left;
+      const y = (e.clientY ?? (e.touches && e.touches[0] && e.touches[0].clientY)) - rect.top;
+      createRipple(x, y);
+    }
+
+    function onKeyDown(e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space') {
+
+        if (e.key === ' ' || e.code === 'Space') e.preventDefault();
+        const rect = element.getBoundingClientRect();
+        createRipple(rect.width / 2, rect.height / 2);
+      }
+    }
+
+    element.addEventListener('pointerdown', onPointerDown);
+    element.addEventListener('keydown', onKeyDown);
+
+    element.__destroyRipple = () => {
+      element.removeEventListener('pointerdown', onPointerDown);
+      element.removeEventListener('keydown', onKeyDown);
+      applied.delete(element);
+    };
   }
-  @keyframes ripple-exit {
-    from { opacity: 0.35; transform: scale(1); }
-    to { opacity: 0; transform: scale(1); }
-  }`;
-  document.head.appendChild(rippleStyle);
-}
 
-document.querySelectorAll('.header-btns-container button,.side-nav a').forEach(el =>
-  addRipple(el, { color: 'darkgrey', maxRipples: 3 })
-);
-/*********************************/
+  function observeSelector(selector, options = {}) {
+    
+    document.querySelectorAll(selector).forEach((el) => addRipple(el, options));
+
+    const observer = new MutationObserver((mutations) => {
+      for (const m of mutations) {
+        
+        if (m.addedNodes && m.addedNodes.length) {
+          m.addedNodes.forEach((node) => {
+            if (node.nodeType !== 1) return; 
+            if (node.matches && node.matches(selector)) {
+              addRipple(node, options);
+            }
+            
+            const descendants = node.querySelectorAll ? node.querySelectorAll(selector) : null;
+            if (descendants && descendants.length) {
+              descendants.forEach((el) => addRipple(el, options));
+            }
+          });
+        }
+
+        if (m.type === 'attributes' && m.target && m.target.matches && m.target.matches(selector)) {
+          addRipple(m.target, options);
+        }
+      }
+    });
+
+    observer.observe(document.documentElement || document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'id', 'role', 'data-*'],
+    });
+
+    return observer;
+  }
+
+  const selector =
+    '.header-btns-container button, .side-nav a, .close-nav-btn, .input-options-item, .copy-share-url, .close-share-modal, .quick-actions-btn button, .expanded-input-option-svg, #share-category-btn,.calclulo-pwa-container button';
+
+  const rippleObserver = observeSelector(selector, { color: 'darkgrey', maxRipples: 3 });
+
+  window.__ripple = {
+    addRipple,
+    observeSelector,
+    rippleObserver,
+  };
+})();
