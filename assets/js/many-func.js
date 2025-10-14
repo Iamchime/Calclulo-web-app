@@ -3135,15 +3135,46 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
 /**********************************************************/
 /************** vote feedback ***************/
 document.addEventListener("DOMContentLoaded", () => {
+  let tooltipRoot = document.getElementById("tooltip-root");
+  if (!tooltipRoot) {
+    tooltipRoot = document.createElement("div");
+    tooltipRoot.id = "tooltip-root";
+    Object.assign(tooltipRoot.style, {
+      position: "fixed",
+      top: "0",
+      left: "0",
+      width: "100%",
+      height: "0",
+      pointerEvents: "none",
+      zIndex: "9999",
+    });
+    document.body.appendChild(tooltipRoot);
+  }
+
   const likeBtns = Array.from(document.querySelectorAll(".vote-up"));
+
   likeBtns.forEach((likeBtn, idx) => {
     const container = likeBtn.closest(".calculator") || likeBtn.closest(".vote-group") || likeBtn.parentElement;
     const dislikeBtn = container ? container.querySelector(".vote-down") : document.querySelector(".vote-down");
+
     const tooltip = document.createElement("div");
     tooltip.className = "vote-tooltip";
     tooltip.textContent = "Thanks!";
-    likeBtn.appendChild(tooltip);
+    tooltip.setAttribute("aria-hidden", "true");
+
+    Object.assign(tooltip.style, {
+      position: "fixed",
+      pointerEvents: "none",
+      left: "0px",
+      top: "0px",
+      transformOrigin: "center bottom",
+      willChange: "transform, top, left",
+    });
+
+    tooltipRoot.appendChild(tooltip);
+
     const storageKey = `userVote:${location.pathname}:index:${idx}`;
+
     function updateButtons(vote) {
       if (vote === "like") {
         likeBtn.classList.add("active");
@@ -3156,8 +3187,48 @@ document.addEventListener("DOMContentLoaded", () => {
         dislikeBtn && dislikeBtn.classList.remove("active");
       }
     }
+
     const savedVote = localStorage.getItem(storageKey);
     if (savedVote) updateButtons(savedVote);
+
+    function positionTooltip() {
+      const rect = likeBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      
+      tooltip.style.left = `${centerX}px`;
+      tooltip.style.top = `0px`;
+      
+      const ttHeight = tooltip.offsetHeight;
+      const gap = 8;
+      
+      let top = rect.top - ttHeight - gap;
+      let showBelow = false;
+      if (top < 8) {
+        
+        top = rect.bottom + gap;
+        showBelow = true;
+      }
+
+      tooltip.style.top = `${top}px`;
+      
+      tooltip.dataset.placement = showBelow ? "bottom" : "top";
+    }
+    
+    let repositionHandler = null;
+    function startRepositionListeners() {
+      repositionHandler = () => {
+        if (tooltip.classList.contains("show")) positionTooltip();
+      };
+      window.addEventListener("scroll", repositionHandler, { passive: true });
+      window.addEventListener("resize", repositionHandler);
+    }
+    function stopRepositionListeners() {
+      if (!repositionHandler) return;
+      window.removeEventListener("scroll", repositionHandler);
+      window.removeEventListener("resize", repositionHandler);
+      repositionHandler = null;
+    }
+
     likeBtn.addEventListener("click", () => {
       const isActive = likeBtn.classList.contains("active");
       if (isActive) {
@@ -3166,10 +3237,19 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         updateButtons("like");
         localStorage.setItem(storageKey, "like");
+        
+        positionTooltip();
         tooltip.classList.add("show");
-        setTimeout(() => tooltip.classList.remove("show"), 1500);
+        
+        startRepositionListeners();
+        
+        setTimeout(() => {
+          tooltip.classList.remove("show");
+          stopRepositionListeners();
+        }, 1500);
       }
     });
+
     if (dislikeBtn) {
       dislikeBtn.addEventListener("click", () => {
         const isActive = dislikeBtn.classList.contains("active");
@@ -3223,7 +3303,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const activeRipples = [];
 
     const computed = window.getComputedStyle(element);
-    if (computed.position === 'static') element.style.position = 'relative';
+   if (computed.position === 'static') element.style.position = 'relative';
     if (computed.overflow !== 'hidden') element.style.overflow = 'hidden';
 
     function createRipple(x, y) {

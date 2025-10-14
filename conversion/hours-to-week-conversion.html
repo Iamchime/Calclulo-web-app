@@ -362,14 +362,13 @@ Clear all changes
     </div>
 
     <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
+      <h2>Similar time converters 🕰️ calculators</h2>
       <div class="similar-calculators">
-        <a href="/conversion/minutes-to-hours-converter">Minutes to Hours Converter</a>
-        <a href="/other/download-time-calculator">Download Time Calculator</a>
+        <a href="/conversion/minutes-to-hours-converter">Minutes to hours converter</a>
       </div>
     </div>
 <article class="description-txt">
-   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">tool</span></h2>
+   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
    <p>
     The hours to week Converter allows you to convert hours to weeks or vice versa.
    </p>
@@ -519,7 +518,7 @@ document.addEventListener("DOMContentLoaded", function () {
     weeksInput.value = formatNumber(weeks);
 
     updateBreakdown(hours);
-    markAsResult([weeksInput, hoursResult, minutesResult, secondsResult]);
+    //markAsResult([weeksInput, hoursResult, minutesResult, secondsResult]);
   }
 
   function convertFromWeeks() {
@@ -529,7 +528,7 @@ document.addEventListener("DOMContentLoaded", function () {
     hoursInput.value = formatNumber(hours);
 
     updateBreakdown(hours);
-    markAsResult([hoursInput, hoursResult, minutesResult, secondsResult]);
+    //markAsResult([hoursInput, hoursResult, minutesResult, secondsResult]);
   }
 
   function updateBreakdown(hours) {
@@ -563,6 +562,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     convertFromWeeks();
   });
+  
+  window.onload = () => {
+  if (hoursInput.value.trim() === "" && weeksInput.value.trim() === "") {
+    hoursResult.value = "";
+    minutesResult.value = "";
+    secondsResult.value = "";
+    weeksInput.value = "";
+    return;
+  }
+  
+  if (hoursInput.value.trim() !== "") {
+    convertFromHours();
+  } else if (weeksInput.value.trim() !== "") {
+    convertFromWeeks();
+  }
+};
 });
 </script>
 

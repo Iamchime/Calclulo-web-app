@@ -416,11 +416,9 @@ Clear all changes
     </div>
 
     <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
+      <h2>Similar time converters 🕰️ calculators</h2>
       <div class="similar-calculators">
-       
-        <a href="/other/website-bandwidth-calculator">Website Bandwidth Calculator</a>
-        <a href="/other/download-time-calculator">Download Time Calculator</a>
+       <a href="/conversion/hours-to-week-conversion">Hours to week conversion</a>
       </div>
     </div>
 <article class="description-txt">
@@ -572,12 +570,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
   
-  function resetResultClasses() {
-    [hoursResult, minutesResult, secondsResult, hoursEl, minutesEl, secondsEl].forEach(el => {
-      el.classList.remove("result");
-    });
-  }
-  
   function fromMinutes() {
     const minutes = cleanNumber(minutesEl.value);
     const hours = minutes / 60;
@@ -586,21 +578,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const mins = Math.floor(minutes % 60);
     const secs = Math.floor((minutes * 60) % 60);
     
-    resetResultClasses();
-    
     hoursEl.value = formatNumber(hours, 2, 2);
     secondsEl.value = formatNumber(seconds, 2, 2);
-    
-    hoursEl.classList.add("result");
-    secondsEl.classList.add("result");
-    
     hoursResult.value = formatNumber(hrs);
     minutesResult.value = formatNumber(mins);
     secondsResult.value = formatNumber(secs);
-    
-    hoursResult.classList.add("result");
-    minutesResult.classList.add("result");
-    secondsResult.classList.add("result");
   }
   
   function fromHours() {
@@ -611,21 +593,11 @@ document.addEventListener("DOMContentLoaded", function() {
     const mins = Math.floor((hours * 60) % 60);
     const secs = Math.floor((hours * 3600) % 60);
     
-    resetResultClasses();
-    
     minutesEl.value = formatNumber(minutes, 2, 2);
     secondsEl.value = formatNumber(seconds, 2, 2);
-    
-    minutesEl.classList.add("result");
-    secondsEl.classList.add("result");
-    
     hoursResult.value = formatNumber(hrs);
     minutesResult.value = formatNumber(mins);
     secondsResult.value = formatNumber(secs);
-    
-    hoursResult.classList.add("result");
-    minutesResult.classList.add("result");
-    secondsResult.classList.add("result");
   }
   
   function fromSeconds() {
@@ -636,26 +608,25 @@ document.addEventListener("DOMContentLoaded", function() {
     const minutes = totalSeconds / 60;
     const hours = totalSeconds / 3600;
     
-    resetResultClasses();
-    
     minutesEl.value = formatNumber(minutes, 2, 2);
     hoursEl.value = formatNumber(hours, 2, 2);
-    
-    minutesEl.classList.add("result");
-    hoursEl.classList.add("result");
-    
     hoursResult.value = formatNumber(hrs);
     minutesResult.value = formatNumber(mins);
     secondsResult.value = formatNumber(secs);
-    
-    hoursResult.classList.add("result");
-    minutesResult.classList.add("result");
-    secondsResult.classList.add("result");
   }
   
   minutesEl.addEventListener("input", fromMinutes);
   hoursEl.addEventListener("input", fromHours);
   secondsEl.addEventListener("input", fromSeconds);
+  window.onload = () => {
+    
+  if (hoursEl.value.trim() !== "") {
+    fromHours();
+  } else if (minutesEl.value.trim() !== "") {
+    fromMinutes();
+  } else if (secondsEl.value.trim() !== "") {
+    fromSeconds();
+  }}
 });
 </script>
 
