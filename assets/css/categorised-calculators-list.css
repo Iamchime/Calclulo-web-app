@@ -451,12 +451,9 @@ color: #515353;
   padding: 24px;
   margin-top: -2em;
 }
-.calculators-lists ul li{
-  
-}
 .calculators-lists ul li::marker {
   font-size: 1.4em;
-  color: #464BFF73;
+  color: #515353D4;
 }
 .calculators-lists a{
 cursor: none;

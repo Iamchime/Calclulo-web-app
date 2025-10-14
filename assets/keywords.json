@@ -1295,6 +1295,13 @@
   ],
   "category": "Everyday life Calculators",
   "link": "/everyday-life/bikini-calculator"
-}
+},{
+  "tool": "Margin Calculator",
+  "relatedKeywords": [
+    "profit margin"
+  ],
+  "category": "Finance Calculators",
+  "link": "/finance/margin-calculator"
+  }
   ]
 }
