@@ -115,12 +115,23 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 /****************************************/
 
-/***************** PWA helper
- ******************/
- document.addEventListener("DOMContentLoaded", () => {
+/***************** PWA helper + Disable popup ******************/
+document.addEventListener("DOMContentLoaded", () => {
+  /*************** Disable long-press and context menu ***************/
+  const style = document.createElement("style");
+  style.textContent = `
+    a, img {
+      -webkit-touch-callout: none !important;
+      user-select: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  document.addEventListener("contextmenu", e => e.preventDefault());
+  
+  /***************** PWA helper ******************/
   const homeLink = document.querySelector(".home-link");
-  const isStandalone =
-    window.matchMedia("(display-mode: standalone)").matches;
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
   
   const updateHomeLink = () => {
     if (!homeLink) return;
@@ -131,15 +142,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
   
-updateHomeLink();
+  updateHomeLink();
   
-  if (
-    (isStandalone) &&
-    window.location.pathname === "/index"
-  ) {
+  if (isStandalone && window.location.pathname === "/index") {
     window.location.replace("/pwa-start-page");
   }
-
+  
   window.addEventListener("resize", updateHomeLink);
 });
 /****************************************/
