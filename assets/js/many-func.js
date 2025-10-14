@@ -3361,7 +3361,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const selector =
-    '.header-btns-container button, .side-nav a, .close-nav-btn, .input-options-item, .copy-share-url, .close-share-modal, .quick-actions-btn button, .expanded-input-option-svg, #share-category-btn,.calclulo-pwa-container button';
+    '.header-btns-container button, .side-nav a, .close-nav-btn, .input-options-item, .copy-share-url, .close-share-modal, .quick-actions-btn button, .cookie-wrapper button, #share-category-btn,.calclulo-pwa-container button';
 
   const rippleObserver = observeSelector(selector, { color: 'darkgrey', maxRipples: 3 });
 
