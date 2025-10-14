@@ -197,7 +197,6 @@ window.addEventListener('beforeinstallprompt', (e) => {
 
 function InstallPwa() {
   if (!deferredPrompt) {
-    console.log("PWA install prompt is not available yet.");
     return;
   }
   
@@ -205,9 +204,9 @@ function InstallPwa() {
   
   deferredPrompt.userChoice.then((choiceResult) => {
     if (choiceResult.outcome === 'accepted') {
-      console.log('User accepted the PWA install prompt ✅');
+
     } else {
-      console.log('User dismissed the PWA install prompt ❌');
+      
     }
     deferredPrompt = null;
     
@@ -216,7 +215,7 @@ function InstallPwa() {
 }
 
 window.addEventListener('appinstalled', () => {
-  console.log('PWA installed successfully 🎉');
+  showMessage('success','PWA installed successfully 🎉');
   deferredPrompt = null;
   installBtn.style.display = 'none';
 });
@@ -2045,9 +2044,9 @@ function injectAdsterra() {
     }
     
     container.dataset.adsInjected = '1';
-    
+    document.querySelector("footer").style.paddingBottom = "5em";
   } catch (err) {
-    console.error('injectAdsterra error:', err);
+    showMessage('error',err);
   }
 }
 
