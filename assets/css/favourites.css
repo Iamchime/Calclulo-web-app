@@ -315,7 +315,7 @@ box-shadow: rgba(0, 0, 0, 0.01) 0px 0px 14px;
   padding: 1.5em 1em;
 }
 #hero-h1 {
-  isplay: flex;
+  display: flex;
 align-items: baseline;
 gap: 0.3em;
 font-size: 1.5em;
@@ -324,24 +324,7 @@ color: #1f1f1f;
 margin: 0;
 font-family: lexend;
 }
-#filter-btn{
-  background: #42445A21;
-  border: none;
-  outline: none;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  border-radius: 10px;
-  transition: .13s;
-}
-#filter-btn:active{
-  transform: scale(.97);
-}
-#filter-btn svg{
-  width: 20px;
-}
+
 ul#favs-list {
   list-style: none;
   padding: 0;
@@ -359,6 +342,9 @@ ul#favs-list {
   justify-content: space-between;
   box-shadow: 0 1px 5px rgba(0,0,0,0.1);
   transition: .2s;
+  font-size: 1em;
+  font-family: lexend;
+  font-weight: 400;
 }
 #favs-list li:active{
   transform: scale(.97);
@@ -368,6 +354,7 @@ ul#favs-list {
   font-size: 1em;
   cursor: help;
   color: #4D4D56;
+  font-weight: 400;
 }
 .fav-details {
   flex: 1;

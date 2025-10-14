@@ -25,6 +25,7 @@
     
     favs.forEach(fav => {
       const li = document.createElement("li");
+      li.className = "fav-item-li";
       li.innerHTML = `
         <a href="${fav.link}" class="fav-link"><strong>${fav.name}</strong></a>
         <div class="fav-btn-group">
@@ -366,7 +367,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const selector =
-    '.header-btns-container button, .side-nav a, .close-nav-btn, .quick-actions-btn button, .cookie-wrapper button, .calculator-categories-two a, .search-result-item, .fav-link';
+    '.header-btns-container button, .side-nav a, .close-nav-btn, .quick-actions-btn button, .cookie-wrapper button, .calculator-categories-two a, .search-result-item, .share-btn, .del-btn, #favs-list li';
 
   const rippleObserver = observeSelector(selector, { color: 'darkgrey', maxRipples: 3 });
 
