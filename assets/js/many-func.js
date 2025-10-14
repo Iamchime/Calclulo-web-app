@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
     
   } catch (error) {
-    console.error("Error loading calculator counts:", error);
+    showMessage("error",`Error loading calculator counts:, ${error}`);
   }
 });
 /****************************************/
@@ -125,10 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
       user-select: none !important;
     }
 
-    /* Prevent overscroll (pull-to-refresh) */
+    /* Prevent Chrome/Android pull-to-refresh but keep scrolling */
     html, body {
       overscroll-behavior-y: contain !important;
-      touch-action: none !important;
     }
   `;
   document.head.appendChild(style);
@@ -136,15 +135,20 @@ document.addEventListener("DOMContentLoaded", () => {
   // Disable right-click and long-press menus
   document.addEventListener("contextmenu", e => e.preventDefault());
   
-  /*************** Disable pull-to-refresh (extra layer for mobile) ***************/
+  /*************** Disable pull-to-refresh (logic layer) ***************/
   let lastTouchY = 0;
   const preventPullToRefresh = (e) => {
-    const currentY = e.touches ? e.touches[0].clientY : 0;
-    if (currentY > lastTouchY && window.scrollY === 0) {
+    const currentY = e.touches[0].clientY;
+    const scrollY = window.scrollY;
+    
+    // If swiping down from the top of the page, prevent it
+    if (currentY > lastTouchY && scrollY === 0) {
       e.preventDefault();
     }
+    
     lastTouchY = currentY;
   };
+  
   document.addEventListener("touchstart", e => { lastTouchY = e.touches[0].clientY; }, { passive: false });
   document.addEventListener("touchmove", preventPullToRefresh, { passive: false });
   
