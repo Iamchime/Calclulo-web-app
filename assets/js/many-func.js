@@ -3337,7 +3337,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const selector =
-    '.header-btns-container button, .side-nav a, .close-nav-btn, .input-options-item, .copy-share-url, .close-share-modal, .quick-actions-btn button, .cookie-wrapper button, #share-category-btn,.calclulo-pwa-container button';
+    '.header-btns-container button, .side-nav a, .close-nav-btn, .input-options-item, .copy-share-url, .close-share-modal, .quick-actions-btn button, .cookie-wrapper button, #share-category-btn,.calclulo-pwa-container button,#currencyList li,#currencyCloseBtn';
 
   const rippleObserver = observeSelector(selector, { color: 'darkgrey', maxRipples: 3 });
 
