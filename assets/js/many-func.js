@@ -2671,20 +2671,19 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
   }
   function isNonEmptyNode(el) {
     if (!el) return false;
-    // Consider non-empty if it has child elements or visible text
+    
     if (el.childElementCount > 0) return true;
     const txt = (el.textContent || '').trim();
     return txt.length > 0;
   }
 
-  // ---------- inline SVGs (use currentColor for visibility) ----------
+
   const rawCopySvg = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg>`;
   const rawDownloadSvg = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z"/></svg>`;
-  // Force fill -> currentColor for adaptability
+
   const COPY_SVG = rawCopySvg.replace(/fill="[^"]*"/, 'fill="currentColor"');
   const DOWNLOAD_SVG = rawDownloadSvg.replace(/fill="[^"]*"/, 'fill="currentColor"');
 
-  // ---------- PDF builder (minimal single-page plain text) ----------
   function escapePdfString(s) {
     return String(s || '')
       .replace(/\\/g, '\\\\')
@@ -2733,13 +2732,12 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     return new Blob([encoder.encode(all)], { type: 'application/pdf' });
   }
 
-  // ---------- download helpers ----------
   function triggerDownloadBlob(filename, blob) {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
-    // append to body to ensure click works
+    
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -2749,11 +2747,10 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     return String(text || '').split(/\r?\n/).map(l => '"' + l.replace(/"/g, '""') + '"').join('\r\n');
   }
 
-  // ---------- inject CSS (only once) ----------
   function injectCss() {
     if (document.getElementById('calclulo-output-styles')) return;
     const css = `
-/* Calclulo output tools - injected styles (fade-only) */
+
 .calclulo-output-actions {
   position: absolute;
   top: 8px;
@@ -2847,7 +2844,6 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     document.head.appendChild(s);
   }
 
-  // ---------- core: create UI element (but do not attach yet) ----------
   function createUiElement() {
     const container = document.createElement('div');
     container.className = 'calclulo-output-actions';
@@ -2872,72 +2868,62 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     return container;
   }
 
-  // ---------- attach UI to a specific output-group, but only if .output-group-data non-empty ----------
-  const attached = new WeakMap(); // host -> { ui, listeners... }
+  const attached = new WeakMap();
 
   function attachToGroup(host) {
     if (!host || !(host instanceof Element)) return;
-    // find the .output-group-data child
-    const dataEl = host.querySelector('.output-group-data');
-    if (!dataEl) return; // no data element, do nothing
 
-    // check non-empty
+    const dataEl = host.querySelector('.output-group-data');
+    if (!dataEl) return;
+    
     if (!isNonEmptyNode(dataEl)) {
-      // remove if previously attached
+      
       detachFromGroup(host);
       return;
     }
 
-    // if already attached, ensure UI exists and return
     if (attached.has(host)) {
-      // UI present, maybe re-position or do nothing
+      
       const state = attached.get(host);
-      // ensure toast exists
+      
       return state;
     }
 
-    // create UI element and insert after dataEl
+    
     injectCss();
     const ui = createUiElement();
 
-    // Insert immediately after dataEl inside host
-    // If dataEl has next sibling and it's our UI, skip. Otherwise insert.
     if (dataEl.nextElementSibling) {
       dataEl.insertAdjacentElement('afterend', ui);
     } else {
       dataEl.parentNode.appendChild(ui);
     }
-
-    // For accessibility + hover behavior: we also add 'calclulo-visible' if host has :hover/focus-within,
-    // but CSS already handles host:hover .calclulo-output-actions so no further action needed.
-    // We'll also toggle class when host gains keyboard focus (focusin/out) to ensure keyboard users see it.
+    
     function onHostFocusIn() { ui.classList.add('calclulo-visible'); }
     function onHostFocusOut() { ui.classList.remove('calclulo-visible'); }
 
     host.addEventListener('focusin', onHostFocusIn);
     host.addEventListener('focusout', onHostFocusOut);
-
-    // Add small padding-right so the content does not sit beneath the UI
-    // Opt-out if host has data-calclulo-no-pad="1"
+    
     let addedPad = false;
     if (host.dataset.calcluloNoPad !== '1') {
       try {
         const cs = window.getComputedStyle(host);
         const currentPad = parseFloat(cs.paddingRight || '0') || 0;
-        // store inline original to restore on detach
+        
         host.dataset._calcluloOrigPad = host.style.paddingRight || '';
-        const needed = 76; // approx width for UI area
+        const needed = 76;
+        
         if (currentPad < needed) {
           host.style.paddingRight = (currentPad + needed) + 'px';
           host.dataset._calcluloAddedPad = '1';
           addedPad = true;
         }
       } catch (e) {
-        // ignore
+        
       }
     }
 
-    // wire up buttons
     const copyBtn = ui.querySelector('.calclulo-copy-btn');
     const downloadBtn = ui.querySelector('.calclulo-download-btn');
     const menu = ui.querySelector('.calclulo-download-menu');
@@ -2945,10 +2931,10 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     const toast = ui.querySelector('.calclulo-toast');
 
     function getDataText() {
-      // copy whole content inside .output-group-data (prefer innerText)
+      
       const el = host.querySelector('.output-group-data');
       if (!el) return '';
-      // preserve line breaks and trim
+      
       return (el.innerText || '').trim().replace(/\r\n/g, '\n');
     }
 
@@ -2963,7 +2949,6 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
       }, 1300);
     }
 
-    // copy handler
     async function onCopyClick(ev) {
       ev.stopPropagation();
       const txt = getDataText();
@@ -2985,7 +2970,6 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
       }
     }
 
-    // download handlers
     function onDownloadToggle(ev) {
       ev.stopPropagation();
       const open = menu.classList.toggle('open');
@@ -3021,7 +3005,7 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     }
 
     function outsideClickHandler(ev) {
-      // if click outside the host, close menu
+      
       if (!host.contains(ev.target)) {
         menu.classList.remove('open');
         menu.setAttribute('aria-hidden', 'true');
@@ -3034,7 +3018,6 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     options.forEach(o => o.addEventListener('click', onOptionClick));
     document.addEventListener('click', outsideClickHandler, { passive: true });
 
-    // store attached state so we can detach later
     attached.set(host, {
       ui,
       handlers: { onHostFocusIn, onHostFocusOut, onCopyClick, onDownloadToggle, onOptionClick, outsideClickHandler },
@@ -3044,12 +3027,11 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     return attached.get(host);
   }
 
-  // ---------- detach/cleanup ----------
   function detachFromGroup(host) {
     if (!host || !attached.has(host)) return;
     const state = attached.get(host);
     const ui = state.ui;
-    // remove event listeners
+    
     try {
       host.removeEventListener('focusin', state.handlers.onHostFocusIn);
       host.removeEventListener('focusout', state.handlers.onHostFocusOut);
@@ -3063,9 +3045,9 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
       options.forEach(o => o.removeEventListener('click', state.handlers.onOptionClick));
     } catch (e) {}
     try { document.removeEventListener('click', state.handlers.outsideClickHandler); } catch (e) {}
-    // remove UI element if present
+   
     try { if (ui && ui.parentNode) ui.parentNode.removeChild(ui); } catch (e) {}
-    // restore padding if added
+    
     try {
       if (host.dataset._calcluloAddedPad === '1') {
         host.style.paddingRight = host.dataset._calcluloOrigPad || '';
@@ -3076,13 +3058,12 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     attached.delete(host);
   }
 
-  // ---------- scan & process all groups (debounced) ----------
   function processAllGroups() {
     const groups = qa('.output-group');
     groups.forEach(g => {
       const dataEl = g.querySelector('.output-group-data');
       if (!dataEl) {
-        // remove if previously attached
+        
         detachFromGroup(g);
         return;
       }
@@ -3095,12 +3076,11 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
   }
   const debouncedProcess = debounce(processAllGroups, 120);
 
-  // ---------- observe DOM changes (new nodes / subtree changes) ----------
   let globalObserver = null;
   function startObserving() {
     if (globalObserver) return;
     globalObserver = new MutationObserver((mutations) => {
-      // If mutation affects .output-group or .output-group-data, re-process.
+
       let shouldRun = false;
       for (const m of mutations) {
         if (m.type === 'childList') {
@@ -3120,7 +3100,7 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
             if (shouldRun) break;
           }
         } else if (m.type === 'characterData' || m.type === 'attributes') {
-          // text or attributes changed - could affect emptiness
+          
           shouldRun = true;
           break;
         }
@@ -3130,27 +3110,23 @@ window.selectCurrencyWithAtomicConversion = selectCurrencyWithAtomicConversion;
     globalObserver.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['style', 'class'] });
   }
 
-  // ---------- initial run ----------
   injectCss();
-  // small delay so other scripts that run at DOMContentLoaded can finish writing
+
   setTimeout(() => {
     processAllGroups();
     startObserving();
   }, 30);
 
-  // ---------- expose API (optional) ----------
   window.calcluloOutputTools = window.calcluloOutputTools || {};
   window.calcluloOutputTools.processAll = processAllGroups;
   window.calcluloOutputTools.attachTo = attachToGroup;
   window.calcluloOutputTools.detachFrom = detachFromGroup;
   window.calcluloOutputTools.destroy = function () {
-    // remove all attached UIs and observer
+    
     qa('.output-group').forEach(g => detachFromGroup(g));
     try { if (globalObserver) { globalObserver.disconnect(); globalObserver = null; } } catch (e) {}
     try { const s = document.getElementById('calclulo-output-styles'); if (s) s.remove(); } catch (e) {}
   };
-
-  // ---------- done ----------
 })();
 /**********************************************************/
 
