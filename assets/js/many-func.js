@@ -115,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 /****************************************/
 
-/***************** PWA helper + Disable popup ******************/
+/***************** PWA helper + Disable popup + Disable pull-to-refresh ******************/
 document.addEventListener("DOMContentLoaded", () => {
   /*************** Disable long-press and context menu ***************/
   const style = document.createElement("style");
@@ -124,10 +124,29 @@ document.addEventListener("DOMContentLoaded", () => {
       -webkit-touch-callout: none !important;
       user-select: none !important;
     }
+
+    /* Prevent overscroll (pull-to-refresh) */
+    html, body {
+      overscroll-behavior-y: contain !important;
+      touch-action: none !important;
+    }
   `;
   document.head.appendChild(style);
   
+  // Disable right-click and long-press menus
   document.addEventListener("contextmenu", e => e.preventDefault());
+  
+  /*************** Disable pull-to-refresh (extra layer for mobile) ***************/
+  let lastTouchY = 0;
+  const preventPullToRefresh = (e) => {
+    const currentY = e.touches ? e.touches[0].clientY : 0;
+    if (currentY > lastTouchY && window.scrollY === 0) {
+      e.preventDefault();
+    }
+    lastTouchY = currentY;
+  };
+  document.addEventListener("touchstart", e => { lastTouchY = e.touches[0].clientY; }, { passive: false });
+  document.addEventListener("touchmove", preventPullToRefresh, { passive: false });
   
   /***************** PWA helper ******************/
   const homeLink = document.querySelector(".home-link");
