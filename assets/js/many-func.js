@@ -1917,7 +1917,7 @@ document.addEventListener("click", (e) => {
 /****************************************/
 
 /*********** Adsterra ads ********/
-/*function injectAdsterra() {
+function injectAdsterra() {
   try {
 
     function createScriptAd(className, key, width, height) {
@@ -2023,8 +2023,23 @@ document.addEventListener("click", (e) => {
   }
 }
 
-window.addEventListener('load', injectAdsterra);*/
+window.addEventListener('load', injectAdsterra);
 /************* end Adsterra ads ***************/
+
+/******************* monetag ads ***********************/
+function insertMonetag() {
+  try {
+    const script = document.createElement('script');
+    script.dataset.zone = '10036779';
+    script.src = 'https://groleegni.net/vignette.min.js';
+    ([document.documentElement, document.body].filter(Boolean).pop()).appendChild(script);
+  } catch (e) {
+    console.error('Failed to insert Monetag script:', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', insertMonetag);
+/************************************/
 
 /*********************************************
  currency handling 
@@ -3195,142 +3210,10 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 /*****************************************/
 /************************************** protection function *********/
-/*(function () {
-  const DEVTOOLS_TIME_THRESHOLD_MS = 100;
-  const DIMENSION_DIFF_THRESHOLD = 160;
-  const CHECK_INTERVAL_MS = 800;
-  const ACTION_AFTER_DETECT = 'overlay';
-  const REDIRECT_URL = 'about:blank';
-  function triggerDetected() {
-    if (window.__antiInspectTriggered) return;
-    window.__antiInspectTriggered = true;
 
-    try {
-      document.documentElement.style.pointerEvents = 'none';
-      document.body.style.userSelect = 'none';
-      document.body.style.opacity = '0.15';
-    } catch (e) {}
-
-    if (ACTION_AFTER_DETECT === 'overlay') {
-      const overlay = document.createElement('div');
-      overlay.id = 'anti-inspect-overlay';
-      Object.assign(overlay.style, {
-        position: 'fixed',
-        inset: '0',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: 'rgba(0,0,0,0.95)',
-        color: '#fff',
-        fontSize: '18px',
-        zIndex: '2147483647',
-        textAlign: 'center',
-        padding: '20px',
-        lineHeight: '1.5',
-      });
-      overlay.innerHTML = '<div><strong>Access denied.</strong><div style="margin-top:8px;font-size:13px;opacity:.9">Developer tools are not allowed on this page.</div></div>';
-      document.documentElement.appendChild(overlay);
-    } else if (ACTION_AFTER_DETECT === 'reload') {
-      location.reload();
-    } else if (ACTION_AFTER_DETECT === 'redirect') {
-      location.href = REDIRECT_URL;
-    }
-  }
-  document.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
-  }, { passive: false });
-
-  document.addEventListener('keydown', function (e) {
-    const kc = e.keyCode || e.which;
-    const ctrl = e.ctrlKey || e.metaKey;
-    const shift = e.shiftKey;
-
-    if (kc === 123) {
-      e.preventDefault(); e.stopPropagation(); triggerDetected();
-    }
-
-    if (ctrl && shift && (kc === 73 || kc === 105)) {
-      e.preventDefault(); e.stopPropagation(); triggerDetected();
-    }
-    if (ctrl && shift && (kc === 74 || kc === 106)) {
-      e.preventDefault(); e.stopPropagation(); triggerDetected();
-    }
-
-    if (ctrl && (kc === 85 || kc === 117)) {
-      e.preventDefault(); e.stopPropagation(); triggerDetected();
-    }
-    if (ctrl && shift && (kc === 67 || kc === 99)) {
-      e.preventDefault(); e.stopPropagation(); triggerDetected();
-    }
-  }, { passive: false });
-
-  function checkByDebuggerTimer() {
-    try {
-      const start = performance.now();
-      debugger;
-      const dt = performance.now() - start;
-      if (dt > DEVTOOLS_TIME_THRESHOLD_MS) {
-        triggerDetected();
-      }
-    } catch (e) {
-    }
-  }
-
-  function checkByDimensions() {
-    try {
-      const widthDiff = Math.abs(window.outerWidth - window.innerWidth);
-      const heightDiff = Math.abs(window.outerHeight - window.innerHeight);
-      if (widthDiff > DIMENSION_DIFF_THRESHOLD || heightDiff > DIMENSION_DIFF_THRESHOLD) {
-        triggerDetected();
-      }
-    } catch (e) {}
-  }
-  function checkByConsole() {
-    try {
-      const element = new Image();
-      Object.defineProperty(element, 'id', {
-        get: function () {
-          triggerDetected();
-          return '';
-        }
-      });
-      console.log(element);
-    } catch (e) {}
-  }
-  const checkInterval = setInterval(function () {
-    if (window.__antiInspectTriggered) {
-      clearInterval(checkInterval);
-      return;
-    }
-    checkByDebuggerTimer();
-    checkByDimensions();
-    checkByConsole();
-  }, CHECK_INTERVAL_MS);
-
-  window.addEventListener('resize', function () {
-    if (window.__antiInspectTriggered) return;
-    checkByDimensions();
-  });
-  document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'visible' && !window.__antiInspectTriggered) {
-      checkByDebuggerTimer();
-      checkByDimensions();
-    }
-  });
-  window.disableAntiInspectForDev = function () {
-    try {
-      window.__antiInspectTriggered = true;
-      clearInterval(checkInterval);
-      document.removeEventListener('contextmenu', () => {});
-      document.onkeydown = null;
-      console.info('Anti-inspect disabled for this session.');
-    } catch (e) { console.error(e); }
-  };
-
-})();*/
 /**********************************************************/
 
-/************** ripple effect handling (supports dynamic elements) ****************/
+/************** ripple effect handling ****************/
 (function () {
   const applied = new WeakSet();
 
@@ -3488,3 +3371,4 @@ document.addEventListener("DOMContentLoaded", () => {
     rippleObserver,
   };
 })();
+
