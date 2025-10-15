@@ -346,10 +346,9 @@ Clear all changes
     </div>
 
     <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
+      <h2>Similar carbon footprint calculators ♻️</h2>
       <div class="similar-calculators">
-        <a href="/agriculture/herbicide-calculator">Herbicide calculator</a>
-        <a href="/agriculture/seed-rate-calculator">Seed Rate calculator</a>
+        <a href="/ecology/vegan-footprint-calculator">Vegan footprint</a>
       </div>
     </div>
 <article class="description-txt">
@@ -549,8 +548,7 @@ letter-spacing: .3px;
   const frequency = document.getElementById('frequency').value;
   const resultDiv = document.querySelector('.output-group');
   
-  if (isNaN(uses) || uses <= 0 || isNaN(disposed) || disposed <= 0) {
-    resultDiv.innerHTML = `<p id="error-txt" style="color: red;">Please enter valid positive numbers.</p>`;
+ if (isNaN(uses) || uses <= 0 || isNaN(disposed) || disposed <= 0) {
     return;
   }
   

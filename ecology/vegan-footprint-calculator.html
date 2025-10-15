@@ -537,11 +537,9 @@ Clear all changes
 
 
     <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
+      <h2>Similar Similar carbon footprint calculators ♻️</h2>
       <div class="similar-calculators">
-        <a href="/ecology/bag-footprint-calculator">Vegan Footprint Calculator</a>
-        <a href="/agriculture/herbicide-calculator">Herbicide Calculator</a>
-        <a href="/agriculture/seed-rate-calculator">Seed Rate Calculator</a>
+      <a href="/ecology/bag-footprint-calculator">Bag footprint</a>
       </div>
     </div>
 <article class="description-txt">
@@ -734,7 +732,7 @@ font-weight: 400;
     co2: 9.07,
     forests: 2.785,
     grain: 18.14,
-    water: 4175 
+    water: 4175
   };
 
   let programmaticWrite = false;
@@ -743,17 +741,23 @@ font-weight: 400;
 
   function parseNumber(val) {
     if (val === null || val === undefined) return 0;
-
     const cleaned = String(val).replace(/[, ]+/g, "").replace(/[^\d.-]/g, "");
     const num = parseFloat(cleaned);
     return Number.isFinite(num) ? num : 0;
   }
+  
+  function hasValidNumber(val) {
+    if (val === null || val === undefined) return false;
+    const cleaned = String(val).replace(/[, ]+/g, "").replace(/[^\d.-]/g, "").trim();
+    if (cleaned === "" || cleaned === "." || cleaned === "-" || cleaned === "-.") return false;
+    const num = Number(cleaned);
+    return Number.isFinite(num);
+  }
 
   function formatNumberLocalized(num, maxFractionDigits = 2) {
-
     return Number.isFinite(num)
-      ? num.toLocaleString("en-US", { maximumFractionDigits: maxFractionDigits })
-      : "0";
+      ? Number(num).toLocaleString("en-US", { maximumFractionDigits: maxFractionDigits })
+      : "";
   }
 
   function timeToDays(value, unit) {
@@ -875,14 +879,23 @@ font-weight: 400;
       default: return value;
     }
   }
-  
-  function setResult(el, value, options = {}) {
 
+  function setResult(el, value, options = {}) {
     const decimals = ("decimals" in options) ? options.decimals : 2;
     programmaticWrite = true;
-
     el.value = formatNumberLocalized(value, decimals);
+    setTimeout(() => programmaticWrite = false, 0);
+  }
 
+  function clearResults() {
+    programmaticWrite = true;
+    
+    animalInput.value = "";
+    co2Input.value = "";
+    forestsInput.value = "";
+    grainInput.value = "";
+    waterInput.value = "";
+    timeInput.value = "";
     setTimeout(() => programmaticWrite = false, 0);
   }
 
@@ -901,7 +914,6 @@ font-weight: 400;
   }
 
   function updateAllFromDaysAndDisplay(days) {
-    
     const timeValue = daysToTime(days, timeUnit.value);
     setResult(timeInput, timeValue, { decimals: 2 });
     calculateFromDays(days);
@@ -909,6 +921,10 @@ font-weight: 400;
 
   function calcFromAnimalInput() {
     if (programmaticWrite) return;
+    if (!hasValidNumber(animalInput.value)) {
+      clearResults();
+      return;
+    }
     const animals = parseNumber(animalInput.value);
     const days = animals / factors.animals;
     updateAllFromDaysAndDisplay(days);
@@ -916,6 +932,10 @@ font-weight: 400;
 
   function calcFromCO2Input() {
     if (programmaticWrite) return;
+    if (!hasValidNumber(co2Input.value)) {
+      clearResults();
+      return;
+    }
     const val = parseNumber(co2Input.value);
     const kg = convertCO2ToKg(val, co2Unit.value);
     const days = kg / factors.co2;
@@ -924,6 +944,10 @@ font-weight: 400;
 
   function calcFromForestsInput() {
     if (programmaticWrite) return;
+    if (!hasValidNumber(forestsInput.value)) {
+      clearResults();
+      return;
+    }
     const val = parseNumber(forestsInput.value);
     const m2 = convertForestsToM2(val, forestsUnit.value);
     const days = m2 / factors.forests;
@@ -932,6 +956,10 @@ font-weight: 400;
 
   function calcFromGrainInput() {
     if (programmaticWrite) return;
+    if (!hasValidNumber(grainInput.value)) {
+      clearResults();
+      return;
+    }
     const val = parseNumber(grainInput.value);
     const kg = convertGrainToKg(val, grainUnit.value);
     const days = kg / factors.grain;
@@ -940,6 +968,10 @@ font-weight: 400;
 
   function calcFromWaterInput() {
     if (programmaticWrite) return;
+    if (!hasValidNumber(waterInput.value)) {
+      clearResults();
+      return;
+    }
     const val = parseNumber(waterInput.value);
     const liters = convertWaterToLiters(val, waterUnit.value);
     const days = liters / factors.water;
@@ -949,24 +981,57 @@ font-weight: 400;
   function handleUnitChange(inputEl, prevUnitKey, convertToBaseFn, convertFromBaseFn, selectEl) {
     const prevUnit = selectEl.dataset.prev || prevUnitKey;
     const newUnit = selectEl.value;
+
+    if (!hasValidNumber(inputEl.value)) {
+      
+      selectEl.dataset.prev = newUnit;
+      return;
+    }
+
     const raw = parseNumber(inputEl.value);
-
     const base = convertToBaseFn(raw, prevUnit);
-
     const newVal = convertFromBaseFn(base, newUnit);
-    setResult(inputEl, newVal, inputEl === waterInput || inputEl === animalInput ? { decimals: 0 } : { decimals: 2 });
+    setResult(inputEl, newVal, (inputEl === waterInput || inputEl === animalInput) ? { decimals: 0 } : { decimals: 2 });
     selectEl.dataset.prev = newUnit;
   }
 
+  const numericInputs = [timeInput, animalInput, co2Input, forestsInput, grainInput, waterInput];
+
+  numericInputs.forEach(input => {
+    input.addEventListener("input", (e) => {
+      if (programmaticWrite) return;
+
+      let v = e.target.value;
+      
+      v = v.replace(/[^0-9.,-]/g, "");
+
+      const dotIndex = v.indexOf(".");
+      if (dotIndex !== -1) {
+        
+        v = v.slice(0, dotIndex + 1) + v.slice(dotIndex + 1).replace(/\./g, "");
+      }
+
+      v = v[0] === "-" ? "-" + v.slice(1).replace(/-/g, "") : v.replace(/-/g, "");
+
+      e.target.value = v;
+    });
+  });
+
   timeInput.addEventListener("input", () => {
     if (programmaticWrite) return;
+    if (!hasValidNumber(timeInput.value)) {
+      clearResults();
+      return;
+    }
     const days = timeToDays(parseNumber(timeInput.value), timeUnit.value);
     calculateFromDays(days);
   });
 
   timeUnit.addEventListener("change", () => {
-
     if (programmaticWrite) return;
+    if (!hasValidNumber(timeInput.value)) {
+      return;
+    }
     const days = timeToDays(parseNumber(timeInput.value), timeUnit.value);
     calculateFromDays(days);
   });
@@ -989,25 +1054,23 @@ font-weight: 400;
   waterUnit.addEventListener("change", () => {
     handleUnitChange(waterInput, waterUnit.value, (v, unit) => convertWaterToLiters(v, unit), (liters, unit) => convertWaterFromLiters(liters, unit), waterUnit);
   });
-
+  
   (function init() {
-
-    const initialTime = parseNumber(timeInput.value);
-    if (initialTime) {
-      const days = timeToDays(initialTime, timeUnit.value);
+    if (hasValidNumber(timeInput.value)) {
+      const days = timeToDays(parseNumber(timeInput.value), timeUnit.value);
       calculateFromDays(days);
-    } else if (parseNumber(animalInput.value)) {
+    } else if (hasValidNumber(animalInput.value)) {
       calcFromAnimalInput();
-    } else if (parseNumber(co2Input.value)) {
+    } else if (hasValidNumber(co2Input.value)) {
       calcFromCO2Input();
-    } else if (parseNumber(forestsInput.value)) {
+    } else if (hasValidNumber(forestsInput.value)) {
       calcFromForestsInput();
-    } else if (parseNumber(grainInput.value)) {
+    } else if (hasValidNumber(grainInput.value)) {
       calcFromGrainInput();
-    } else if (parseNumber(waterInput.value)) {
+    } else if (hasValidNumber(waterInput.value)) {
       calcFromWaterInput();
     } else {
-      calculateFromDays(0);
+
     }
   })();
 

@@ -1,7 +1,11 @@
 /***************** PWA helper ******************/
 document.addEventListener("DOMContentLoaded", () => {
-  const style = document.createElement("style");
-  style.textContent = `
+  
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
+  
+  if (isStandalone) {
+    const style = document.createElement("style");
+    style.textContent = `
   body{
     user-select: none;
   }
@@ -14,27 +18,27 @@ document.addEventListener("DOMContentLoaded", () => {
       overscroll-behavior-y: contain !important;
     }
   `;
-  document.head.appendChild(style);
-  
-  document.addEventListener("contextmenu", e => e.preventDefault());
-  
-  let lastTouchY = 0;
-  const preventPullToRefresh = (e) => {
-    const currentY = e.touches[0].clientY;
-    const scrollY = window.scrollY;
+    document.head.appendChild(style);
     
-    if (currentY > lastTouchY && scrollY === 0) {
-      e.preventDefault();
-    }
+    document.addEventListener("contextmenu", e => e.preventDefault());
     
-    lastTouchY = currentY;
-  };
-  
-  document.addEventListener("touchstart", e => { lastTouchY = e.touches[0].clientY; }, { passive: false });
-  document.addEventListener("touchmove", preventPullToRefresh, { passive: false });
+    let lastTouchY = 0;
+    const preventPullToRefresh = (e) => {
+      const currentY = e.touches[0].clientY;
+      const scrollY = window.scrollY;
+      
+      if (currentY > lastTouchY && scrollY === 0) {
+        e.preventDefault();
+      }
+      
+      lastTouchY = currentY;
+    };
+    
+    document.addEventListener("touchstart", e => { lastTouchY = e.touches[0].clientY; }, { passive: false });
+    document.addEventListener("touchmove", preventPullToRefresh, { passive: false });
+  }
   
   const homeLink = document.querySelector(".home-link");
-  const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
   
   const updateHomeLink = () => {
     if (!homeLink) return;

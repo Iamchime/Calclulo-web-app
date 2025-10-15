@@ -531,37 +531,6 @@ letter-spacing: .3px;
   background: #464BFF29;
       }
 
-.input-group-main-wrap{
-  display: flex;
-}
-.input-group-main-wrap .input-group{
-  overflow: hidden;
-  padding: 5px;
-}
-.input-group-main-wrap .input-group input {
-  width: 50%;
-  text-align: center;
-}
-.input-group-main-wrap-two{
-  display: flex;
-  align-items: flex-start;
-justify-content: flex-start;
-gap: 5px;
-margin-bottom: -30px;
-}
-.input-group-main-wrap-two label{
-padding: 5px;
-
-}
-.input-group-main-wrap-two .input-group{
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  width: 50%;
-  padding-right: 23px;
-  padding-left: 3px;
-}
 
 
 /********* new and updated data types *********/
@@ -611,13 +580,14 @@ padding: 5px;
   border: 1.4px solid #464BFF2B;
   border-radius: 8px;
   padding: 12px 36px 12px 12px;
-  min-height: 35px;
+  min-height: 32px;
   background-color: #fff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   outline: none;
   width: 100%;
   font-family: zalando;
   transition: .3s;
+  background: #F8F9FB;
 }
 .input-group input[type="date"] {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='24px' viewBox='0 -960 960 960' width='24px' fill='%23464BFF'%3E%3Cpath d='M320-400q-17 0-28.5-11.5T280-440q0-17 11.5-28.5T320-480q17 0 28.5 11.5T360-440q0 17-11.5 28.5T320-400Zm160 0q-17 0-28.5-11.5T440-440q0-17 11.5-28.5T480-480q17 0 28.5 11.5T520-440q0 17-11.5 28.5T480-400Zm160 0q-17 0-28.5-11.5T600-440q0-17 11.5-28.5T640-480q17 0 28.5 11.5T680-440q0 17-11.5 28.5T640-400ZM200-80q-33 0-56.5-23.5T120-160v-560q0-33 23.5-56.5T200-800h40v-80h80v80h320v-80h80v80h40q33 0 56.5 23.5T840-720v560q0 33-23.5 56.5T760-80H200Zm0-80h560v-400H200v400Zm0-480h560v-80H200v80Zm0 0v-80 80Z'/%3E%3C/svg%3E");
@@ -683,7 +653,7 @@ font-weight: 600;
   line-height: 20px;
   color: #111;
   padding: 12px;
-  min-height: 35px;
+  min-height: 32px;
   border: none;
   outline: none;
   background: transparent;
@@ -698,7 +668,7 @@ font-weight: 600;
   line-height: 20px;
   color: #464BFF;
   padding: 12px 36px 12px 12px;
-  min-height: 35px;
+  min-height: 32px;
 padding-left: 0;
 text-align: center;
   border: none;
@@ -707,7 +677,7 @@ text-align: center;
   box-sizing: border-box;
   appearance: none;
   -webkit-appearance: none;
-  -moz-appearance: none;
+  background-color: #fff;
 
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30.727 30.727' xml:space='preserve'><path fill='%232428AF' d='M29.994 10.183 15.363 24.812.733 10.184a2.5 2.5 0 1 1 3.536-3.536l11.095 11.093L26.461 6.647a2.5 2.5 0 1 1 3.533 3.536'/></svg>");
   background-repeat: no-repeat;
@@ -744,11 +714,13 @@ text-align: center;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   overflow: hidden;
   font-family: zalando;
+  background: #F8F9FB;
 }
 
-.input-group .currency-or-unit-input:focus-within {
+.input-group .currency-or-unit-input:focus-within,.input-group input:focus{
   border-color: #464BFF;
   box-shadow: 0 0 0 3px #464BFF17;
+  background-color: #fff;
 }
 
 .input-group .currency-or-unit-input .currency-or-unit-display {
@@ -758,7 +730,7 @@ text-align: center;
   color: #42445AD9;
   padding: 12px;
   padding-right: 0;
-  min-height: 35px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -772,7 +744,7 @@ text-align: center;
   line-height: 20px;
   color: #111;
   padding: 12px;
-  min-height: 35px;
+  min-height: 32px;
   border: none;
   outline: none;
   background: transparent;
@@ -813,7 +785,7 @@ text-align: center;
   line-height: 20px;
   color: #464BFF;
   padding: 12px 36px 12px 12px;
-  min-height: 35px;
+  min-height: 32px;
   padding-left: 0;
   text-align: center;
   border: none;
@@ -1788,7 +1760,7 @@ font-size: 1.01em;
 line-height: 1.72;
   }
 .description-special-explanatory {
-  background-color: #F5F5F5;          /* light grey background */
+  background-color: #F5F5F5;
   border: 1px solid #E7E7E7;
   border-left: 3px solid #464BFF;
   padding: 18px 16px;                  /* inner spacing */
