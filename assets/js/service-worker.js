@@ -3,14 +3,8 @@ const urlsToCache = [
   '/',
   '/pwa-start-page',
   '/assets/css/pwa-start-page.css',
-  '/assets/js/pwa-start-page.js',
   '/assets/js/favourites.js',
   '/assets/css/favourites.css',
-  '/favourites',
-  '/assets/js/favourites-list.js',
-  '/assets/js/header-functions.js',
-  '/assets/css/search.css',
-  '/assets/js/search.js'
 ];
 
 self.addEventListener('install', event => {

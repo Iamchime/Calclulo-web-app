@@ -182,14 +182,25 @@ document.addEventListener("DOMContentLoaded", () => {
       overscroll-behavior-y: contain !important;
     }
   `;
+    document.addEventListener('gesturestart', function(e) {
+      e.preventDefault();
+    });
+    
+    document.addEventListener('dblclick', function(e) {
+      e.preventDefault();
+    });
     document.head.appendChild(style);
     
     document.addEventListener("contextmenu", e => e.preventDefault());
     
     let lastTouchY = 0;
+    
     const preventPullToRefresh = (e) => {
       const currentY = e.touches[0].clientY;
       const scrollY = window.scrollY;
+      
+      const target = e.target.closest('.side-nav, [data-scrollable="true"]');
+      if (target) return;
       
       if (currentY > lastTouchY && scrollY === 0) {
         e.preventDefault();
@@ -198,8 +209,11 @@ document.addEventListener("DOMContentLoaded", () => {
       lastTouchY = currentY;
     };
     
-    document.addEventListener("touchstart", e => { lastTouchY = e.touches[0].clientY; }, { passive: false });
-    document.addEventListener("touchmove", preventPullToRefresh, { passive: false });
+    document.addEventListener('touchstart', e => {
+      lastTouchY = e.touches[0].clientY;
+    }, { passive: false });
+    
+    document.addEventListener('touchmove', preventPullToRefresh, { passive: false });
   }
   
   const homeLink = document.querySelector(".home-link");
