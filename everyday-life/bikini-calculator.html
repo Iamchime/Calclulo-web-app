@@ -421,10 +421,10 @@ International Journal of Clothing Science and Technology, 19(5), 374–391.</li>
 
 
     <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
+      <h2>Similar calculators 🫡</h2>
       <div class="similar-calculators">
-        <a href="/everyday-life/boyfriend-day">Boyfriend's Day </a>
-        <a href="/everyday-life/girlfriend-day">Girlfriend's Day </a>
+        <a href="/everyday-life/boyfriend-day">Boyfriend's day </a>
+        <a href="/everyday-life/girlfriend-day">Girlfriend's day </a>
       
         <a href="/everyday-life/summer-countdown">Summer </a>
       </div>
@@ -564,9 +564,9 @@ Everyday Life
 <script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
 
 <script defer crossorigin="anonymous">
-  // Bikini calculator — lightweight + safe + heuristic unit disambiguation
+
 (function () {
-  // --- Config ---
+  
   const unitToCm = {
     centimetres: 1,
     meters: 100,
@@ -582,7 +582,6 @@ Everyday Life
   ];
   const outputSelector = ".output-group";
 
-  // --- Lightweight parsing ---
   function parseFlexibleNumber(str) {
     if (typeof str !== "string") str = String(str ?? "");
     str = str.trim();
@@ -605,7 +604,7 @@ Everyday Life
   }
   function numIsValid(n) { return isFinite(n) && !Number.isNaN(n); }
 
-  // --- Conversions ---
+
   function toCm(value, unit) {
     return value * (unitToCm[unit] ?? NaN);
   }
@@ -617,7 +616,6 @@ Everyday Life
   function cmToInches(cm) { return cm / 2.54; }
   function toInches(value, unit) { return cmToInches(toCm(value, unit)); }
 
-  // --- Formatting helpers ---
   function formatForInput(n, decimals = 2, sep = ".") {
     if (!numIsValid(n)) return "";
     const pow = Math.pow(10, decimals);
@@ -627,7 +625,6 @@ Everyday Life
     return s;
   }
 
-  // --- Basic validation (permissive) ---
   function readRawInputs() {
     const out = {};
     for (const p of idPairs) {
@@ -651,9 +648,8 @@ Everyday Life
     return { ok: true };
   }
 
-  // --- Omni-style inch-based classifier (keeps order & thresholds similar to Omni) ---
   function classifyByInches(bIn, wIn, hhIn, hIn) {
-    // safe-guards
+    
     if (![bIn, wIn, hhIn, hIn].every(numIsValid)) return { code: "invalid", label: "Invalid measurements" };
 
     const bustMinusHips = bIn - hIn;
@@ -662,88 +658,73 @@ Everyday Life
     const hipsMinusWaist = hIn - wIn;
     const highHipOverWaist = hhIn / wIn;
 
-    // Hourglass (Omni): bust ≈ hips (small difference) AND waist much smaller
     if (Math.abs(bustMinusHips) <= 1.5 || Math.abs(bIn - hIn) / Math.max(bIn, hIn) <= 0.03) {
       if (bustMinusWaist >= 8.5 || hipsMinusWaist >= 8.5) {
         return { code: "hourglass", label: "hourglass" };
       }
     }
-
-    // Bottom hourglass / pear
+    
     if (hipsMinusBust >= 3.6 && hipsMinusWaist >= 9 && highHipOverWaist < 1.193) {
       return { code: "bottom-hourglass", label: "bottom hourglass" };
     }
-
-    // Top hourglass
+    
     if (bustMinusHips >= 3.6 && bustMinusWaist >= 9) {
       return { code: "top-hourglass", label: "top hourglass" };
     }
-
-    // Spoon
+    
     if (hipsMinusBust > 2 && hipsMinusWaist >= 7 && highHipOverWaist >= 1.193) {
       return { code: "spoon", label: "spoon" };
     }
-
-    // Triangle / Pear (hips bigger)
+    
     if (hipsMinusBust >= 3.6 && hipsMinusWaist < 9) {
       return { code: "triangle", label: "triangle" };
     }
-
-    // Inverted triangle
+    
     if (bustMinusHips >= 3.6 && bustMinusWaist < 9) {
       return { code: "inverted-triangle", label: "inverted triangle" };
     }
 
-    // Rectangle fallback
+    
     if (Math.abs(bIn - hIn) / Math.max(bIn, hIn) <= 0.06 && bustMinusWaist < 9 && hipsMinusWaist < 9) {
       return { code: "rectangle", label: "rectangle" };
     }
 
-    // Fallback based on hips >= bust
+    
     if (hIn >= bIn) return { code: "triangle", label: "triangle" };
     return { code: "inverted-triangle", label: "inverted triangle" };
   }
-
-  // --- Unit-disambiguation heuristic (tries alternative unit interpretations when magnitudes disagree)
-  // We'll only run the heuristic when the current converted values are wildly different in scale.
+  
   function disambiguateUnitsIfNeeded(rawInputs) {
-    // Build current converted-inch values using the user's selects
+    
     const currentInches = {};
     for (const k of ["Bust", "Waist", "HighHip", "Hips"]) {
       const r = rawInputs[k];
       currentInches[k] = numIsValid(r.parsed) ? toInchesUsingUnit(r.parsed, r.unit) : NaN;
     }
-
-    // quick guard: if all values same order of magnitude -> no disambiguation needed
+    
     const vals = Object.values(currentInches).filter(numIsValid);
-    if (vals.length < 4) return { chosen: null, inches: currentInches }; // validation will handle later
+    if (vals.length < 4) return { chosen: null, inches: currentInches };
+    
     const maxv = Math.max(...vals);
     const minv = Math.min(...vals);
     if (maxv / Math.max(minv, 1) <= 50) {
-      // within 50x scale -> assume user intent correct
+    
       return { chosen: null, inches: currentInches };
     }
-
-    // Candidate units to try for each input (we will try all combos if needed)
+    
     const unitKeys = Object.keys(unitToCm);
-
-    // Convert typed numeric value v assuming unit U -> inches
+    
     function convertCandidate(v, U) {
       const cm = toCm(v, U);
       return numIsValid(cm) ? cmToInches(cm) : NaN;
     }
-
-    // Brute-force small search over unit assignments (4^4 = 256 combos)
-    // Score each assignment by log-range (smaller is better) and prefer assignments that keep each value
-    // in a human-friendly mean range (10"-300") if possible.
+    
     const inputs = ["Bust", "Waist", "HighHip", "Hips"];
     let best = { score: Infinity, assign: null, inches: null };
-
-    // Precompute parsed numbers
+    
     const parsedVals = {};
     for (const k of inputs) parsedVals[k] = rawInputs[k].parsed;
-
-    // generate combos iteratively to avoid recursion overhead
+    
     const combos = [[]];
     for (let i = 0; i < inputs.length; i++) {
       const newCombos = [];
@@ -771,9 +752,10 @@ Everyday Life
       const mx = Math.max(...arr);
       const mn = Math.min(...arr);
       const mean = arr.reduce((a,b)=>a+b,0)/arr.length;
-      // score: log-range penalized and distance of mean from 60" (typical adult scale)
+      
       const logRange = Math.log10(mx / Math.max(mn, 1));
-      const meanPenalty = Math.abs(Math.log10(Math.max(mean,1) / 60)); // prefer mean near 60 inches
+      const meanPenalty = Math.abs(Math.log10(Math.max(mean,1) / 60)); 
+      
       const score = logRange + meanPenalty * 0.5;
 
       if (score < best.score) {
@@ -781,32 +763,29 @@ Everyday Life
       }
     }
 
-    // If best assignment significantly reduces scale mismatch vs current, pick it
     if (best.assign) {
-      // compute current log-range
+      
       const currVals = vals;
       const currLogRange = Math.log10(Math.max(...currVals) / Math.max(Math.min(...currVals),1));
       const bestArr = Object.values(best.inches);
       const bestLogRange = Math.log10(Math.max(...bestArr) / Math.max(Math.min(...bestArr),1));
-      // choose best only if it reduces log-range by at least 0.8 (≈ 6x improvement) OR produces a mean within plausible range
+      
       const bestMean = bestArr.reduce((a,b)=>a+b,0)/bestArr.length;
       if (bestLogRange + 0.001 < currLogRange - 0.2 || (bestMean >= 20 && bestMean <= 200)) {
-        // return chosen interpretation (note: we do not change the selects visually)
+        
         return { chosen: best.assign, inches: best.inches };
       }
     }
-
-    // default: keep current
+    
     return { chosen: null, inches: currentInches };
-
-    // helper
+    
     function toInchesUsingUnit(v, u) {
       const cm = toCm(v, u);
       return numIsValid(cm) ? cmToInches(cm) : NaN;
     }
   }
 
-  // --- Render concise result (no measurements trace/summary) ---
+  
   const adviceText = {
     hourglass: "Your silhouette is very proportional, and we recommend wearing bikinis that accentuate your beautiful, clearly defined waist.",
     "top-hourglass": "Your upper body is more pronounced. Balance the silhouette with bottoms that add volume—ruffled or patterned bottoms and low-cut hipsters are great.",
@@ -825,7 +804,7 @@ Everyday Life
       return;
     }
     const adv = adviceText[shape.code] || "";
-    // concise Omni-style text
+    
     out.innerHTML = `
       <div class="result-card">
         <h3>Congratulations, you are a <strong>${escapeHtml(shape.label)}</strong>! 👙</h3>
@@ -838,8 +817,7 @@ Everyday Life
   function escapeHtml(s) {
     return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
   }
-
-  // --- Main calculation flow ---
+  
   function calculateAndRender(userTriggered = false) {
     try {
       const rawInputs = readRawInputs();
@@ -847,7 +825,7 @@ Everyday Life
 
       const pres = validatePresence(rawInputs);
       if (!pres.ok) {
-        // if incomplete show info quietly
+        
         const out = document.querySelector(outputSelector); if (out) out.innerHTML = "";
         if (pres.code === "incomplete") {
           showMessage("Enter measurements to see your bikini body shape", "info");
@@ -856,18 +834,16 @@ Everyday Life
         }
         return;
       }
-
-      // Disambiguate if needed — returns an inches map for classification
+      
       const disamb = disambiguateUnitsIfNeeded(rawInputs);
       const inchesMap = disamb.inches;
 
-      // pull inches for classifier
+      
       const bIn = inchesMap.Bust;
       const wIn = inchesMap.Waist;
       const hhIn = inchesMap.HighHip;
       const hIn = inchesMap.Hips;
-
-      // classify
+      
       const shape = classifyByInches(bIn, wIn, hhIn, hIn);
       renderResult(shape);
     } catch (err) {
@@ -875,8 +851,7 @@ Everyday Life
       showMessage("An unexpected error occurred while calculating", "error");
     }
   }
-
-  // --- Convert input numeric when unit changes (preserve decimal sep) ---
+  
   function convertOnUnitChange(inputId, prevUnit, newUnit) {
     const el = document.getElementById(inputId); if (!el) return;
     const raw = el.value ?? ""; if (String(raw).trim() === "") return;
@@ -887,14 +862,13 @@ Everyday Life
     const newNumeric = fromCm(cm, newUnit);
     el.value = formatForInput(newNumeric, 2, decimalSep);
   }
-
-  // --- Attach listeners idempotently (avoid duplicates) ---
+  
   function attachListeners() {
     for (const p of idPairs) {
       const el = document.getElementById(p.input);
       const sel = document.getElementById(p.unit);
       if (!el || !sel) continue;
-      // mark attached via dataset to prevent double-attaching
+      
       if (!el.dataset.bikiniAttached) {
         const onUserInput = () => debouncedCalc(true);
         el.addEventListener("input", onUserInput);
@@ -919,7 +893,7 @@ Everyday Life
     }
   }
 
-  // --- Small debounce to avoid thrash ---
+  
   function debounce(fn, t = 160) {
     let timer;
     return (...args) => {
@@ -928,11 +902,10 @@ Everyday Life
     };
   }
   const debouncedCalc = debounce(calculateAndRender, 160);
-
-  // --- Init ---
+  
   function init() {
     attachListeners();
-    // if any input has a non-empty value treat as user triggered initial calc
+    
     const rawInputs = readRawInputs(); let any = false;
     if (rawInputs) for (const k of ["Bust","Waist","HighHip","Hips"]) if (String(rawInputs[k].raw).trim() !== "") any = true;
     calculateAndRender(!!any);
@@ -941,7 +914,6 @@ Everyday Life
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 
-  // expose tiny debug helpers (non-intrusive)
   window.__bikiniCalc = {
     calculateAndRender,
     parseFlexibleNumber
