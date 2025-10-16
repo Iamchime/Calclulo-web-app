@@ -238,7 +238,7 @@ Everyday Life
     <select id="massUnits" name="massUnits">
   <option value="ug">micrograms (ug)</option>
   <option value="mg">milligrams (mg)</option>
-  <option value="g">grams (g)</option>
+  <option selected value="g">grams (g)</option>
   <option value="dag">decagrams (dag)</option>
   <option value="kg">kilograms (kg)</option>
   <option value="t">metric tons (t)</option>
@@ -370,9 +370,9 @@ Clear all changes
     </div>
 
     <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
+      <h2>Similar food calculators 😋</h2>
       <div class="similar-calculators">
-       <a href="/food/coffee-calculator">Coffee Calculator</a>
+       <a href="/food/coffee-calculator">Coffee</a>
       </div>
     </div>
 <article class="description-txt">
@@ -643,6 +643,7 @@ function calculateResults() {
   const el = document.getElementById(id);
   if (el) el.addEventListener("input", calculateResults);
 });
+
 
 window.addEventListener("load", () => {
   calculateResults();

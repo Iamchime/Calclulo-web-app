@@ -246,16 +246,18 @@ Clear all changes
 </button>
     </div>
 
+    
+    
     <div class="similar-calculators-wrap">
-      <h2>Similar calculators</h2>
-      <div class="similar-calculators">
-        <a href="/other/tiktok-diamonds-calculator">TikTok Diamonds Calculator</a>
-        <a href="/other/youtube-ad-revenue-calculator">YouTube Ad Revenue Calculator</a>
-        <a href="/other/facebook-ads-cost-calculator">Facebook Ad Cost Calculator</a>
-      </div>
-    </div>
+  <h2>Similar tiktok calculators 🎦</h2>
+  <div class="similar-calculators">
+    <a href="/other/tiktok-diamonds-calculator">Tiktok diamonds</a>
+    <a href="/other/tiktok-money-calculator">Tiktok money</a>
+  </div>
+</div>
+
 <article class="description-txt">
-   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">tool</span></h2>
+   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
    <p>
      Our tiktok coin calculator allows you to find out the value of your tiktok coins in united states dollars.
    </p>
@@ -432,7 +434,6 @@ function calculateResults() {
   const coins = parseInt(rawValue, 10);
   
   if (isNaN(coins) || coins <= 0) {
-    resultDiv.innerHTML = '<p id="error-txt">Please enter a valid number of TikTok coins.</p>';
     return;
   }
   

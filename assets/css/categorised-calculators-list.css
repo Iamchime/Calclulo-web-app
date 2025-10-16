@@ -12,6 +12,12 @@
   font-style: normal;
 }
 @font-face {
+  font-family: 'AlanSans';
+  src: url("/assets/fonts/AlanSans-Regular.woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+@font-face {
   font-family: 'lexend';
   src: url("/assets/fonts/Lexend-SemiBold.woff2");
   font-weight: 400;
@@ -458,7 +464,7 @@ cursor: none;
 transition: .2s;
 color: #42445ADB;
 border: none;
-font-family: "Young";
+font-family: Alansans;
 }
 .calculators-lists a:hover{
   color: #000000;

@@ -578,7 +578,6 @@ const handleInput = e => {
 [rentEl, threeTimesEl, tenantsEl].forEach(el => el?.addEventListener('input', handleInput));
 tenantsCheckbox.addEventListener('change', handleInput);
 
-// initial setup and auto calculation on load
 window.addEventListener('DOMContentLoaded', () => {
   updateVisibility();
   calc(rentEl);
