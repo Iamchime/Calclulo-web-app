@@ -74,47 +74,6 @@ hamburger.addEventListener("click", openNav);
 closeBtn.addEventListener("click", closeNav);
 /****************************************/
 
-/*******************************/
-/********** list the total number of calculators in a category *********/
-
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    
-    const response = await fetch("/assets/keywords.json");
-    const data = await response.json();
-    const tools = data.tools || [];
-    
-    const categoryCount = {};
-    tools.forEach(tool => {
-      let category = tool.category.trim().toLowerCase();
-     
-      category = category.replace(/calculators?/gi, "").trim();
-      
-      if (!categoryCount[category]) {
-        categoryCount[category] = 0;
-      }
-      categoryCount[category]++;
-    });
-    
-    document.querySelectorAll(".description-header-info-calculator-numb").forEach(span => {
-      const dataCategory = span.dataset.nameCategory?.trim().toLowerCase() || "";
-      
-      const normalizedCategory = dataCategory.replace(/calculators?/gi, "").trim();
-      
-      const count = categoryCount[normalizedCategory] || 0;
-      
-      span.textContent = `${count} calculator${count !== 1 ? "s" : ""}`;
-      
-      if(count == 0)
-      span.textContent = `no calculator`;
-    });
-    
-  } catch (error) {
-    showMessage("error",`Error loading calculator counts:, ${error}`);
-  }
-});
-/****************************************/
-
 /***************** PWA helper ******************/
 document.addEventListener("DOMContentLoaded", () => {
   
