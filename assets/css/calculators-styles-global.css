@@ -354,6 +354,12 @@ padding: 15px;
 box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 4px;
 
  }
+ [container-space-top]{
+   margin-top: 4px;
+}
+ [container-space-bottom] {
+   margin-bottom: 4px;
+ }
 .container h2 {
   font-size: 1em;
 }
@@ -604,7 +610,9 @@ font-weight: 600;
 .input-group input[type="date"]:disabled{
   background: #2327BE0F;
 }
-
+[hide-element]{
+  display: none;
+}
 .input-group select {
   appearance: none;
   -webkit-appearance: none;
@@ -772,6 +780,7 @@ text-align: center;
   flex-shrink: 0;
   color: #464BFF;
   padding: 12px;
+  padding-left: 0;
   font-size: 15px;
 }
 .secondary-style{
@@ -1307,9 +1316,7 @@ input[type="date"]{
     transform: scale(0.9);
   }
 }
-
-     
-        #quick-actions-buttons-wrap{
+ #quick-actions-buttons-wrap{
   position: absolute;
   right: 0;
 }
@@ -1387,18 +1394,6 @@ padding: 7px;
   background: #9597AD45;
 }
 /*******************/
-
- #error-txt {
-   background: #D118181F;
-   padding: 1em;
-   border-radius: 10px;
-   font-family: "young";
-   line-height: 1.6;
-   font-size: 13px;
-   color: #A81D1D;
-   width: 90%;
- }
- 
 summary {
   display: block;
   list-style: none;
@@ -1406,8 +1401,8 @@ summary {
   padding-left: 28px;
   transition: .13s;
   background: #fff;
-  padding-top: 16px;
-  padding-bottom: 16px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   width: 90%;
   font-family: "young";
   user-select: none;
@@ -1432,7 +1427,12 @@ summary::before {
 details[open] summary::before {
   transform: translateY(-50%) rotate(180deg);
 }
-
+.no-arrow{
+  padding-left: 0;
+}
+.no-arrow::before{
+  background: none;
+}
 
 .quick-actions-btn{
   display: flex;
@@ -2333,8 +2333,7 @@ footer span svg{
 border-radius: 20px;
 border: 1px solid #42445A1C;
 padding: 12px;
-padding-top: 2em;
-margin-left: 6em
+margin-left: 6em;
  }
  .description-txt,.hero-sec,.quick-actions-btn,.similar-calculators-wrap,.ng-cgpa-container,.calculation-sources-wrap{
    margin-left: 6em;

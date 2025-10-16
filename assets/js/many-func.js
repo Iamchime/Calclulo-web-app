@@ -1521,7 +1521,6 @@ document.addEventListener("click", (e) => {
    const text = document.getElementById('categoryText');
    const btn = document.getElementById('toggleBtn');
    const btnText = document.getElementById('btnText');
-   const storageKey = 'categoryTextExpanded_v1';
    
    function updateButton(expanded) {
      btn.setAttribute('aria-expanded', expanded);
@@ -1532,7 +1531,6 @@ document.addEventListener("click", (e) => {
      if (expanded) text.classList.add('expanded');
      else text.classList.remove('expanded');
      updateButton(expanded);
-     if (save) localStorage.setItem(storageKey, expanded ? '1' : '0');
    }
    
    function needsToggle() {
@@ -1554,18 +1552,6 @@ document.addEventListener("click", (e) => {
      setExpanded(!text.classList.contains('expanded'));
    });
    
-   window.addEventListener('DOMContentLoaded', () => {
-     try {
-       if (!needsToggle()) {
-         btn.classList.add('hidden');
-         return;
-       }
-       const saved = localStorage.getItem(storageKey);
-       if (saved === '1') setExpanded(true, false);
-     } catch (e) {
-       console.warn('Read more measurement failed', e);
-     }
-   });
 }else return })();
 /****************************************/
 
@@ -1963,6 +1949,7 @@ document.addEventListener("click", (e) => {
 
 /*********** Adsterra ads ********/
 function injectAdsterra() {
+  document.querySelector("footer").style.paddingBottom = "5em";
   try {
 
     function createScriptAd(className, key, width, height) {
@@ -2062,7 +2049,6 @@ function injectAdsterra() {
     }
     
     container.dataset.adsInjected = '1';
-    document.querySelector("footer").style.paddingBottom = "5em";
   } catch (err) {
     showMessage('error',err);
   }

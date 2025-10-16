@@ -216,12 +216,26 @@ Everyday Life
 </div>
 
 <div class="input-group">
-  <div class="double-row-inputs-wrap">
+  <div data-input-id="a-b-foil-calculator" class="input-group">
     
-    <div data-input-id="a-foil-calculator" class="input-group">
-      <label>A <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
-      <input   inputmode="numeric" pattern="[0-9]*" type="text" id="a">
-      <div class="input-options">
+    <label>A and B
+    
+    <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
+    </label>
+    
+    <div class="double-row-inputs-wrap">
+      <div class="currency-or-unit-input">
+  <input inputmode="numeric" pattern="[0-9]*" type="text" id="a">
+  <span class="unit-display">A</span>
+</div>
+      
+      <div class="currency-or-unit-input">
+  <input   inputmode="numeric" pattern="[0-9]*" type="text" id="b">
+  <span class="unit-display" >B</span>
+</div>
+      
+    </div>
+    <div class="input-options">
    <div class="input-options-item">
   <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
   
@@ -242,64 +256,10 @@ Everyday Life
     <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg> <span class="option-name">Rename label</span>
   </div>
 
-  
-
-
-
-  <!-- Copy -->
-  <div data-action="copy" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg> <span class="option-name">Copy </span>
-  </div>
-  
-    <!-- Paste -->
-  <div data-action="paste" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h167q11-35 43-57.5t70-22.5q40 0 71.5 22.5T594-840h166q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560h-80v120H280v-120h-80v560Zm280-560q17 0 28.5-11.5T520-800q0-17-11.5-28.5T480-840q-17 0-28.5 11.5T440-800q0 17 11.5 28.5T480-760Z"/></svg><span class="option-name"> Paste</span>
-  </div>
  </div>
-    </div>
-    <div data-input-id="b-foil-calculator" class="input-group">
-      <label>B <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
-      <input   inputmode="numeric" pattern="[0-9]*" type="text" id="b">
-      <div class="input-options">
-   <div class="input-options-item">
-  <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
-  
-  
-  <span class="option-name">Save Input value</span>
-  <div class="checkbox-wrapper-toggle">
-  <input id="saveInputValue" type="checkbox" data-role="save-toggle" class="for-toggle-checkbox">
-</div>
-  </div>
-
-  <!-- Reset Field -->
-  <div data-action="reset"  class="input-options-item">
-  <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span class="option-name"> Reset field</span>
-  </div>
-
-  <!-- Rename Label -->
-  <div data-action="rename" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg> <span class="option-name">Rename label</span>
-  </div>
-
-  
-
-
-
-  <!-- Copy -->
-  <div data-action="copy" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg> <span class="option-name">Copy </span>
   </div>
   
-    <!-- Paste -->
-  <div data-action="paste" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h167q11-35 43-57.5t70-22.5q40 0 71.5 22.5T594-840h166q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560h-80v120H280v-120h-80v560Zm280-560q17 0 28.5-11.5T520-800q0-17-11.5-28.5T480-840q-17 0-28.5 11.5T440-800q0 17 11.5 28.5T480-760Z"/></svg><span class="option-name"> Paste</span>
-  </div>
- </div>
-    </div>
-  </div>
-</div>
-
-<div data-input-id="exponent-n-foil-calculator" style="display: none;" class="input-group">
+  <div data-input-id="exponent-n-foil-calculator" hide-element class="input-group">
   
   <label>Exponent n <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
   <input type="text"   inputmode="numeric" pattern="[0-9]*" id="Exponentm">
@@ -340,15 +300,26 @@ Everyday Life
  </div>
 </div>
 
-
-
-<div class="input-group">
-  <div class="double-row-inputs-wrap">
+  
+  <div data-input-id="a-b-foil-calculator" class="input-group">
     
-    <div data-input-id="c-foil-calculator" class="input-group">
-      <label>C <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
-      <input   inputmode="numeric" pattern="[0-9]*" type="text" id="c">
-      <div class="input-options">
+    <label>D and C
+        <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
+    </label>
+    
+    <div class="double-row-inputs-wrap">
+      <div class="currency-or-unit-input">
+  <input inputmode="numeric" pattern="[0-9]*" type="text" id="c">
+  <span class="unit-display">C</span>
+</div>
+      
+      <div class="currency-or-unit-input">
+  <input   inputmode="numeric" pattern="[0-9]*" type="text" id="d">
+  <span class="unit-display" >D</span>
+</div>
+      
+    </div>
+    <div class="input-options">
    <div class="input-options-item">
   <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
   
@@ -369,66 +340,12 @@ Everyday Life
     <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg> <span class="option-name">Rename label</span>
   </div>
 
-  
-
-
-
-  <!-- Copy -->
-  <div data-action="copy" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg> <span class="option-name">Copy </span>
-  </div>
-  
-    <!-- Paste -->
-  <div data-action="paste" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h167q11-35 43-57.5t70-22.5q40 0 71.5 22.5T594-840h166q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560h-80v120H280v-120h-80v560Zm280-560q17 0 28.5-11.5T520-800q0-17-11.5-28.5T480-840q-17 0-28.5 11.5T440-800q0 17 11.5 28.5T480-760Z"/></svg><span class="option-name"> Paste</span>
-  </div>
  </div>
-    </div>
-    
-    <div data-input-id="d-foil-calculator" class="input-group">
-      <label>D <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
-      <input   inputmode="numeric" pattern="[0-9]*" type="text" id="d">
-      <div class="input-options">
-   <div class="input-options-item">
-  <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
-  
-  
-  <span class="option-name">Save Input value</span>
-  <div class="checkbox-wrapper-toggle">
-  <input id="saveInputValue" type="checkbox" data-role="save-toggle" class="for-toggle-checkbox">
-</div>
   </div>
 
-  <!-- Reset Field -->
-  <div data-action="reset"  class="input-options-item">
-  <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span class="option-name"> Reset field</span>
-  </div>
-
-  <!-- Rename Label -->
-  <div data-action="rename" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg> <span class="option-name">Rename label</span>
-  </div>
-
-  
 
 
-
-  <!-- Copy -->
-  <div data-action="copy" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg> <span class="option-name">Copy </span>
-  </div>
-  
-    <!-- Paste -->
-  <div data-action="paste" class="input-options-item">
-    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h167q11-35 43-57.5t70-22.5q40 0 71.5 22.5T594-840h166q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560h-80v120H280v-120h-80v560Zm280-560q17 0 28.5-11.5T520-800q0-17-11.5-28.5T480-840q-17 0-28.5 11.5T440-800q0 17 11.5 28.5T480-760Z"/></svg><span class="option-name"> Paste</span>
-  </div>
- </div>
-    </div>
-  </div>
-</div>
-
-
-<div data-input-id="exponent-m-foil-calculator" style="display: none;" class="input-group">
+<div data-input-id="exponent-m-foil-calculator" hide-element class="input-group">
   
   <label>Exponent m <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
   <input   inputmode="numeric" pattern="[0-9]*" type="text" id="ExponentM">
@@ -474,6 +391,7 @@ Everyday Life
   </div>
   
   
+</div>
 </div>
 
 <div class="quick-actions-btn">  <button class="vote-up"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M720-120H280v-520l280-280 50 50q7 7 11.5 19t4.5 23v14l-44 174h258q32 0 56 24t24 56v80q0 7-2 15t-4 15L794-168q-9 20-30 34t-44 14Zm-360-80h360l120-280v-80H480l54-220-174 174v406Zm0-406v406-406Zm-80-34v80H160v360h120v80H80v-520h200Z"/></svg></button>   <button class="vote-down"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-840h440v520L400-40l-50-50q-7-7-11.5-19t-4.5-23v-14l44-174H120q-32 0-56-24t-24-56v-80q0-7 2-15t4-15l120-282q9-20 30-34t44-14Zm360 80H240L120-480v80h360l-54 220 174-174v-406Zm0 406v-406 406Zm80 34v-80h120v-360H680v-80h200v520H680Z"/></svg></button>
@@ -662,18 +580,10 @@ gap: -13em;
   const exponentNGroup = document.getElementById("Exponentm").closest(".input-group");
   const resultBox = document.querySelector(".output-group");
   
-  
   function toggleExponentGroups() {
-    if (generalRadio.checked) {
-      exponentMGroup.style.display = "block";
-      exponentNGroup.style.display = "block";
-    } else {
-      exponentMGroup.style.display = "none";
-      exponentNGroup.style.display = "none";
-    }
-    calculateResults();
-  }
-  
+  [exponentMGroup, exponentNGroup].forEach(g => g.toggleAttribute('hide-element', !generalRadio.checked));
+  calculateResults();
+}
   
   function calculateResults() {
     const a = parseFloat(document.getElementById("a").value) || 0;

@@ -1302,6 +1302,22 @@
   ],
   "category": "Finance Calculators",
   "link": "/finance/margin-calculator"
-  }
+  },
+  {
+  "tool": "Profit Calculator",
+  "relatedKeywords": [
+    "profit calculator","money made from product "
+  ],
+  "category": "Finance Calculators",
+  "link": "/finance/profit-calculator"
+},
+{
+  "tool": "3x Rent Calculator",
+  "relatedKeywords": [
+    "my three times rent calculator"
+  ],
+  "category": "Finance Calculators",
+  "link": "/finance/3x-rent-calculator"
+}
   ]
 }
