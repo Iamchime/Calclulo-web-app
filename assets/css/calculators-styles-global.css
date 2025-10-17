@@ -1332,7 +1332,7 @@ input[type="date"]{
   background: #FCF7E1;
   padding: 1em;
   border-radius: 10px;
-  font-family: "young";
+  font-family: Alansans;
   line-height: 1.6;
   font-size: 13px;
   color: #593913;
@@ -1343,7 +1343,7 @@ input[type="date"]{
 /******** message handling *******/
 .message-toast {
   position: fixed;
-  bottom: 20px;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
   padding: 24px 24px;
@@ -1363,6 +1363,7 @@ input[type="date"]{
   pointer-events: none;
   user-select: none;
   font-size: .9em;
+  z-index: 9999;
 }
 
 .message-toast.show {
@@ -1588,7 +1589,7 @@ color: #4F5163;
   transition: fill 0.3s ease, transform 0.2s ease;
 }
 
-.vote-up.active svg {
+/*.vote-up.active svg {
   fill: #000000;
   transform: scale(1.2);
 }
@@ -1596,7 +1597,7 @@ color: #4F5163;
 .vote-down.active svg {
  fill: #000000;
   transform: scale(1.2);
-}
+}*/
 
 .vote-up:active, .vote-down:active {
   transform: scale(0.9);
