@@ -392,19 +392,22 @@ function collapseTip(tip, icon = null) {
 }
 /****************************************/
 
- /************************************** Overflowing text handling
+/************************************** Overflowing text handling
  **************************************/
 document.addEventListener('DOMContentLoaded', () => {
   setupSmartInputs({ minFontSize: 10 });
 });
 
 function setupSmartInputs(options = {}) {
-  const inputs = Array.from(document.querySelectorAll('input[type="text"], input[type="number"]:not([readonly])'));
+  const inputs = Array.from(
+    document.querySelectorAll(
+      'input[type="text"]:not(#search-global-input), input[type="number"]:not([readonly]):not(#search-global-input)'
+    )
+  );
   const minFontSize = options.minFontSize || 10;
-
+  
   const tooltip = document.createElement('div');
   tooltip.className = 'input-tooltip-float';
-  tooltip.style.display = 'none';
   document.body.appendChild(tooltip);
   
   const mirror = document.createElement('span');
@@ -419,27 +422,37 @@ function setupSmartInputs(options = {}) {
   let hideTimeout = null;
   
   function showTooltip(text, input) {
-    tooltip.textContent = text;
-    tooltip.classList.add('visible');
-    tooltip.style.display = 'block';
+    if (!text || activeInput !== input) return;
     
+    tooltip.textContent = text;
+   
+    tooltip.style.display = 'block';
+    void tooltip.offsetHeight;
+    
+    updateTooltipPosition(input);
+    
+    requestAnimationFrame(() => {
+      tooltip.classList.add('visible');
+    });
+  }
+  
+  function updateTooltipPosition(input) {
     const rect = input.getBoundingClientRect();
     const scrollY = window.scrollY || document.documentElement.scrollTop;
     const scrollX = window.scrollX || document.documentElement.scrollLeft;
     
-    requestAnimationFrame(() => {
-      tooltip.style.left = `${rect.left + scrollX}px`;
-      tooltip.style.top = `${rect.top - 8 + scrollY - tooltip.offsetHeight - 8}px`;
-    });
+    tooltip.style.left = `${rect.left + scrollX}px`;
+    tooltip.style.top = `${rect.top + scrollY - tooltip.offsetHeight - 8}px`;
   }
   
   function hideTooltip(immediate = false) {
+    tooltip.classList.remove('visible');
+    
     if (immediate) {
-      tooltip.classList.remove('visible');
       tooltip.style.display = 'none';
       return;
     }
-    tooltip.classList.remove('visible');
+    
     clearTimeout(hideTimeout);
     hideTimeout = setTimeout(() => {
       if (!tooltip.classList.contains('visible')) {
@@ -473,8 +486,8 @@ function setupSmartInputs(options = {}) {
       }
       
       const isOverflowing = input.scrollWidth > input.clientWidth;
-      
-      if (isOverflowing && currentFontSize <= minFontSize) {
+       
+      if (isOverflowing && currentFontSize <= minFontSize && document.activeElement === input) {
         activeInput = input;
         showTooltip(input.value, input);
       } else if (activeInput === input) {
@@ -495,18 +508,22 @@ function setupSmartInputs(options = {}) {
       }
     });
     
+    window.addEventListener('resize', () => {
+      if (activeInput === input && tooltip.classList.contains('visible')) {
+        updateTooltipPosition(input);
+      }
+    });
+    
+    window.addEventListener('scroll', () => {
+      if (activeInput === input && tooltip.classList.contains('visible')) {
+        updateTooltipPosition(input);
+      }
+    });
+    
     adjust();
     
     const ro = new ResizeObserver(() => adjust());
     ro.observe(input);
-    
-    const origSetAttr = input.setAttribute.bind(input);
-    input.setAttribute = function(name, val) {
-      origSetAttr(name, val);
-      if (String(name).toLowerCase() === 'value') {
-        adjust();
-      }
-    };
     
     state.set(input, {
       adjust,
@@ -527,60 +544,51 @@ function setupSmartInputs(options = {}) {
     requestAnimationFrame(watchValues);
   })();
 }
-/****************************************/
+/***********************************************************************/
 
-/*************************** formatting input ***********************/
+/******************************* Formatting inputs 
+*****************************/
 
 let enableFormatting = true;
 
 function setNumberFormatting(state) {
-  enableFormatting = state;
+  enableFormatting = !!state;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  const inputs = document.querySelectorAll("input");
-  const formatter = new Intl.NumberFormat("en-US");
   
-  inputs.forEach(input => {
-    let timeout;
-    let isFormatted = false;
+  const inputs = document.querySelectorAll('input[type="text"], input[type="number"]:not([readonly])');
+  const locale = "en-US";
+  
+  const unformatNumber = (val) => String(val ?? "").replace(/,/g, "").trim();
+  
+  const formatIfValid = (val) => {
+    const raw = unformatNumber(val);
+    if (raw === "") return "";
     
-    function unformatNumber(val) {
-      return val.replace(/,/g, "");
-    }
+    const num = Number(raw);
+    if (!Number.isFinite(num)) return val;
     
-    function formatIfValid(val) {
-      const raw = unformatNumber(val);
-      return !isNaN(raw) && raw.trim() !== "" ? formatter.format(raw) : val;
-    }
+    const decimalPart = raw.includes(".") ? raw.split(".")[1] : "";
+    const maxFrac = Math.min(decimalPart.length, 20);
     
-    function handleFormat() {
-      if (!enableFormatting) return;
-      const formatted = formatIfValid(input.value);
-      input.value = formatted;
-      isFormatted = true;
-    }
+    const fmt = new Intl.NumberFormat(locale, { maximumFractionDigits: maxFrac });
     
-    input.addEventListener("input", () => {
-      clearTimeout(timeout);
-      if (isFormatted) {
-        input.value = unformatNumber(input.value);
-        isFormatted = false;
-      }
-      timeout = setTimeout(handleFormat, 500);
-    });
-    
+    return fmt.format(num);
+  };
+  
+  inputs.forEach((input) => {
     input.addEventListener("focus", () => {
-      if (isFormatted) {
-        input.value = unformatNumber(input.value);
-        isFormatted = false;
-      }
+      input.value = unformatNumber(input.value);
     });
     
-    input.addEventListener("blur", handleFormat);
+    input.addEventListener("blur", () => {
+      if (!enableFormatting) return;
+      input.value = formatIfValid(input.value);
+    });
   });
 });
-/****************************************/
+/**********************************************************************************/
 
 /***********************************
  Reset all inputs across containers

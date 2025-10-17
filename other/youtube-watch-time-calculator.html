@@ -475,7 +475,7 @@ Everyday Life
     <button onclick="window.location.reload()" class="reload-page">
   Reload Page
 </button>
-    <button onclick="resetFields()" class="clear-inputs-btn">
+    <button onclick="resetCalculator()" class="clear-inputs-btn">
 Clear all changes
     </button>
     <button onclick="InstallPwa()" class="install-pwa-btn">
@@ -659,13 +659,6 @@ function calculateResults() {
   const requiredViews = remainingWatchSeconds / effectiveSecondsPerView;
   
   document.getElementById('RequiredViews').value = formatViews(requiredViews);
-}
-
-function resetFields() {
-  ['targetHours', 'avgMinutes', 'avgSeconds', 'currentHours', 'retention', 'videoLength', 'RequiredViews'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
 }
 
 function formatViews(number) {

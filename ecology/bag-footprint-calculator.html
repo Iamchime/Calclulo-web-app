@@ -616,13 +616,6 @@ letter-spacing: .3px;
     </div>
   `;
 }
-function resetFields() {
-  document.getElementById('numberofuse').value = '';
-  document.getElementById('numberofbagdisposed').value = '';
-  document.getElementById('frequency').selectedIndex = 0;
-  document.querySelector('#plasticbag').checked = true;
-  document.querySelector('.output-group').innerHTML = '';
-}
 
 document.querySelectorAll('input[name="bagtype"], #numberofuse, #numberofbagdisposed, #frequency').forEach(el => {
   el.addEventListener('input', calculateResults);
