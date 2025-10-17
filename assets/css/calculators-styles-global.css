@@ -1592,16 +1592,6 @@ color: #4F5163;
   transform: rotate(180deg);
 }
 
-/*.vote-up.active svg {
-  fill: #000000;
-  transform: scale(1.2);
-}
-
-.vote-down.active svg {
- fill: #000000;
-  transform: scale(1.2);
-}*/
-
 .vote-up:active, .vote-down:active {
   transform: scale(0.9);
 }
