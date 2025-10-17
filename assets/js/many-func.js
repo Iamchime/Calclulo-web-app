@@ -3247,38 +3247,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     likeBtn.addEventListener("click", () => {
-      const isActive = likeBtn.classList.contains("active");
-      if (isActive) {
-        updateButtons(null);
-        localStorage.removeItem(storageKey);
-      } else {
-        updateButtons("like");
-        localStorage.setItem(storageKey, "like");
-        
-        positionTooltip();
-        tooltip.classList.add("show");
-        
-        startRepositionListeners();
-        
-        setTimeout(() => {
-          tooltip.classList.remove("show");
-          stopRepositionListeners();
-        }, 1500);
-      }
-    });
+  const currentVote = localStorage.getItem(storageKey);
+  if (currentVote === "like") {
+    updateButtons(null);
+    localStorage.removeItem(storageKey);
+  } else {
+    updateButtons("like");
+    localStorage.setItem(storageKey, "like");
+    
+    positionTooltip();
+    tooltip.classList.add("show");
+    
+    startRepositionListeners();
+    
+    setTimeout(() => {
+      tooltip.classList.remove("show");
+      stopRepositionListeners();
+    }, 1500);
+  }
+});
 
-    if (dislikeBtn) {
-      dislikeBtn.addEventListener("click", () => {
-        const isActive = dislikeBtn.classList.contains("active");
-        if (isActive) {
-          updateButtons(null);
-          localStorage.removeItem(storageKey);
-        } else {
-          updateButtons("dislike");
-          localStorage.setItem(storageKey, "dislike");
-        }
-      });
+if (dislikeBtn) {
+  dislikeBtn.addEventListener("click", () => {
+    const currentVote = localStorage.getItem(storageKey);
+    if (currentVote === "dislike") {
+      updateButtons(null);
+      localStorage.removeItem(storageKey);
+    } else {
+      updateButtons("dislike");
+      localStorage.setItem(storageKey, "dislike");
     }
+  });
+}
   });
 });
 /*****************************************/
