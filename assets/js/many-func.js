@@ -1581,6 +1581,7 @@ document.addEventListener("click", (e) => {
         background: rgba(0,0,0,0.45);
         opacity: 0; transition: opacity 260ms ease; z-index: 9998; pointer-events: none;
         -webkit-tap-highlight-color: transparent;
+        font-family: Alansans;
       }
       .calclulo-pwa-backdrop.visible { opacity: 1; pointer-events: auto; }
       .calclulo-pwa-drawer {
@@ -1606,11 +1607,12 @@ document.addEventListener("click", (e) => {
       margin-top: 10px;
       margin-bottom: 10px;
       line-height: 1.7;
+      font-family: Alansans;
       }
       .calclulo-pwa-actions { display: flex; gap: 10px; margin-top: 14px; justify-content: flex-end; }
       .calclulo-btn { min-width: 120px; padding: 10px 14px; border-radius: 10px; font-weight: 400; border: none; font-size: 0.95rem;
-      font-family: young;
         transition: .2s;
+        font-family: Alansans;
       }
       .calclulo-btn.primary { background: #464BFF; color: white; box-shadow: 0 6px 18px rgba(29,123,237,0.24); }
       .calclulo-btn.primary:hover{
@@ -1760,7 +1762,7 @@ document.addEventListener("click", (e) => {
 
   function openDrawer() {
     setTimeout(() => {
-    if (window.innerWidth >= 768 || document.querySelector(".cookie-wrapper")?.classList.contains("show") || document.querySelector(".calclulo-trustpilot-drawer")?.classList.contains("visible")) return;
+    if (window.innerWidth >= 768 || document.querySelector(".cookie-wrapper")?.classList.contains("show")) return;
     
     setTimeout(() => {
     if (isDrawerOpen) return;
@@ -1807,7 +1809,7 @@ document.addEventListener("click", (e) => {
     });
 
     isDrawerOpen = true;
-    },15000);
+    },1500);
   },5000);
   }
 

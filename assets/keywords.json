@@ -1326,6 +1326,30 @@
   ],
   "category": "Finance Calculators",
   "link": "/finance/attrition-rate-calculator"
+},
+{
+  "tool": "Percent Error Calculator",
+  "relatedKeywords": [
+    "how to calculate percent error"
+  ],
+  "category": "Math Calculators",
+  "link": "/math/percent-error-calculator"
+},
+{
+  "tool": "Percentage Increase Calculator",
+  "relatedKeywords": [
+    "how to calculate percent increase"
+  ],
+  "category": "Math Calculators",
+  "link": "/math/percentage-increase-calculator"
+},
+{
+  "tool": "Percentage Decrease Calculator",
+  "relatedKeywords": [
+    "how to calculate percent decrease"
+  ],
+  "category": "Math Calculators",
+  "link": "/math/percentage-decrease-calculator"
 }
   ]
 }

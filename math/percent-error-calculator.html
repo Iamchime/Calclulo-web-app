@@ -5,40 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#464BFF"/>   
 
-<title>Everyday Life Calculators</title>  
+<title>Percent Error Calculator</title>
 
 <script>
 (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0], j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src= 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f); })(window,document,'script','dataLayer','GTM-5BVJ6KMT');
-</script>      
-
-<link rel="stylesheet" href="/assets/css/categorised-calculators-list.css" />
+</script> 
 
 <link rel="manifest" href="/assets/manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Calclulo">
 
-<meta name="description" content="In our daily life, there are hundreds of mini calculations, budget planning, routine scheduling, etc. our everyday life calculators remove the pain associated with the number thereby providing you with both quick and clear cut answers which makes decision making in everyday life easy and manageable.">
+<link rel="stylesheet" href="/assets/css/calculators-styles-global.css" />
 
-<link rel="canonical" href="https://calclulo.com/everyday-life">
+<meta name="description" content="Find the relative error between the true and observed values.">
+
+<link rel="canonical" href="https://calclulo.com/math/percent-error-calculator">
 
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://calclulo.com/everyday-life">
-<meta property="og:title" content="Free Everyday Life Calculators">
-<meta property="og:description" content="In our daily life, there are hundreds of mini calculations, budget planning, routine scheduling, etc. our everyday life calculators remove the pain associated with the number thereby providing you with both quick and clear cut answers which makes decision making in everyday life easy and manageable.">
+<meta property="og:url" content="https://calclulo.com/math/percent-error-calculator">
+<meta property="og:title" content="Percent Error Calculator">
+<meta property="og:description" content="Find the relative error between the true and observed values.">
 <meta property="og:image" content="https://calclulo.com/assets/images/thumbnail-global.png">
 
-<link href="/favicons/favicon.png" rel="icon" sizes="48x48">
-<link href="/favicons/favicon-128.png" rel="icon" sizes="128x128">
-<link href="/favicons/favicon-192.png" rel="icon" sizes="192x192">
+<link href="/favicons/favicon.png" rel="icon" sizes="48x48"> <link href="/favicons/favicon-128.png" rel="icon" sizes="128x128"> <link href="/favicons/favicon-192.png" rel="icon" sizes="192x192">
 
 <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": "Free Calculators for Everyday Life ",
-    "url": "https://calclulo.com/everyday-life",
-    "description": "In our daily life, there are hundreds of mini calculations, budget planning, routine scheduling, etc. our everyday life calculators remove the pain associated with the number thereby providing you with both quick and clear cut answers which makes decision making in everyday life easy and manageable.",
+    "name": "Percent Error Calculator",
+    "url": "https://calclulo.com/math/percent-error-calculator",
+    "description": "Find the relative error between the true and observed values.",
     "inLanguage": "en",
     "publisher": {
       "@type": "Organization",
@@ -50,7 +48,6 @@
 </head>
 
 <body>
-
   <header>
   <a class="home-link" href="/index">
     <img src="/assets/images/Calclulo Logo.svg" alt="Logo" /></a>
@@ -177,86 +174,190 @@ Everyday Life
 
   <section class="sec-one">
     <div class="hero-sec">
-     
+     <span class="last-updated-text">  Last updated:   <time datetime="2025-10-17">     <span class="last-updated-date"><strong>October 17, 2025</strong></span>   </time> </span>
 <h1 id="hero-h1">
-  <span class="icon-wrapper">
-    <svg class="hero-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M218-381q-24 13-51 5.5T126-406q-17-29-6-60t43-42l337-112 36 71-318 168Zm22 261v-227l349-184-17-35 228-114 36 72-276 208v280H240Zm60-440q-58 0-99-41t-41-99q0-58 41-99t99-41q58 0 99 41t41 99q0 58-41 99t-99 41Z"/></svg>
-  </span>
-  Everyday Life
-  <button id="share-category-btn" class="global-share-btn">
-    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm480-280q17 0 28.5-11.5T720-760q0-17-11.5-28.5T680-800q-17 0-28.5 11.5T640-760q0 17 11.5 28.5T680-720Zm0 520ZM200-480Zm480-280Z"/></svg>
-  
-</button>
+  Percent Error Calculator
 </h1>
 
-<p data-name-category="everyday life" class="description-header-info-calculator-numb">39 calculators</p>
-
-  <p class="category-info-p clamped" id="categoryText">
-   You have little things in everyday life where numbers just creep into your thoughts whether in solving time, in organizing yourself or running fast decisions that shape your day. These small calculations can seem an awful lot of pressure as life goes by at crazy-fast speeds. Our everyday life calculators come in to relieve you of that burden. They simplify complex numbers to straight forward simple answers, which leaves you space to breathe and concentrate and make better decisions. Whether you're planning your schedule, managing resources or simply trying to make sense of the daily tasks, these tools help you get more confident handling life, saving time and spending your energy on what you should be.
-
-
-  </p>
-  <button class="read-more-btn" id="toggleBtn"
-          aria-expanded="false" aria-controls="categoryText">
-    <span id="btnText">Read more</span>
-
-    <svg class="chev" viewBox="0 0 10 6" aria-hidden="true" focusable="false">
-      <path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </button>
 </div>
 
-<div class="calculators-lists">
-<h2>Clothing and sewing calculators 👗</h2>
-<ul>
-  <li><a href="/everyday-life/bikini-calculator">Bikini Calculator</a></li>
-</ul>
-<h2>Time and Date 📆</h2>
- <ul>
-   <li><a href="/everyday-life/age-calculator">Age Calculator</a></li>
-   <li><a href="/everyday-life/age-difference-calculator">Age Difference Calculator</a></li>
-   <li><a href="/everyday-life/africa-day-countdown">Africa Day </a></li>
-   <li><a href="/everyday-life/boyfriend-day">Boyfriend's Day </a></li>
-   <li><a href="/everyday-life/christmas-countdown">Christmas </a></li>
-   <li><a href="/everyday-life/earth-day-countdown">Earth Day </a></li>
-   <li><a href="/everyday-life/friendship-day-countdown">Friendship Day </a></li>
-   <li><a href="/everyday-life/girlfriend-day">Girlfriend's Day </a></li>
-   <li><a href="/everyday-life/human-rights-day-countdown">Human Rights Day </a></li>
-   <li><a href="/everyday-life/independence-day-countdown">Independence Day </a></li>
-   <li><a href="/everyday-life/international-day-of-happiness-countdown">International Day of Happiness </a></li>
-   <li><a href="/everyday-life/international-men-day-countdown">International Men Day </a></li>
-   <li><a href="/everyday-life/international-women-day-countdown">International Women's Day </a></li>
-   <li><a href="/everyday-life/siblings-day-countdown">Siblings Day </a></li>
-   <li><a href="/everyday-life/summer-countdown">Summer </a></li>
-   <li><a href="/everyday-life/thanksgiving-countdown">Thanksgiving </a></li>
-   <li><a href="/everyday-life/world-animal-day-countdown">World Animal Day </a></li>
-   <li><a href="/everyday-life/world-autism-awareness-day-countdown">World Autism Awareness Day  </a></li>
-   <li><a href="/everyday-life/world-cancer-day-countdown">World Cancer Day </a></li>
-   <li><a href="/everyday-life/world-food-day-countdown">World Food Day </a></li>
-   <li><a href="/everyday-life/world-literacy-day-countdown">World Literacy Day </a></li>
-   <li><a href="/everyday-life/world-mental-health-day-countdown">World Mental Health Day </a></li>
-   <li><a href="/everyday-life/world-ocean-day-countdown">World Ocean Day </a></li>
-   <li><a href="/everyday-life/world-refugee-day-countdown">World Refugee Day </a></li>
-   <li><a href="/everyday-life/world-teacher-day-countdown">World Teacher Day </a></li>
-   <li><a href="/everyday-life/world-tourism-day-countdown">World Tourism Day </a></li>
-   <li><a href="/everyday-life/world-water-day-countdown">World Water Day </a></li>
-   <li><a href="/everyday-life/world-youth-day-countdown">World Youth Day </a></li>
-   <li><a href="/everyday-life/new-year-countdown-calculator">New Year Countdown</a></li>
-   <li><a href="/everyday-life/halloween-countdown-calculator">Halloween Countdown</a></li>
-   <li><a href="/everyday-life/easter-countdown">Easter </a>
-</li>
-   <li><a href="/everyday-life/childrens-day-countdown">Children's Day </a></li>
-   <li><a href="/everyday-life/valentines-day-countdown">Valentine's Day </a></li>
-   <li><a href="/everyday-life/mothers-day-countdown">Mother's Day </a></li>
-   <li><a href="/everyday-life/fathers-day-countdown">Father's Day </a></li>
-   <li><a href="/everyday-life/labour-day">Labour Day </a></li>
-   <li><a href="/everyday-life/world-environment-day">World Environment Day </a></li>
-   <li><a href="/everyday-life/world-health-day">World Health Day </a></li>
- </ul>
-
+<div class="container">
+  <div data-input-id="true-value-percent-error-calculator" class="input-group">
+    <label>True value <svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
+<input  inputmode="numeric" pattern="[0-9]*" type="text" id="trueValue" >
+<div class="input-options">
+   <div class="input-options-item">
+  <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
+  
+  
+  <span class="option-name">Save Input value</span>
+  <div class="checkbox-wrapper-toggle">
+  <input id="saveInputValue" type="checkbox" data-role="save-toggle" class="for-toggle-checkbox">
 </div>
+  </div>
+
+  <!-- Reset Field -->
+  <div data-action="reset"  class="input-options-item">
+  <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span class="option-name"> Reset field</span>
+  </div>
+
+  <!-- Rename Label -->
+  <div data-action="rename" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg> <span class="option-name">Rename label</span>
+  </div>
+
+  
+
+
+
+  <!-- Copy -->
+  <div data-action="copy" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg> <span class="option-name">Copy </span>
+  </div>
+  
+    <!-- Paste -->
+  <div data-action="paste" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h167q11-35 43-57.5t70-22.5q40 0 71.5 22.5T594-840h166q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560h-80v120H280v-120h-80v560Zm280-560q17 0 28.5-11.5T520-800q0-17-11.5-28.5T480-840q-17 0-28.5 11.5T440-800q0 17 11.5 28.5T480-760Z"/></svg><span class="option-name"> Paste</span>
+  </div>
+ </div>
+  </div>
+
+  <div data-input-id="observed-value-percent-error-calculator" class="input-group">
+    <label>Observed value 
+    <svg id="input-tip-icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M440-280h80v-240h-80v240Zm40-320q17 0 28.5-11.5T520-640q0-17-11.5-28.5T480-680q-17 0-28.5 11.5T440-640q0 17 11.5 28.5T480-600Zm0 520q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm0-80q134 0 227-93t93-227q0-134-93-227t-227-93q-134 0-227 93t-93 227q0 134 93 227t227 93Zm0-320Z"/></svg>
+<svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg>
+        </label>
+    <input type="text" inputmode="numeric" pattern="[0-9]*"  id="observedValue">
+    <span class="input-tips"> The experimental or measured value.</span>
+    <div class="input-options">
+   <div class="input-options-item">
+  <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
+  
+  
+  <span class="option-name">Save Input value</span>
+  <div class="checkbox-wrapper-toggle">
+  <input id="saveInputValue" type="checkbox" data-role="save-toggle" class="for-toggle-checkbox">
+</div>
+  </div>
+
+  <!-- Reset Field -->
+  <div data-action="reset"  class="input-options-item">
+  <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span class="option-name"> Reset field</span>
+  </div>
+
+  <!-- Rename Label -->
+  <div data-action="rename" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg> <span class="option-name">Rename label</span>
+  </div>
+
+  
+
+
+
+  <!-- Copy -->
+  <div data-action="copy" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg> <span class="option-name">Copy </span>
+  </div>
+  
+    <!-- Paste -->
+  <div data-action="paste" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h167q11-35 43-57.5t70-22.5q40 0 71.5 22.5T594-840h166q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560h-80v120H280v-120h-80v560Zm280-560q17 0 28.5-11.5T520-800q0-17-11.5-28.5T480-840q-17 0-28.5 11.5T440-800q0 17 11.5 28.5T480-760Z"/></svg><span class="option-name"> Paste</span>
+  </div>
+ </div>
+  </div>
+  
+  
+  <div data-input-id="percent-error-percent-error-calculator" class="input-group">
+    <label>Percent error<svg class="expanded-input-option-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M240-400q-33 0-56.5-23.5T160-480q0-33 23.5-56.5T240-560q33 0 56.5 23.5T320-480q0 33-23.5 56.5T240-400Zm240 0q-33 0-56.5-23.5T400-480q0-33 23.5-56.5T480-560q33 0 56.5 23.5T560-480q0 33-23.5 56.5T480-400Zm240 0q-33 0-56.5-23.5T640-480q0-33 23.5-56.5T720-560q33 0 56.5 23.5T800-480q0 33-23.5 56.5T720-400Z"/></svg></label>
+    
+<div class="currency-or-unit-input">
+  
+  <input inputmode="numeric" pattern="[0-9]*" type="text" id="percentError" >
+  <span  class="unit-display">%
+  </span>
+</div>
+
+
+<div class="input-options">
+   <div class="input-options-item">
+  <svg  class="description-svg"  xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="m640-480 80 80v80H520v240l-40 40-40-40v-240H240v-80l80-80v-280h-40v-80h400v80h-40v280Zm-286 80h252l-46-46v-314H400v314l-46 46Zm126 0Z"/></svg>
+  
+  
+  <span class="option-name">Save Input value</span>
+  <div class="checkbox-wrapper-toggle">
+  <input id="saveInputValue" type="checkbox" data-role="save-toggle" class="for-toggle-checkbox">
+</div>
+  </div>
+
+  <!-- Reset Field -->
+  <div data-action="reset"  class="input-options-item">
+  <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M480-160q-134 0-227-93t-93-227q0-134 93-227t227-93q69 0 132 28.5T720-690v-110h80v280H520v-80h168q-32-56-87.5-88T480-720q-100 0-170 70t-70 170q0 100 70 170t170 70q77 0 139-44t87-116h84q-28 106-114 173t-196 67Z"/></svg> <span class="option-name"> Reset field</span>
+  </div>
+
+  <!-- Rename Label -->
+  <div data-action="rename" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-200h57l391-391-57-57-391 391v57Zm-80 80v-170l528-527q12-11 26.5-17t30.5-6q16 0 31 6t26 18l55 56q12 11 17.5 26t5.5 30q0 16-5.5 30.5T817-647L290-120H120Zm640-584-56-56 56 56Zm-141 85-28-29 57 57-29-28Z"/></svg> <span class="option-name">Rename label</span>
+  </div>
+
+  
+
+
+
+  <!-- Copy -->
+  <div data-action="copy" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/></svg> <span class="option-name">Copy </span>
+  </div>
+  
+    <!-- Paste -->
+  <div data-action="paste" class="input-options-item">
+    <svg class="description-svg" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#1f1f1f"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h167q11-35 43-57.5t70-22.5q40 0 71.5 22.5T594-840h166q33 0 56.5 23.5T840-760v560q0 33-23.5 56.5T760-120H200Zm0-80h560v-560h-80v120H280v-120h-80v560Zm280-560q17 0 28.5-11.5T520-800q0-17-11.5-28.5T480-840q-17 0-28.5 11.5T440-800q0 17 11.5 28.5T480-760Z"/></svg><span class="option-name"> Paste</span>
+  </div>
+ </div>
+  </div>
+  
+  
+</div>
+
+<div class="quick-actions-btn">  <button class="vote-up"><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">     <path d="M19.221 10.803 12 10V4a2 2 0 0 0-4 0v12l-3.031-1.212a2 2 0 0 0-2.64 1.225l-.113.34a1 1 0 0 0 .309 1.084l5.197 4.332c.179.149.406.231.64.231H19a2 2 0 0 0 2-2v-7.21a2 2 0 0 0-1.779-1.987"            fill="none"            stroke="currentColor"            stroke-width="1.9"            stroke-linecap="round"            stroke-linejoin="round"/> </sv></button>   <button class="vote-down"><svg height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">     <path d="M19.221 10.803 12 10V4a2 2 0 0 0-4 0v12l-3.031-1.212a2 2 0 0 0-2.64 1.225l-.113.34a1 1 0 0 0 .309 1.084l5.197 4.332c.179.149.406.231.64.231H19a2 2 0 0 0 2-2v-7.21a2 2 0 0 0-1.779-1.987"            fill="none"            stroke="currentColor"            stroke-width="1.9"            stroke-linecap="round"            stroke-linejoin="round"/> </svg></button>
+  <button id="share-calculator-btn" class="global-share-btn"><svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path d="M680-80q-50 0-85-35t-35-85q0-6 3-28L282-392q-16 15-37 23.5t-45 8.5q-50 0-85-35t-35-85q0-50 35-85t85-35q24 0 45 8.5t37 23.5l281-164q-2-7-2.5-13.5T560-760q0-50 35-85t85-35q50 0 85 35t35 85q0 50-35 85t-85 35q-24 0-45-8.5T598-672L317-508q2 7 2.5 13.5t.5 14.5q0 8-.5 14.5T317-452l281 164q16-15 37-23.5t45-8.5q50 0 85 35t35 85q0 50-35 85t-85 35Zm0-80q17 0 28.5-11.5T720-200q0-17-11.5-28.5T680-240q-17 0-28.5 11.5T640-200q0 17 11.5 28.5T680-160ZM200-440q17 0 28.5-11.5T240-480q0-17-11.5-28.5T200-520q-17 0-28.5 11.5T160-480q0 17 11.5 28.5T200-440Zm480-280q17 0 28.5-11.5T720-760q0-17-11.5-28.5T680-800q-17 0-28.5 11.5T640-760q0 17 11.5 28.5T680-720Zm0 520ZM200-480Zm480-280Z"/></svg>Share
+</button>
+<button class="fav-btn" 
+        data-id="percent-error-cal" 
+        data-name="Percent Error Calculator" 
+        data-label="Add to Favs">
+
+  Favourite
+</button>
+  <button onclick="window.location.reload()" class="reload-page">
+  Reload Page
+</button>
+    <button onclick="resetCalculator()" class="clear-inputs-btn">
+Clear all changes
+    </button>
+    <button onclick="InstallPwa()" class="install-pwa-btn">
+  <svg height="18" viewBox="0 -960 960 960" width="18" fill="currentColor"><path d="M280-40q-33 0-56.5-23.5T200-120v-720q0-33 23.5-56.5T280-920h280v200H280v480h400v-80h80v200q0 33-23.5 56.5T680-40H280Zm440-360L520-600l56-56 104 104v-288h80v288l104-104 56 56-200 200Z"></path></svg>
+</button>
+    </div>
+    
+    <div class="similar-calculators-wrap">
+  <h2>Similar percentage calculators 💯</h2>
+  <div class="similar-calculators">
+    <a href="/math/decimal-to-percent-converter">Decimal to percent</a>
+    <a href="/math/percentage-calculator">Percentage</a>
+    <a href="/math/percent-off-calculator">Percent off </a>
+  </div>
+</div>
+   
+<article class="description-txt">
+   <h2 class="about-header-description-txt">About this <span class="this-calculator-ab-hd">calculator</span></h2>
+   <p>
+     Our percent error calculator finds the relative error between the true and observed values found in a measurement.
+   </p>
+
+
+ </article>
   </section>
-
+  
 <footer>
     <h3>Calculator Categories</h3>
     <div class="calculator-categories-footer">
@@ -372,10 +473,70 @@ Everyday Life
     <span>Copyright by Calclulo Ltd.</span>
   </footer>
 
-  <script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
-  <script src="/assets/js/search.js"></script>
-  
   <script src="/assets/js/service-worker.js" defer crossorigin="anonymous"></script>
+<script src="/assets/js/search.js" defer crossorigin="anonymous"></script>
+
+<script defer crossorigin="anonymous">
+  const trueValue = document.getElementById("trueValue");
+const observedValue = document.getElementById("observedValue");
+const percentError = document.getElementById("percentError");
+
+function parseNum(val) {
+  return parseFloat(val.replace(/,/g, "")) || 0;
+}
+
+function formatNum(num) {
+  return num.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function calcPercentError() {
+  const t = parseNum(trueValue.value);
+  const o = parseNum(observedValue.value);
+  if (!t || !o) return;
+  const error = Math.abs((o - t) / t) * 100;
+  percentError.value = formatNum(error);
+}
+
+function reverseCalcTrueValue() {
+  const o = parseNum(observedValue.value);
+  const p = parseNum(percentError.value);
+  if (!o || !p) return;
+  const t = o / (1 + p / 100);
+  trueValue.value = formatNum(t);
+}
+
+function calcObservedFromError() {
+  const t = parseNum(trueValue.value);
+  const p = parseNum(percentError.value);
+  if (!t || !p) return;
+  const o = t + (p / 100) * t;
+  observedValue.value = formatNum(o);
+}
+
+trueValue.addEventListener("input", () => {
+  if (document.activeElement === percentError) return;
+  calcPercentError();
+});
+
+observedValue.addEventListener("input", () => {
+  if (document.activeElement === percentError) return;
+  calcPercentError();
+});
+
+percentError.addEventListener("input", () => {
+  const t = parseNum(trueValue.value);
+  const o = parseNum(observedValue.value);
+  const p = parseNum(percentError.value);
+  if (t && !o && p) calcObservedFromError();
+  else if (o && p) reverseCalcTrueValue();
+});
+
+window.addEventListener("load", calcPercentError);
+</script>
+
+<script src="/assets/js/favourites.js" defer crossorigin="anonymous"></script>
+<script src="/assets/js/many-func.js" defer crossorigin="anonymous"></script>
+
 </body>
 
 </html>

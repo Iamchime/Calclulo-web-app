@@ -292,6 +292,7 @@ display: block;
   font-size: 1em;
 color: #42445AD4;
 margin-top: 1.5em;
+font-family: Alansans;
 }
 
 .category-info-p{
@@ -300,7 +301,7 @@ font-size: 1em;
 color: #42445ACC;
 margin-top: 1.5em;
 margin-bottom: 1.5em;
-font-family: "Young";
+font-family: Alansans;
 }
   .category-info { max-width: 800px; }
   .category-info-p { margin: 0; line-height: 1.5; }
