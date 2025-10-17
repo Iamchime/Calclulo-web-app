@@ -3174,17 +3174,36 @@ document.addEventListener("DOMContentLoaded", () => {
     const storageKey = `userVote:${location.pathname}:index:${idx}`;
 
     function updateButtons(vote) {
-      if (vote === "like") {
-        likeBtn.classList.add("active");
-        dislikeBtn && dislikeBtn.classList.remove("active");
-      } else if (vote === "dislike") {
-        dislikeBtn && dislikeBtn.classList.add("active");
-        likeBtn.classList.remove("active");
-      } else {
-        likeBtn.classList.remove("active");
-        dislikeBtn && dislikeBtn.classList.remove("active");
-      }
-    }
+  const outlinedSVG = `
+    <svg height="24" viewBox="0 0 24 24" width="24" 
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.221 10.803 12 10V4a2 2 0 0 0-4 0v12l-3.031-1.212
+      a2 2 0 0 0-2.64 1.225l-.113.34a1 1 0 0 0 .309 1.084l5.197 
+      4.332c.179.149.406.231.64.231H19a2 2 0 0 0 2-2v-7.21
+      a2 2 0 0 0-1.779-1.987"
+      fill="none" stroke="currentColor" stroke-width="1.9" 
+      stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  
+  const filledSVG = `
+    <svg height="24" viewBox="0 0 24 24" width="24" 
+      xmlns="http://www.w3.org/2000/svg">
+      <path d="M19.221 10.803 12 10V4a2 2 0 0 0-4 0v12l-3.031-1.212
+      a2 2 0 0 0-2.64 1.225l-.113.34a1 1 0 0 0 .309 1.084l5.197 
+      4.332c.179.149.406.231.64.231H19a2 2 0 0 0 2-2v-7.21
+      a2 2 0 0 0-1.779-1.987"
+      fill="currentColor" stroke="currentColor" stroke-width="1.3" 
+      stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  
+  const getSVG = (active, flip) => {
+    const icon = active ? filledSVG : outlinedSVG;
+    return flip ? icon.replace('<svg', '<svg style="transform:rotate(180deg)"') : icon;
+  };
+  
+  likeBtn.innerHTML = getSVG(vote === "like", false);
+  dislikeBtn.innerHTML = getSVG(vote === "dislike", true);
+}
 
     const savedVote = localStorage.getItem(storageKey);
     if (savedVote) updateButtons(savedVote);

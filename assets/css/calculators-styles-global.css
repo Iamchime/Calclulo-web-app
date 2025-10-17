@@ -1588,6 +1588,9 @@ color: #4F5163;
 .vote-up svg, .vote-down svg {
   transition: fill 0.3s ease, transform 0.2s ease;
 }
+.vote-down svg{
+  transform: rotate(180deg);
+}
 
 /*.vote-up.active svg {
   fill: #000000;
